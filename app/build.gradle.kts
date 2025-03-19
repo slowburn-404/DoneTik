@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.service)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlinx.serialization.gp)
 }
 
 android {
@@ -61,6 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
     //firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
@@ -76,6 +78,10 @@ dependencies {
     //coil
     implementation(libs.coil)
     implementation(libs.coil.network.okhttp)
+
+    //credential manager
+    implementation(libs.androidx.credential.manager)
+    implementation(libs.androidx.ui.text.google.fonts)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
