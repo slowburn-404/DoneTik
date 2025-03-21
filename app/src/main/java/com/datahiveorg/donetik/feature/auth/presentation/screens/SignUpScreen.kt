@@ -4,23 +4,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.Create
+import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -38,14 +31,12 @@ import com.datahiveorg.donetik.ui.components.UserInputField
 import com.datahiveorg.donetik.ui.theme.DoneTikTheme
 
 @Composable
-fun LoginScreen(
+fun SignUpScreen(
     modifier: Modifier = Modifier,
 ) {
-    var isPasswordVisible by remember { mutableStateOf(false) }
-
-    val signUpText = buildAnnotatedString {
-        append("Don't have an account? ")
-        pushStringAnnotation("Sign Up", annotation = "Click Sign up")
+    val loginText = buildAnnotatedString {
+        append("Already have an account? ")
+        pushStringAnnotation("Login", annotation = "Click Login")
         withStyle(style = SpanStyle(color = colorScheme.primary)) {
             append("Sign Up")
         }
@@ -56,93 +47,90 @@ fun LoginScreen(
         modifier = modifier
     ) {
         Text(
-            text = "Welcome back to Donetik",
+            text = "Create your account",
             style = typography.bodyLarge
         )
 
         UserInputField(
             label = "Email",
-            enterValue = {},
+            value = "",
             error = "",
+            leadingIcon = Icons.Rounded.Email,
+            trailingIcon = null,
+            placeholder = "Enter your email",
+            visualTransformation = VisualTransformation.None,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email
             ),
-            visualTransformation = VisualTransformation.None,
-            value = "",
-            leadingIcon = Icons.Filled.Email,
-            trailingIcon = null,
-            placeholder = "Enter email",
-            onTogglePasswordVisibility = {}
+            onTogglePasswordVisibility = {},
+            enterValue = {}
 
         )
 
         UserInputField(
             label = "Password",
-            enterValue = {},
+            value = "",
             error = "",
+            leadingIcon = Icons.Rounded.Create,
+            trailingIcon = null,
+            placeholder = "Enter your password",
+            visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password
             ),
-            visualTransformation = if (isPasswordVisible) {
-                VisualTransformation.None
-            } else PasswordVisualTransformation(),
-            value = "",
-            leadingIcon = Icons.Filled.Email,
-            trailingIcon = if (isPasswordVisible) Icons.Rounded.Build else Icons.Rounded.Lock,
-            placeholder = "Enter password",
-            onTogglePasswordVisibility = {
-                isPasswordVisible = !isPasswordVisible
-            }
+            onTogglePasswordVisibility = {},
+            enterValue = {}
 
         )
 
-        TextButton(
-            modifier = Modifier.align(Alignment.End),
-            onClick = {}
-        ) {
-            Text(
-                text = "Forgot Password?",
-                style = typography.bodyMedium,
-                textAlign = TextAlign.End
-            )
-        }
+        UserInputField(
+            label = "Confirm Password",
+            value = "",
+            error = "",
+            leadingIcon = Icons.Rounded.Lock,
+            trailingIcon = Icons.Rounded.Create,
+            placeholder = "Confirm your password",
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password
+            ),
+            onTogglePasswordVisibility = {},
+            enterValue = {}
+
+        )
 
         Spacer(
             modifier = Modifier.weight(1f)
         )
 
         PrimaryButton(
-            label = "Login",
+            label = "Create account",
             onClick = {},
             isEnabled = true
         )
 
         SecondaryButton(
-            label = "Continue with Google",
+            label = "Sign up with Google",
             onClick = {},
             leadingIcon = Icons.Rounded.Share
         )
 
-
         Text(
-            text = signUpText,
+            text = loginText,
+            style = typography.bodyLarge,
             modifier = Modifier
-                .padding(bottom = 8.dp)
-                .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
                 .clickable {
-                    val annotatedString = signUpText
-                        .getStringAnnotations(
-                            tag = "Sign Up",
-                            start = 0,
-                            end = signUpText.length
-                        ).firstOrNull()
+                    val annotatedString = loginText.getStringAnnotations(
+                        tag = "Login",
+                        start = 0,
+                        end = loginText.length
+                    ).firstOrNull()
 
                     annotatedString?.let {
-                        //TODO(Navigate to sign up screen)
+                        //TODO(Navigate to log in screen)
                     }
                 },
-            style = typography.bodyMedium,
             textAlign = TextAlign.Center
         )
 
@@ -152,8 +140,8 @@ fun LoginScreen(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LoginScreenPreview() {
+fun SignUpScreenPreview() {
     DoneTikTheme {
-        LoginScreen()
+        SignUpScreen()
     }
 }
