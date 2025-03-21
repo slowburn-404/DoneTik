@@ -32,6 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationIntent
+import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiEvent
+import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiState
 import com.datahiveorg.donetik.ui.components.PrimaryButton
 import com.datahiveorg.donetik.ui.components.SecondaryButton
 import com.datahiveorg.donetik.ui.components.UserInputField
@@ -40,8 +43,10 @@ import com.datahiveorg.donetik.ui.theme.DoneTikTheme
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
+    state: AuthenticationUiState,
+    onEvent: (AuthenticationUiEvent) -> Unit,
+    onIntent: (AuthenticationIntent) -> Unit
 ) {
-    var isPasswordVisible by remember { mutableStateOf(false) }
 
     val signUpText = buildAnnotatedString {
         append("Don't have an account? ")
@@ -50,6 +55,8 @@ fun LoginScreen(
             append("Sign Up")
         }
     }
+
+    var isPasswordVisible by remember { mutableStateOf(false) }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -62,13 +69,15 @@ fun LoginScreen(
 
         UserInputField(
             label = "Email",
-            enterValue = {},
-            error = "",
+            enterValue = {
+                onIntent(AuthenticationIntent.EnterEmail(it))
+            },
+            error = state.emailError,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email
             ),
             visualTransformation = VisualTransformation.None,
-            value = "",
+            value = state.user.email,
             leadingIcon = Icons.Filled.Email,
             trailingIcon = null,
             placeholder = "Enter email",
@@ -78,27 +87,30 @@ fun LoginScreen(
 
         UserInputField(
             label = "Password",
-            enterValue = {},
-            error = "",
+            enterValue = {
+                onIntent(AuthenticationIntent.EnterPassword(it))
+            },
+            error = state.passwordError,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password
             ),
             visualTransformation = if (isPasswordVisible) {
                 VisualTransformation.None
             } else PasswordVisualTransformation(),
-            value = "",
+            value = state.user.password,
             leadingIcon = Icons.Filled.Email,
             trailingIcon = if (isPasswordVisible) Icons.Rounded.Build else Icons.Rounded.Lock,
             placeholder = "Enter password",
             onTogglePasswordVisibility = {
                 isPasswordVisible = !isPasswordVisible
             }
-
         )
 
         TextButton(
             modifier = Modifier.align(Alignment.End),
-            onClick = {}
+            onClick = {
+                //TODO(Navigate to forgot password screen)
+            }
         ) {
             Text(
                 text = "Forgot Password?",
@@ -113,13 +125,17 @@ fun LoginScreen(
 
         PrimaryButton(
             label = "Login",
-            onClick = {},
-            isEnabled = true
+            onClick = {
+                onIntent(AuthenticationIntent.Login)
+            },
+            isEnabled = state.isFormValid
         )
 
         SecondaryButton(
             label = "Continue with Google",
-            onClick = {},
+            onClick = {
+                //TODO(Sign in with Google)
+            },
             leadingIcon = Icons.Rounded.Share
         )
 
@@ -139,13 +155,12 @@ fun LoginScreen(
                         ).firstOrNull()
 
                     annotatedString?.let {
-                        //TODO(Navigate to sign up screen)
+                        onEvent(AuthenticationUiEvent.Navigate.SignUp)
                     }
                 },
             style = typography.bodyMedium,
             textAlign = TextAlign.Center
         )
-
 
     }
 }
@@ -154,6 +169,10 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     DoneTikTheme {
-        LoginScreen()
+        LoginScreen(
+            state = AuthenticationUiState(),
+            onEvent = {},
+            onIntent = {},
+        )
     }
 }

@@ -23,8 +23,12 @@ fun NavGraphBuilder.authenticationNavGraph(
             AuthenticationScreenWrapper(
                 navigator = authenticationNavigator,
                 snackBarHostState = snackBarHostState
-            ) { _, _ ->
-                LoginScreen()
+            ) { state, onEvent, onIntent ->
+                LoginScreen(
+                    state = state,
+                    onEvent = onEvent,
+                    onIntent = onIntent
+                )
             }
         }
 
@@ -32,8 +36,12 @@ fun NavGraphBuilder.authenticationNavGraph(
             AuthenticationScreenWrapper(
                 navigator = authenticationNavigator,
                 snackBarHostState = snackBarHostState
-            ) { _, _ ->
-                SignUpScreen()
+            ) { state, onEvent, onIntent ->
+                SignUpScreen(
+                    state = state,
+                    onEvent = onEvent,
+                    onIntent = onIntent
+                )
             }
         }
 
