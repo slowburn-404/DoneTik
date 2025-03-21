@@ -14,6 +14,10 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -25,6 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationIntent
+import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiEvent
+import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiState
 import com.datahiveorg.donetik.ui.components.PrimaryButton
 import com.datahiveorg.donetik.ui.components.SecondaryButton
 import com.datahiveorg.donetik.ui.components.UserInputField
@@ -33,6 +40,9 @@ import com.datahiveorg.donetik.ui.theme.DoneTikTheme
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
+    state: AuthenticationUiState,
+    onEvent: (AuthenticationUiEvent) -> Unit,
+    onIntent: (AuthenticationIntent) -> Unit
 ) {
     val loginText = buildAnnotatedString {
         append("Already have an account? ")
@@ -41,6 +51,7 @@ fun SignUpScreen(
             append("Sign Up")
         }
     }
+    var isPasswordVisible by remember { mutableStateOf(false) }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -53,8 +64,8 @@ fun SignUpScreen(
 
         UserInputField(
             label = "Email",
-            value = "",
-            error = "",
+            value = state.user.email,
+            error = state.emailError,
             leadingIcon = Icons.Rounded.Email,
             trailingIcon = null,
             placeholder = "Enter your email",
@@ -63,14 +74,16 @@ fun SignUpScreen(
                 keyboardType = KeyboardType.Email
             ),
             onTogglePasswordVisibility = {},
-            enterValue = {}
+            enterValue = {
+                onIntent(AuthenticationIntent.EnterEmail(it))
+            }
 
         )
 
         UserInputField(
             label = "Password",
-            value = "",
-            error = "",
+            value = state.user.password,
+            error = state.passwordError,
             leadingIcon = Icons.Rounded.Create,
             trailingIcon = null,
             placeholder = "Enter your password",
@@ -78,24 +91,12 @@ fun SignUpScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password
             ),
-            onTogglePasswordVisibility = {},
-            enterValue = {}
-
-        )
-
-        UserInputField(
-            label = "Confirm Password",
-            value = "",
-            error = "",
-            leadingIcon = Icons.Rounded.Lock,
-            trailingIcon = Icons.Rounded.Create,
-            placeholder = "Confirm your password",
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password
-            ),
-            onTogglePasswordVisibility = {},
-            enterValue = {}
+            onTogglePasswordVisibility = {
+                isPasswordVisible = !isPasswordVisible
+            },
+            enterValue = {
+                onIntent(AuthenticationIntent.EnterPassword(it))
+            }
 
         )
 
@@ -105,13 +106,17 @@ fun SignUpScreen(
 
         PrimaryButton(
             label = "Create account",
-            onClick = {},
-            isEnabled = true
+            onClick = {
+                onIntent(AuthenticationIntent.SignUp)
+            },
+            isEnabled = state.isFormValid
         )
 
         SecondaryButton(
             label = "Sign up with Google",
-            onClick = {},
+            onClick = {
+                //TODO(Sign up with google)
+            },
             leadingIcon = Icons.Rounded.Share
         )
 
@@ -128,7 +133,7 @@ fun SignUpScreen(
                     ).firstOrNull()
 
                     annotatedString?.let {
-                        //TODO(Navigate to log in screen)
+                        onEvent(AuthenticationUiEvent.Navigate.Login)
                     }
                 },
             textAlign = TextAlign.Center
@@ -142,6 +147,10 @@ fun SignUpScreen(
 @Composable
 fun SignUpScreenPreview() {
     DoneTikTheme {
-        SignUpScreen()
+        SignUpScreen(
+            state = AuthenticationUiState(),
+            onIntent = {},
+            onEvent = {}
+        )
     }
 }
