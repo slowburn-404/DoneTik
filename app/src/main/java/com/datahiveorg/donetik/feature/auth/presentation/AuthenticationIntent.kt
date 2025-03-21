@@ -1,0 +1,9 @@
+package com.datahiveorg.donetik.feature.auth.presentation
+
+sealed interface AuthenticationIntent {
+    data class EnterEmail(val email: String) : AuthenticationIntent
+    data class EnterPassword(val password: String) : AuthenticationIntent
+    data object Login : AuthenticationIntent
+    data object SignUp : AuthenticationIntent
+    data object ValidateForm: AuthenticationIntent
+}

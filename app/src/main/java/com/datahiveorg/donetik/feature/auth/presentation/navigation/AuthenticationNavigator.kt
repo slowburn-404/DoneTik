@@ -11,8 +11,8 @@ internal class AuthenticationNavigatorImpl(
 ) : AuthenticationNavigator {
     override fun navigate(screen: AuthenticationScreen) {
         when (screen) {
-            is AuthenticationScreen.LoginScreen -> {}
-            is AuthenticationScreen.SignUpScreen -> {}
+            is AuthenticationScreen.LoginScreen -> navigateToLogin()
+            is AuthenticationScreen.SignUpScreen -> navigateToSignUp()
         }
     }
 
