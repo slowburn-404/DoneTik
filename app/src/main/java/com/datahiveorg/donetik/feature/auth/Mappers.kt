@@ -4,6 +4,7 @@ import android.net.Uri
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.firebase.model.FirebaseRequest
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 
 fun User.toUserCredential(): FirebaseRequest.User {
@@ -31,4 +32,16 @@ fun FirebaseUser.toDomain(): User {
         imageUrl = photoUrl ?: Uri.EMPTY,
         password = ""
     )
+}
+
+fun FirebaseAuthException.toDomain(): String {
+    return when(this.errorCode) {
+        "ERROR_INVALID_EMAIL" -> "Invalid email format."
+        "ERROR_WRONG_PASSWORD" -> "Incorrect password."
+        "ERROR_USER_NOT_FOUND" -> "No account found with this email."
+        "ERROR_USER_DISABLED" -> "This account has been disabled."
+        "ERROR_TOO_MANY_REQUESTS" -> "Too many failed attempts. Try again later."
+        "ERROR_NETWORK_REQUEST_FAILED" -> "Network error. Check your connection and try again."
+        else -> "Authentication failed: ${this.message}"
+    }
 }

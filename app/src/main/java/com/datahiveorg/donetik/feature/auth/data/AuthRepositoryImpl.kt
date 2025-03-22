@@ -24,7 +24,7 @@ class AuthRepositoryImpl(
 
                 is FirebaseResponse.Failure -> {
                     DomainResponse.Failure(
-                        response.exception.localizedMessage ?: "Unexpected error"
+                        response.exception.toDomain()
                     )
                 }
             }
@@ -46,7 +46,7 @@ class AuthRepositoryImpl(
 
                 is FirebaseResponse.Failure -> {
                     DomainResponse.Failure(
-                        response.exception.localizedMessage ?: "Unexpected error"
+                        response.exception.toDomain()
                     )
                 }
             }
@@ -66,7 +66,7 @@ class AuthRepositoryImpl(
 
                 is FirebaseResponse.Failure -> {
                     DomainResponse.Failure(
-                        response.exception.localizedMessage ?: "Unexpected error"
+                        response.exception.toDomain()
                     )
                 }
             }

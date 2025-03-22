@@ -1,6 +1,7 @@
 package com.datahiveorg.donetik.feature.auth.presentation.navigation
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
@@ -20,9 +21,10 @@ fun NavGraphBuilder.authenticationNavGraph(
     ) {
 
         composable(AuthenticationScreen.LoginScreen.route) {
+
             AuthenticationScreenWrapper(
                 navigator = authenticationNavigator,
-                snackBarHostState = snackBarHostState
+                snackBarHostState = snackBarHostState,
             ) { state, onEvent, onIntent ->
                 LoginScreen(
                     state = state,
