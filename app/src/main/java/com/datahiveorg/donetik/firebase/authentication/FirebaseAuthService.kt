@@ -6,6 +6,7 @@ import com.datahiveorg.donetik.util.Logger
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -52,6 +53,8 @@ internal class FirebaseAuthServiceImpl(
         } catch (exception: Exception) {
             Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
             FirebaseResponse.Failure(exception)
+        } catch(exception: FirebaseAuthException) {
+            FirebaseResponse.Failure(exception)
         }
     }
 
@@ -64,6 +67,8 @@ internal class FirebaseAuthServiceImpl(
             FirebaseResponse.Success(authResult)
         } catch (exception: Exception) {
             Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
+            FirebaseResponse.Failure(exception)
+        } catch (exception: FirebaseAuthException) {
             FirebaseResponse.Failure(exception)
         }
     }
@@ -79,6 +84,8 @@ internal class FirebaseAuthServiceImpl(
         } catch (exception: Exception) {
             Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
             FirebaseResponse.Failure(exception)
+        }catch (exception: FirebaseAuthException) {
+            FirebaseResponse.Failure(exception)
         }
     }
 
@@ -88,6 +95,8 @@ internal class FirebaseAuthServiceImpl(
             FirebaseResponse.Success(authResult.toString())
         } catch (exception: Exception) {
             Logger.e("FirebaseAuthenticationService", exception.message ?: "Unknown error")
+            FirebaseResponse.Failure(exception)
+        } catch (exception: FirebaseAuthException) {
             FirebaseResponse.Failure(exception)
         }
     }
