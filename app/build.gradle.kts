@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,9 +9,19 @@ plugins {
     alias(libs.plugins.kotlinx.serialization.gp)
 }
 
+fun getLocalProperty(key: String): String {
+    val localProperties = Properties()
+    localProperties.load(FileInputStream(rootProject.file("local.properties")))
+    return localProperties.getProperty(key)
+}
+
 android {
     namespace = "com.datahiveorg.donetik"
     compileSdk = 35
+
+    buildFeatures{
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "com.datahiveorg.donetik"
@@ -21,6 +34,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "webClientId", "\"${getLocalProperty("web_client_id")}\"")
     }
 
     buildTypes {
@@ -30,6 +45,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        create("customDebugType") {
+            isDebuggable = true
         }
     }
     compileOptions {
@@ -69,7 +88,7 @@ dependencies {
     implementation(libs.firebase.authentication)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
-    implementation(libs.firebase.crashlytics)
+   // implementation(libs.firebase.crashlytics)
     //koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
@@ -81,7 +100,14 @@ dependencies {
 
     //credential manager
     implementation(libs.androidx.credential.manager)
+    implementation(libs.androidx.credential.manager.play.services)
+    implementation(libs.google.id)
+
+    //google fonts
     implementation(libs.androidx.ui.text.google.fonts)
+
+    //kotlinx serialization
+    implementation(libs.kotlinx.serialization)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
