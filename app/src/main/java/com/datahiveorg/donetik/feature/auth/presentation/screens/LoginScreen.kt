@@ -1,6 +1,5 @@
 package com.datahiveorg.donetik.feature.auth.presentation.screens
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,11 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.rounded.Build
-import androidx.compose.material.icons.rounded.Lock
-import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
@@ -26,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,15 +29,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationIntent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiEvent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiState
-import com.datahiveorg.donetik.util.GoogleSignHelper
 import com.datahiveorg.donetik.ui.components.PrimaryButton
 import com.datahiveorg.donetik.ui.components.SecondaryButton
 import com.datahiveorg.donetik.ui.components.UserInputField
-import com.datahiveorg.donetik.util.Logger
+import com.datahiveorg.donetik.util.GoogleSignHelper
 import kotlinx.coroutines.launch
 
 @Composable
@@ -87,7 +82,7 @@ fun LoginScreen(
             ),
             visualTransformation = VisualTransformation.None,
             value = state.user.email,
-            leadingIcon = Icons.Filled.Email,
+            leadingIcon = painterResource(R.drawable.ic_mail),
             trailingIcon = null,
             placeholder = "Enter email",
             onTogglePasswordVisibility = {}
@@ -107,8 +102,10 @@ fun LoginScreen(
                 VisualTransformation.None
             } else PasswordVisualTransformation(),
             value = state.user.password,
-            leadingIcon = Icons.Filled.Email,
-            trailingIcon = if (isPasswordVisible) Icons.Rounded.Build else Icons.Rounded.Lock,
+            leadingIcon = painterResource(R.drawable.ic_lock),
+            trailingIcon = if (isPasswordVisible) painterResource(R.drawable.ic_visibility_off) else painterResource(
+                R.drawable.ic_visibility
+            ),
             placeholder = "Enter password",
             onTogglePasswordVisibility = {
                 isPasswordVisible = !isPasswordVisible
@@ -128,23 +125,20 @@ fun LoginScreen(
             )
         }
 
-//        Spacer(
-//            modifier = Modifier.weight(1f)
-//        )
-
         PrimaryButton(
             label = "Login",
             onClick = {
                 onIntent(AuthenticationIntent.Login)
             },
-            isEnabled = state.isFormValid
+            isFormValid = state.isFormValid,
+            isLoading = state.isLoading
         )
 
         SecondaryButton(
             label = "Continue with Google",
             onClick = {
                 coroutineContext.launch {
-                    when (val result = googleSignHelper.getGoogleIdToken()) {
+                    when (val result = googleSignHelper.getGoogleIdToken(true)) {
                         is DomainResponse.Success -> {
                             onIntent(AuthenticationIntent.SignInWithGoogle(result.data))
                         }
@@ -161,7 +155,8 @@ fun LoginScreen(
 
 
             },
-            leadingIcon = Icons.Rounded.Share
+            leadingIcon = painterResource(R.drawable.ic_google),
+            isLoading = state.isLoading
         )
 
 
