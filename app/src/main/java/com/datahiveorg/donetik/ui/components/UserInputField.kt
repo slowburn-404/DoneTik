@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -27,8 +28,8 @@ fun UserInputField(
     onTogglePasswordVisibility: () -> Unit,
     error: String,
     keyboardOptions: KeyboardOptions,
-    leadingIcon: ImageVector?,
-    trailingIcon: ImageVector?,
+    leadingIcon: Painter?,
+    trailingIcon: Painter?,
     placeholder: String,
     value: String,
     visualTransformation: VisualTransformation = VisualTransformation.None
@@ -63,7 +64,7 @@ fun UserInputField(
             leadingIcon = if (leadingIcon !== null) {
                 {
                     Icon(
-                        imageVector = leadingIcon,
+                        painter = leadingIcon,
                         contentDescription = null
                     )
                 }
@@ -76,7 +77,7 @@ fun UserInputField(
                         onClick = onTogglePasswordVisibility
                     ) {
                         Icon(
-                            imageVector = trailingIcon,
+                            painter = trailingIcon,
                             contentDescription = null
                         )
                     }

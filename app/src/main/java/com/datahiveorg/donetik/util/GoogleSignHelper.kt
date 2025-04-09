@@ -9,6 +9,7 @@ import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.util.Keys.WEB_CLIENT_ID
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
@@ -20,17 +21,24 @@ class GoogleSignHelper(private val activity: Context) {
 
     private val credentialManager = CredentialManager.create(activity)
 
-    suspend fun getGoogleIdToken(): DomainResponse<String> {
+    suspend fun getGoogleIdToken(isLogin: Boolean): DomainResponse<String> {
         return try {
             val hashedNonce = getHashedNonce()
 
-            val signInWithGoogleOption = GetSignInWithGoogleOption
+            val signUpWithGoogleOption = GetSignInWithGoogleOption
                 .Builder(serverClientId = WEB_CLIENT_ID)
                 .setNonce(hashedNonce)
                 .build()
 
+            val signInWithGoogleOption = GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(true)
+                .setServerClientId(serverClientId = WEB_CLIENT_ID)
+                .setAutoSelectEnabled(true)
+                .setNonce(hashedNonce)
+                .build()
+
             val request: GetCredentialRequest = GetCredentialRequest.Builder()
-                .setCredentialOptions(listOf(signInWithGoogleOption))
+                .setCredentialOptions(listOf(if(isLogin)signInWithGoogleOption else signUpWithGoogleOption))
                 .build()
 
             val result = credentialManager.getCredential(context = activity, request = request)

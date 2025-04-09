@@ -88,7 +88,6 @@ class AuthenticationViewModel(
     private fun validatePassword(password: String): String {
         val regexPattern = "^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#\$%^&*]).*\$"
         if (password.length < 6) return "Password must be least 6 characters long"
-        if (password.length > 12) return "Password must be at most 12 characters long"
 
         return if (!password.matches(Regex(regexPattern))) {
             "Password must contain at least one digit," +
