@@ -1,10 +1,12 @@
 package com.datahiveorg.donetik.feature.auth.presentation
 
 import android.net.Uri
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 
 @Stable
+@Immutable
 data class AuthenticationUiState(
     val user: User = User(
         email = "",

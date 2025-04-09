@@ -10,25 +10,27 @@ import com.datahiveorg.donetik.firebase.authentication.FirebaseAuthService
 import com.datahiveorg.donetik.firebase.di.firebaseModule
 import com.datahiveorg.donetik.util.DispatcherProvider
 import com.datahiveorg.donetik.util.dispatcherModule
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val authModule = module {
+
     includes(dispatcherModule, firebaseModule)
 
-    single<AuthRepository> {
+    factory<AuthRepository> {
         AuthRepositoryImpl(
             authService = get<FirebaseAuthService>(),
-            dispatcher = get<DispatcherProvider>()
+            dispatcher = get<DispatcherProvider>(),
         )
     }
 
-    single<AuthenticationNavigator> {
+    factory<AuthenticationNavigator> { (navController: NavHostController) ->
         AuthenticationNavigatorImpl(
-            navController = get<NavHostController>()
+            navController = navController
         )
     }
 
-    single<AuthenticationViewModel> {
+    viewModel<AuthenticationViewModel> {
         AuthenticationViewModel(
             authRepository = get<AuthRepository>()
         )

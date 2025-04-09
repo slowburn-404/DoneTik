@@ -6,4 +6,5 @@ sealed interface AuthenticationIntent {
     data object Login : AuthenticationIntent
     data object SignUp : AuthenticationIntent
     data object ValidateForm: AuthenticationIntent
+    data class SignInWithGoogle(val idToken: String): AuthenticationIntent
 }

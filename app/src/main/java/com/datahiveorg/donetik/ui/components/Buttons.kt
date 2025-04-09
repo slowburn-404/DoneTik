@@ -32,10 +32,10 @@ fun PrimaryButton(
         enabled = isEnabled,
     ) {
         Box(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(4.dp),
             contentAlignment = Alignment.Center
         ) {
-            if (isEnabled) {
+            if (!isEnabled) {
                 Text(
                     text = label,
                     style = MaterialTheme.typography.bodyLarge
@@ -61,7 +61,7 @@ fun SecondaryButton(
         shape = RoundedCornerShape(14.dp),
     ) {
         Row(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(4.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

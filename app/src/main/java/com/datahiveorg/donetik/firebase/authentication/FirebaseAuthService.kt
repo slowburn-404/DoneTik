@@ -7,7 +7,11 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -20,7 +24,7 @@ interface FirebaseAuthService {
 
     suspend fun login(user: FirebaseRequest.User): FirebaseResponse<AuthResult>
 
-    suspend fun signUpWithGoogle(): FirebaseResponse<AuthResult>
+    suspend fun signUpWithGoogle(idToken: String): FirebaseResponse<AuthResult>
 
     suspend fun fetchUserInfo(): FirebaseResponse<FirebaseUser>
 
@@ -50,10 +54,8 @@ internal class FirebaseAuthServiceImpl(
 
             FirebaseResponse.Success(authResult)
 
-        } catch (exception: Exception) {
+        } catch (exception: FirebaseAuthException) {
             Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
-            FirebaseResponse.Failure(exception)
-        } catch(exception: FirebaseAuthException) {
             FirebaseResponse.Failure(exception)
         }
     }
@@ -65,26 +67,37 @@ internal class FirebaseAuthServiceImpl(
                 .await()
 
             FirebaseResponse.Success(authResult)
-        } catch (exception: Exception) {
-            Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
-            FirebaseResponse.Failure(exception)
         } catch (exception: FirebaseAuthException) {
+            Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
             FirebaseResponse.Failure(exception)
         }
     }
 
-    override suspend fun signUpWithGoogle(): FirebaseResponse<AuthResult> {
-        TODO("Implement google auth")
+    override suspend fun signUpWithGoogle(idToken: String): FirebaseResponse<AuthResult> {
+        return try {
+            val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+            val authResult = firebaseAuth
+                .signInWithCredential(firebaseCredential)
+                .await()
+            FirebaseResponse.Success(authResult)
+        } catch (exception: FirebaseAuthInvalidUserException) {
+            Logger.e("FirebaseAuthService", exception.message ?: "Unexpected error")
+            FirebaseResponse.Failure(exception)
+        } catch (exception: FirebaseAuthInvalidCredentialsException) {
+            Logger.e("FirebaseAuthService", exception.message.toString())
+            FirebaseResponse.Failure(exception)
+        } catch (exception: FirebaseAuthUserCollisionException) {
+            Logger.e("FirebaseAuthService", exception.message.toString())
+            FirebaseResponse.Failure(exception)
+        }
     }
 
     override suspend fun fetchUserInfo(): FirebaseResponse<FirebaseUser> {
         return try {
             val authResult = firebaseAuth.currentUser
             FirebaseResponse.Success(authResult ?: throw FirebaseException("User not found"))
-        } catch (exception: Exception) {
+        } catch (exception: FirebaseAuthException) {
             Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
-            FirebaseResponse.Failure(exception)
-        }catch (exception: FirebaseAuthException) {
             FirebaseResponse.Failure(exception)
         }
     }
@@ -93,10 +106,8 @@ internal class FirebaseAuthServiceImpl(
         return try {
             val authResult = firebaseAuth.signOut()
             FirebaseResponse.Success(authResult.toString())
-        } catch (exception: Exception) {
-            Logger.e("FirebaseAuthenticationService", exception.message ?: "Unknown error")
-            FirebaseResponse.Failure(exception)
         } catch (exception: FirebaseAuthException) {
+            Logger.e("FirebaseAuthenticationService", exception.message ?: "Unknown error")
             FirebaseResponse.Failure(exception)
         }
     }

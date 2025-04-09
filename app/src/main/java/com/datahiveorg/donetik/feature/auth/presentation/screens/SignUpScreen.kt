@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.feature.auth.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,7 +9,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Create
 import androidx.compose.material.icons.rounded.Email
-import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -17,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,22 +29,25 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationIntent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiEvent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiState
+import com.datahiveorg.donetik.util.GoogleSignHelper
 import com.datahiveorg.donetik.ui.components.PrimaryButton
 import com.datahiveorg.donetik.ui.components.SecondaryButton
 import com.datahiveorg.donetik.ui.components.UserInputField
-import com.datahiveorg.donetik.ui.theme.DoneTikTheme
+import com.datahiveorg.donetik.util.Logger
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
     state: AuthenticationUiState,
     onEvent: (AuthenticationUiEvent) -> Unit,
-    onIntent: (AuthenticationIntent) -> Unit
+    onIntent: (AuthenticationIntent) -> Unit,
+    googleSignHelper: GoogleSignHelper
 ) {
     val loginText = buildAnnotatedString {
         append("Already have an account? ")
@@ -52,6 +57,9 @@ fun SignUpScreen(
         }
     }
     var isPasswordVisible by remember { mutableStateOf(false) }
+
+    val coroutineContext = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -115,7 +123,21 @@ fun SignUpScreen(
         SecondaryButton(
             label = "Sign up with Google",
             onClick = {
-                //TODO(Sign up with google)
+                coroutineContext.launch {
+                    when (val result = googleSignHelper.getGoogleIdToken()) {
+                        is DomainResponse.Success -> {
+                            onIntent(AuthenticationIntent.SignInWithGoogle(result.data))
+                        }
+
+                        is DomainResponse.Failure -> {
+                            Toast.makeText(
+                                context,
+                                result.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
             },
             leadingIcon = Icons.Rounded.Share
         )
@@ -142,15 +164,15 @@ fun SignUpScreen(
 
     }
 }
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun SignUpScreenPreview() {
-    DoneTikTheme {
-        SignUpScreen(
-            state = AuthenticationUiState(),
-            onIntent = {},
-            onEvent = {}
-        )
-    }
-}
+//
+//@Preview(showBackground = true, showSystemUi = true)
+//@Composable
+//fun SignUpScreenPreview() {
+//    DoneTikTheme {
+//        SignUpScreen(
+//            state = AuthenticationUiState(),
+//            onIntent = {},
+//            onEvent = {}
+//        )
+//    }
+//}

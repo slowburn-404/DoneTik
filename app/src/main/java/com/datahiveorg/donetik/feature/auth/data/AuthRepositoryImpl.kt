@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl(
     private val authService: FirebaseAuthService,
-    private val dispatcher: DispatcherProvider
+    private val dispatcher: DispatcherProvider,
 ) : AuthRepository {
     override suspend fun login(user: User): DomainResponse<User> {
         return withContext(dispatcher.io) {
@@ -34,6 +34,7 @@ class AuthRepositoryImpl(
     override suspend fun logout() {
         return withContext(dispatcher.io) {
             authService.logOut()
+            //clear google auth credentials
         }
     }
 
@@ -53,8 +54,18 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun signUpWithGoogle(): DomainResponse<User> {
-        TODO("Not yet implemented")
+    override suspend fun signUpWithGoogle(idToken: String): DomainResponse<User> {
+        return withContext(dispatcher.io) {
+            when (val response = authService.signUpWithGoogle(idToken)) {
+                is FirebaseResponse.Success -> {
+                    DomainResponse.Success(response.data.toDomain())
+                }
+
+                is FirebaseResponse.Failure -> {
+                    DomainResponse.Failure(response.exception.toDomain())
+                }
+            }
+        }
     }
 
     override suspend fun getUser(): DomainResponse<User> {

@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.feature.auth.domain.repository
 
+import android.content.Context
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 
@@ -10,7 +11,7 @@ interface AuthRepository {
 
     suspend fun signUp(user: User): DomainResponse<User>
 
-    suspend fun signUpWithGoogle(): DomainResponse<User>
+    suspend fun signUpWithGoogle(idToken: String): DomainResponse<User>
 
     suspend fun getUser(): DomainResponse<User>
 

@@ -88,6 +88,8 @@ dependencies {
     implementation(libs.firebase.authentication)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.appcheck)
+    implementation(libs.firebase.appcheck.debug)
    // implementation(libs.firebase.crashlytics)
     //koin
     implementation(platform(libs.koin.bom))
