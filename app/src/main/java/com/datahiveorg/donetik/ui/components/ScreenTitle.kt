@@ -22,8 +22,8 @@ import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 fun ScreenTitle(
     modifier: Modifier = Modifier,
     title: String,
-    feature: FeatureScreen,
-    onNavigateUp: () -> Unit
+    //feature: FeatureScreen,
+    //onNavigateUp: () -> Unit
 ) {
     LargeTopAppBar(
         modifier = modifier
@@ -32,23 +32,25 @@ fun ScreenTitle(
             Text(
                 modifier = Modifier.padding(4.dp),
                 text = title,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.displayMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
         },
-        navigationIcon = {
-            if (feature is AuthenticationScreen) {
-                IconButton(
-                    onClick = onNavigateUp
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back",
-                    )
-                }
-            }
-        }
+//        navigationIcon = {
+//            if (feature is AuthenticationScreen) {
+//                IconButton(
+//                    onClick = onNavigateUp
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+//                        contentDescription = "Back",
+//                    )
+//                }
+//            } else {
+//
+//            }
+//        }
 
     )
 

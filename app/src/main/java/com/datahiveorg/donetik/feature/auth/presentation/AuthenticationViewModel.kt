@@ -5,12 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -20,12 +23,11 @@ class AuthenticationViewModel(
     private val _state = MutableStateFlow(AuthenticationUiState())
     val state: StateFlow<AuthenticationUiState> = _state.asStateFlow()
 
-    private val _uiEvents = MutableSharedFlow<AuthenticationUiEvent>()
-    val uiEvents: SharedFlow<AuthenticationUiEvent> = _uiEvents.asSharedFlow()
+    private val _uiEvents: Channel<AuthenticationUiEvent> = Channel(Channel.BUFFERED)
+    val uiEvents: Flow<AuthenticationUiEvent> = _uiEvents.receiveAsFlow()
 
-    private val _uiIntents = MutableSharedFlow<AuthenticationIntent>()
+    private val _uiIntents: MutableSharedFlow<AuthenticationIntent> = MutableSharedFlow()
     private val uiIntents: SharedFlow<AuthenticationIntent> = _uiIntents.asSharedFlow()
-
 
     init {
         viewModelScope.launch {
@@ -35,26 +37,24 @@ class AuthenticationViewModel(
                     is AuthenticationIntent.EnterPassword -> enterPassword(event.password)
                     is AuthenticationIntent.SignUp -> signUp()
                     is AuthenticationIntent.Login -> login()
-                    is AuthenticationIntent.ValidateForm -> {
-                        _state.update { currentState ->
-                            currentState.copy(
-                                isFormValid = validateForm()
-                            )
-                        }
-                    }
+                    is AuthenticationIntent.ValidateForm -> validateAndUpdateFormState()
+                    is AuthenticationIntent.SignInWithGoogle -> signInWithGoogle(event.idToken)
                 }
             }
         }
     }
 
     fun emitEvent(event: AuthenticationUiEvent) {
-        _uiEvents.tryEmit(event)
+        viewModelScope.launch {
+            _uiEvents.send(event)
+        }
     }
 
     fun emitIntent(intent: AuthenticationIntent) {
-        _uiIntents.tryEmit(intent)
+        viewModelScope.launch {
+            _uiIntents.emit(intent)
+        }
     }
-
 
     private fun enterEmail(email: String) {
         val isValid = validateEmail(email)
@@ -65,6 +65,8 @@ class AuthenticationViewModel(
                 emailError = if (!isValid) "Enter a valid email address" else ""
             )
         }
+
+        validateAndUpdateFormState()
     }
 
     private fun enterPassword(password: String) {
@@ -76,8 +78,9 @@ class AuthenticationViewModel(
                 passwordError = passwordError
             )
         }
-    }
 
+        validateAndUpdateFormState()
+    }
 
     private fun validateEmail(email: String): Boolean =
         email.isNotEmpty() && EMAIL_ADDRESS.matcher(email).matches()
@@ -87,7 +90,7 @@ class AuthenticationViewModel(
         if (password.length < 6) return "Password must be least 6 characters long"
         if (password.length > 12) return "Password must be at most 12 characters long"
 
-        return if (password.matches(Regex(regexPattern))) {
+        return if (!password.matches(Regex(regexPattern))) {
             "Password must contain at least one digit," +
                     " one uppercase letter, " +
                     "one lowercase letter," +
@@ -128,6 +131,7 @@ class AuthenticationViewModel(
                 }
             }
         }
+        validateAndUpdateFormState() // Revalidate form after login attempt
     }
 
     private suspend fun signUp() {
@@ -151,6 +155,7 @@ class AuthenticationViewModel(
                 }
             }
         }
+        validateAndUpdateFormState() // Revalidate form after signup attempt
     }
 
     private fun validateForm(): Boolean {
@@ -160,7 +165,37 @@ class AuthenticationViewModel(
                 state.user.email.isNotEmpty() &&
                 state.user.password.isNotEmpty() &&
                 state.emailError.isEmpty() &&
-                state.passwordError.isEmpty()
+                state.passwordError.isEmpty() &&
+                !state.isLoading
     }
 
+    private fun validateAndUpdateFormState() {
+        val isValid = validateForm()
+        _state.update { currentState ->
+            currentState.copy(isFormValid = isValid)
+        }
+    }
+
+    private suspend fun signInWithGoogle(idToken: String) {
+        showLoadingIndicator()
+        when (val response = authRepository.signUpWithGoogle(idToken)) {
+            is DomainResponse.Success -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        user = response.data,
+                        isLoading = false
+                    )
+                }
+            }
+
+            is DomainResponse.Failure -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        isLoading = false
+                    )
+                }
+                emitEvent(AuthenticationUiEvent.ShowSnackBar(response.message))
+            }
+        }
+    }
 }
