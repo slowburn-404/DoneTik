@@ -1,16 +1,32 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.service)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlinx.serialization.gp)
+}
+
+fun getLocalProperty(key: String): String {
+    val localProperties = Properties()
+    localProperties.load(FileInputStream(rootProject.file("local.properties")))
+    return localProperties.getProperty(key)
 }
 
 android {
     namespace = "com.datahiveorg.donetik"
-    compileSdk = 34
+    compileSdk = 35
+
+    buildFeatures{
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "com.datahiveorg.donetik"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -18,6 +34,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "webClientId", "\"${getLocalProperty("web_client_id")}\"")
     }
 
     buildTypes {
@@ -27,6 +45,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        create("customDebugType") {
+            isDebuggable = true
         }
     }
     compileOptions {
@@ -59,6 +81,36 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
+    //firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.authentication)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.appcheck)
+    implementation(libs.firebase.appcheck.debug)
+   // implementation(libs.firebase.crashlytics)
+    //koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    //coil
+    implementation(libs.coil)
+    implementation(libs.coil.network.okhttp)
+
+    //credential manager
+    implementation(libs.androidx.credential.manager)
+    implementation(libs.androidx.credential.manager.play.services)
+    implementation(libs.google.id)
+
+    //google fonts
+    implementation(libs.androidx.ui.text.google.fonts)
+
+    //kotlinx serialization
+    implementation(libs.kotlinx.serialization)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
