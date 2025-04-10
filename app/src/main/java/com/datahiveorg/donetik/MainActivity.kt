@@ -32,15 +32,15 @@ class MainActivity : ComponentActivity() {
 
             DoneTikTheme {
                 Scaffold(
-                    topBar = {
-                        ScreenTitle(
-                            title = "DoneTik",
-//                            onNavigateUp = {
-//                                navHostController.navigateUp()
-//                            },
-//                            feature = AuthenticationScreen.LoginScreen
-                        )
-                    },
+//                    topBar = {
+//                        ScreenTitle(
+//                            title = "DoneTik",
+////                            onNavigateUp = {
+////                                navHostController.navigateUp()
+////                            },
+////                            feature = AuthenticationScreen.LoginScreen
+//                        )
+//                    },
                     snackbarHost = {
                         SnackbarHost(
                             hostState = snackBarHostState,

@@ -9,6 +9,7 @@ interface AuthenticationNavigator {
 internal class AuthenticationNavigatorImpl(
     private val navController: NavHostController
 ) : AuthenticationNavigator {
+
     override fun navigate(screen: AuthenticationScreen) {
         when (screen) {
             is AuthenticationScreen.LoginScreen -> navigateToLogin()
@@ -16,11 +17,10 @@ internal class AuthenticationNavigatorImpl(
         }
     }
 
-
     private fun navigateToLogin() {
         navController.navigate(AuthenticationScreen.LoginScreen.route) {
             launchSingleTop = true
-            popUpTo<AuthenticationScreen.LoginScreen> {
+            popUpTo(AuthenticationScreen.LoginScreen.route) {
                 inclusive = true
             }
         }
@@ -29,7 +29,7 @@ internal class AuthenticationNavigatorImpl(
     private fun navigateToSignUp() {
         navController.navigate(AuthenticationScreen.SignUpScreen.route) {
             launchSingleTop = true
-            popUpTo<AuthenticationScreen.SignUpScreen> {
+            popUpTo(AuthenticationScreen.SignUpScreen.route) {
                 inclusive = true
             }
         }
