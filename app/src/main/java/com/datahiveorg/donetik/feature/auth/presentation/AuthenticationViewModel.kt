@@ -114,8 +114,6 @@ class AuthenticationViewModel(
             is DomainResponse.Failure -> {
                 _state.update { currentState ->
                     currentState.copy(
-                        emailError = response.message,
-                        passwordError = response.message,
                         isLoading = false
                     )
                 }
@@ -197,4 +195,5 @@ class AuthenticationViewModel(
             }
         }
     }
+
 }

@@ -111,6 +111,9 @@ dependencies {
     //kotlinx serialization
     implementation(libs.kotlinx.serialization)
 
+    //lottie
+    implementation(libs.lottie.files)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
