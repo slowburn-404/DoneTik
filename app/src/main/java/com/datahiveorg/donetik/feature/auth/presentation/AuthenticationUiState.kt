@@ -21,5 +21,5 @@ data class AuthenticationUiState(
     val emailError: String = "",
     val passwordError: String = "",
     val isPasswordVisible: Boolean = false,
-    val isFormValid: Boolean = false
+    val isFormValid: Boolean = false,
 )

@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -66,6 +67,15 @@ fun LoginScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
+        Spacer(
+            modifier = Modifier.weight(1f)
+        )
+
+        Text(
+            text = "Donetik",
+            style = typography.displayMedium,
+        )
+
         Text(
             text = "Welcome back to Donetik",
             style = typography.bodyLarge
@@ -103,7 +113,7 @@ fun LoginScreen(
             } else PasswordVisualTransformation(),
             value = state.user.password,
             leadingIcon = painterResource(R.drawable.ic_lock),
-            trailingIcon = if (isPasswordVisible) painterResource(R.drawable.ic_visibility_off) else painterResource(
+            trailingIcon = if (!isPasswordVisible) painterResource(R.drawable.ic_visibility_off) else painterResource(
                 R.drawable.ic_visibility
             ),
             placeholder = "Enter password",
@@ -180,6 +190,10 @@ fun LoginScreen(
                 },
             style = typography.bodyMedium,
             textAlign = TextAlign.Center
+        )
+
+        Spacer(
+            modifier = Modifier.weight(1f)
         )
 
     }

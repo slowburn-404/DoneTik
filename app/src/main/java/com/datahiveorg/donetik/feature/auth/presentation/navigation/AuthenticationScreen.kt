@@ -8,6 +8,7 @@ sealed class AuthenticationScreen(
     override val route: String,
     override val title: String
 ) : FeatureScreen {
+
     @Serializable
     data object LoginScreen : AuthenticationScreen(
         route = "login_screen",
@@ -19,4 +20,5 @@ sealed class AuthenticationScreen(
         route = "sign_up_screen",
         title = "Sign Up"
     )
+
 }

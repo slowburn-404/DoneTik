@@ -16,6 +16,6 @@ fun ProgressIndicator() {
             .padding(8.dp)
             .size(16.dp),
         strokeCap = StrokeCap.Butt,
-        color = colorScheme.primary
+        color = colorScheme.onPrimary
     )
 }
