@@ -6,5 +6,6 @@ import androidx.compose.runtime.Stable
 @Immutable
 @Stable
 data class RouterState(
-    val isLoggedIn: Boolean = false
+    val isLoggedIn: Boolean = false,
+    val hasFinishedOnBoarding: Boolean = false
 )
