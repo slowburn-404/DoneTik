@@ -114,6 +114,9 @@ dependencies {
     //lottie
     implementation(libs.lottie.files)
 
+    // datastore
+    implementation(libs.datastore.preferences)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
