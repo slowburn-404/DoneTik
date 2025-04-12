@@ -1,6 +1,7 @@
 package com.datahiveorg.donetik.feature.auth.di
 
 import androidx.navigation.NavHostController
+import com.datahiveorg.donetik.datastore.di.datastoreModule
 import com.datahiveorg.donetik.feature.auth.data.AuthRepositoryImpl
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationViewModel

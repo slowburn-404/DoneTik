@@ -34,7 +34,7 @@ fun RouterScreen(
     LaunchedEffect(event) {
         when (event) {
             is RouterEvent.Navigate -> {
-                delay(2000L) //mbogi lazima waone animation
+                delay(1500L) //mbogi lazima waone animation
                 onNavigate(
                     event.screen
                 )

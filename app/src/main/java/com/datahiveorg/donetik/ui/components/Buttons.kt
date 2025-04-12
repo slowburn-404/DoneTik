@@ -1,5 +1,10 @@
 package com.datahiveorg.donetik.ui.components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -7,8 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
 @Composable
 fun PrimaryButton(
@@ -35,13 +41,37 @@ fun PrimaryButton(
         Box(
             contentAlignment = Alignment.Center
         ) {
-            if (!isLoading) {
-                Text(
-                    text = label,
-                    style = typography.bodyLarge,
+            androidx.compose.animation.AnimatedVisibility(
+                visible = !isLoading,
+                enter = fadeIn(animationSpec = tween(ANIMATION_DURATION_SHORT)),
+                exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_SHORT)),
+
+            ) {
+                AnimatedContent(
+                    targetState = label,
+                    transitionSpec = {
+                        fadeIn(
+                            animationSpec = tween(ANIMATION_DURATION_SHORT)
+                        ) togetherWith fadeOut(
+                            animationSpec = tween(ANIMATION_DURATION_SHORT)
+                        )
+                    }
+                ) { targetLabel ->
+                    Text(
+                        text = targetLabel,
+                        style = typography.bodyLarge,
+                    )
+                }
+            }
+
+            androidx.compose.animation.AnimatedVisibility(
+                visible = isLoading,
+                enter = fadeIn(animationSpec = tween(ANIMATION_DURATION_SHORT)),
+                exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_SHORT)),
+            ) {
+                ProgressIndicator(
+                    color = colorScheme.onPrimary
                 )
-            } else {
-                ProgressIndicator()
             }
         }
     }
@@ -77,7 +107,7 @@ fun SecondaryButton(
                     style = typography.bodyLarge
                 )
             } else {
-                ProgressIndicator()
+                ProgressIndicator(color = colorScheme.primary)
             }
         }
     }

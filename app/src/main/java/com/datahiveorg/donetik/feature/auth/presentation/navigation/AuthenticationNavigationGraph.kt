@@ -9,6 +9,7 @@ import com.datahiveorg.donetik.feature.auth.presentation.screens.LoginScreen
 import com.datahiveorg.donetik.router.RouterScreen
 import com.datahiveorg.donetik.feature.auth.presentation.screens.SignUpScreen
 import com.datahiveorg.donetik.ui.navigation.NavigatorFactory
+import com.datahiveorg.donetik.ui.navigation.animatedComposable
 
 
 fun NavGraphBuilder.authenticationNavGraph(
@@ -22,7 +23,7 @@ fun NavGraphBuilder.authenticationNavGraph(
     ) {
         val authenticationNavigator = navigatorFactory.create<AuthenticationNavigator>()
 
-        composable(AuthenticationScreen.LoginScreen.route) {
+        animatedComposable(AuthenticationScreen.LoginScreen.route) {
             AuthenticationScreenWrapper(
                 navigator = authenticationNavigator,
                 snackBarHostState = snackBarHostState,
@@ -36,7 +37,7 @@ fun NavGraphBuilder.authenticationNavGraph(
             }
         }
 
-        composable(AuthenticationScreen.SignUpScreen.route) {
+        animatedComposable(AuthenticationScreen.SignUpScreen.route) {
             AuthenticationScreenWrapper(
                 navigator = authenticationNavigator,
                 snackBarHostState = snackBarHostState,

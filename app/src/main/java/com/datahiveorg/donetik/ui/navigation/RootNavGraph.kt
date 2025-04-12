@@ -10,8 +10,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.authenticationNavGraph
+import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingEvents
+import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingScreen
+import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingViewModel
 import com.datahiveorg.donetik.router.RouterEvent
 import com.datahiveorg.donetik.router.RouterScreen
 import com.datahiveorg.donetik.router.RouterViewModel
@@ -25,7 +27,8 @@ fun RootNavGraph(
     paddingValues: PaddingValues,
     snackBarHostState: SnackbarHostState,
     navHostController: NavHostController,
-    routerViewModel: RouterViewModel = koinViewModel()
+    routerViewModel: RouterViewModel = koinViewModel(),
+    onBoardingViewModel: OnBoardingViewModel = koinViewModel()
 ) {
     val navigatorFactory = getKoin().get<NavigatorFactory> { parametersOf(navHostController) }
 
@@ -42,8 +45,9 @@ fun RootNavGraph(
             snackBarHostState = snackBarHostState,
         )
 
-        composable(RouterScreen.route) {
+        animatedComposable(RouterScreen.route) {
             val event by routerViewModel.event.collectAsStateWithLifecycle(initialValue = RouterEvent.None)
+            val state by routerViewModel.state.collectAsStateWithLifecycle()
 
             RouterScreen(
                 event = event,
@@ -56,7 +60,24 @@ fun RootNavGraph(
                     }
                 }
             )
+        }
 
+        animatedComposable(OnBoardingFeature.route) {
+            val event by onBoardingViewModel.events.collectAsStateWithLifecycle(initialValue = OnBoardingEvents.None)
+            val state by onBoardingViewModel.state.collectAsStateWithLifecycle()
+
+            OnBoardingScreen(
+                onNavigate = { screen ->
+                    navHostController.navigate(screen.route) {
+                        launchSingleTop = true
+                        popUpTo(OnBoardingFeature.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onEvent = onBoardingViewModel::emitEvent,
+                state = state
+            )
         }
     }
 }

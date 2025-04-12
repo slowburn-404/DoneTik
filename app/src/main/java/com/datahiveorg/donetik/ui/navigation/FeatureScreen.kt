@@ -19,3 +19,17 @@ data object AuthFeature: FeatureScreen {
     override val route: String
         get() = "auth"
 }
+
+data object OnBoardingFeature: FeatureScreen {
+    override val title: String
+        get() = ""
+    override val route: String
+        get() = "onboarding"
+}
+
+data object HomeFeature: FeatureScreen {
+    override val route: String
+        get() = "home"
+    override val title: String
+        get() = "Home"
+}
