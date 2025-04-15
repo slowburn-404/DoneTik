@@ -16,7 +16,7 @@ val appModule = module {
 
     factory { (navHostController: NavHostController) ->
         NavigatorFactory(
-            navHostController = navHostController,
+            navController = navHostController,
             koin = getKoin()
         )
     }

@@ -25,10 +25,9 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            val navHostController = rememberNavController()
             val snackBarHostState = SnackbarHostState()
 
-            //val currentScreen = navHostController.currentBackStackEntry?.destination?.route
+            //val currentScreen = navController.currentBackStackEntry?.destination?.route
 
             DoneTikTheme {
                 Scaffold(
@@ -36,7 +35,7 @@ class MainActivity : ComponentActivity() {
 //                        ScreenTitle(
 //                            title = "DoneTik",
 ////                            onNavigateUp = {
-////                                navHostController.navigateUp()
+////                                navController.navigateUp()
 ////                            },
 ////                            feature = AuthenticationScreen.LoginScreen
 //                        )
@@ -57,7 +56,6 @@ class MainActivity : ComponentActivity() {
                     RootNavGraph(
                         paddingValues = innerPadding,
                         snackBarHostState = snackBarHostState,
-                        navHostController = navHostController,
                     )
                 }
             }

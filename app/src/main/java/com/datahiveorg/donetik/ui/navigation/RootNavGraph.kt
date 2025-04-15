@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.authenticationNavGraph
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingEvents
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingScreen
@@ -26,17 +27,17 @@ fun RootNavGraph(
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues,
     snackBarHostState: SnackbarHostState,
-    navHostController: NavHostController,
+    navController: NavHostController = rememberNavController(),
     routerViewModel: RouterViewModel = koinViewModel(),
     onBoardingViewModel: OnBoardingViewModel = koinViewModel()
 ) {
-    val navigatorFactory = getKoin().get<NavigatorFactory> { parametersOf(navHostController) }
+    val navigatorFactory = getKoin().get<NavigatorFactory> { parametersOf(navController) }
 
     NavHost(
         modifier = modifier
             .padding(paddingValues)
             .padding(horizontal = 20.dp),
-        navController = navHostController,
+        navController = navController,
         startDestination = RouterScreen.route
     ) {
         authenticationNavGraph(
@@ -52,7 +53,7 @@ fun RootNavGraph(
             RouterScreen(
                 event = event,
                 onNavigate = { screen ->
-                    navHostController.navigate(screen.route) {
+                    navController.navigate(screen.route) {
                         launchSingleTop = true
                         popUpTo(RouterScreen.route) {
                             inclusive = true
@@ -68,7 +69,7 @@ fun RootNavGraph(
 
             OnBoardingScreen(
                 onNavigate = { screen ->
-                    navHostController.navigate(screen.route) {
+                    navController.navigate(screen.route) {
                         launchSingleTop = true
                         popUpTo(OnBoardingFeature.route) {
                             inclusive = true
