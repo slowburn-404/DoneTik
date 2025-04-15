@@ -1,11 +1,12 @@
 package com.datahiveorg.donetik.ui.navigation
 
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -28,20 +29,25 @@ fun NavGraphBuilder.animatedComposable(
     arguments = arguments,
     deepLinks = deepLinks,
     enterTransition = {
-        slideInHorizontally(
-            initialOffsetX = { fullWidth -> fullWidth },
-            animationSpec = tween(ANIMATION_DURATION_LONG)
-        ) + fadeIn(
-            animationSpec = tween(ANIMATION_DURATION_LONG)
-        )
+        slideIntoContainer(
+            towards = AnimatedContentTransitionScope.SlideDirection.Start,
+            animationSpec = tween(ANIMATION_DURATION_LONG, easing = EaseIn)
+        ) +
+                fadeIn(
+                    animationSpec = tween(ANIMATION_DURATION_LONG, easing = LinearEasing)
+                )
+
     },
     exitTransition = {
-        slideOutHorizontally(
-            targetOffsetX = { fullWidth -> fullWidth },
+        slideOutOfContainer(
+            towards = AnimatedContentTransitionScope.SlideDirection.Start,
             animationSpec = tween(ANIMATION_DURATION_LONG)
-        ) + fadeOut(
-            animationSpec = tween(ANIMATION_DURATION_LONG)
-        )
+        ) +
+                fadeOut(
+                    animationSpec = tween(ANIMATION_DURATION_LONG, easing = LinearEasing),
+                )
+
+
     },
     content = content
 )
