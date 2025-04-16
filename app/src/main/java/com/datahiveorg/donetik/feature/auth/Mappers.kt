@@ -7,8 +7,8 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 
-fun User.toUserCredential(): FirebaseRequest.User {
-    return FirebaseRequest.User(
+fun User.toUserCredential(): FirebaseRequest.UserDTO {
+    return FirebaseRequest.UserDTO(
         email = email,
         password = password
     )
