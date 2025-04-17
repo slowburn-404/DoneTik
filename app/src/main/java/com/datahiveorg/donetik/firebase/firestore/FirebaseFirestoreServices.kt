@@ -1,6 +1,6 @@
 package com.datahiveorg.donetik.firebase.firestore
 
-import com.datahiveorg.donetik.firebase.model.TaskDTO
+import com.datahiveorg.donetik.firebase.model.FirebaseRequest.TaskDTO
 import com.datahiveorg.donetik.util.Logger
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -9,11 +9,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.coroutines.tasks.await
 
 interface FirebaseFireStoreService {
-    suspend fun createTask(taskDTO: TaskDTO): Result<Unit>
+    suspend fun createTask(taskDTO: Map<String, Any>): Result<Unit>
 
-    suspend fun deleteTask(taskDTO: TaskDTO): Result<Unit>
+    suspend fun deleteTask(taskDTO: Map<String, Any>): Result<Unit>
 
-    suspend fun updateTask(taskDTO: TaskDTO): Result<Unit>
+    suspend fun updateTask(taskDTO: Map<String, Any>): Result<Unit>
 
     suspend fun getTasks(userId: String): Result<List<TaskDTO>>
 }
@@ -23,24 +23,24 @@ internal class FirebaseFireStoreServiceImpl(
 ) : FirebaseFireStoreService {
     private val usersCollection = firestore.collection(USER_COLLECTION)
 
-    override suspend fun createTask(taskDTO: TaskDTO): Result<Unit> {
-        val taskDoc = getTaskDocument(taskDTO)
+    override suspend fun createTask(taskDTO: Map<String, Any>): Result<Unit> {
+        val taskDoc = getTaskDocumentReference(taskDTO)
 
         return try {
             taskDoc.set(taskDTO).await()
             Result.success(Unit)
 
         } catch (exception: FirebaseFirestoreException) {
-            Logger.e("FireStore", exception.message.toString())
+            Logger.e("FireStore create task", exception.message.toString())
             Result.failure(exception)
         } catch (exception: Exception) {
-            Logger.e("FireStore create taskDTO", exception.message.toString())
+            Logger.e("FireStore create task", exception.message.toString())
             Result.failure(exception)
         }
     }
 
-    override suspend fun deleteTask(taskDTO: TaskDTO): Result<Unit> {
-        val taskDoc = getTaskDocument(taskDTO)
+    override suspend fun deleteTask(taskDTO: Map<String, Any>): Result<Unit> {
+        val taskDoc = getTaskDocumentReference(taskDTO)
 
         return try {
             taskDoc.delete().await()
@@ -54,8 +54,8 @@ internal class FirebaseFireStoreServiceImpl(
         }
     }
 
-    override suspend fun updateTask(taskDTO: TaskDTO): Result<Unit> {
-        val taskDoc = getTaskDocument(taskDTO)
+    override suspend fun updateTask(taskDTO: Map<String, Any>): Result<Unit> {
+        val taskDoc = getTaskDocumentReference(taskDTO)
 
         return try {
             taskDoc.set(taskDTO).await()
@@ -71,7 +71,7 @@ internal class FirebaseFireStoreServiceImpl(
     }
 
     override suspend fun getTasks(userId: String): Result<List<TaskDTO>> {
-        val tasksCollection = getTaskCollection(userId)
+        val tasksCollection = getTaskCollectionReference(userId)
 
         return try {
             val snapshot = tasksCollection.get().await()
@@ -83,14 +83,15 @@ internal class FirebaseFireStoreServiceImpl(
         }
     }
 
-    private fun getTaskDocument(taskDTO: TaskDTO): DocumentReference {
+    private fun getTaskDocumentReference(taskDTO: Map<String, Any>): DocumentReference {
+        val authorMap = taskDTO["author"] as Map<*, *>
         return usersCollection
-            .document(taskDTO.author.uid)
+            .document(authorMap["uid"] as String)
             .collection(TASKS_COLLECTION)
-            .document(taskDTO.id)
+            .document(taskDTO["id"] as String)
     }
 
-    private fun getTaskCollection(userId: String): CollectionReference {
+    private fun getTaskCollectionReference(userId: String): CollectionReference {
         return usersCollection
             .document(userId)
             .collection(TASKS_COLLECTION)

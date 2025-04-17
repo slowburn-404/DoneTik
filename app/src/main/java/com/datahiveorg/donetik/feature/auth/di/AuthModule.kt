@@ -16,8 +16,6 @@ import org.koin.dsl.module
 
 val authModule = module {
 
-    includes(dispatcherModule, firebaseModule)
-
     factory<AuthRepository> {
         AuthRepositoryImpl(
             authService = get<FirebaseAuthService>(),
