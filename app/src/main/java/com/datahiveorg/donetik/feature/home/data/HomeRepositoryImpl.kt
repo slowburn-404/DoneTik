@@ -1,7 +1,6 @@
 package com.datahiveorg.donetik.feature.home.data
 
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
-import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.firebase.firestore.FirebaseFireStoreService
@@ -9,8 +8,8 @@ import com.datahiveorg.donetik.firebase.firestore.FirebaseFireStoreService
 class HomeRepositoryImpl(
     private val fireStoreService: FirebaseFireStoreService
 ) : HomeRepository {
-    override suspend fun getTasks(user: User): DomainResponse<List<Task>> {
-        val response = fireStoreService.getTasks(user.uid)
+    override suspend fun getTasks(userId: String): DomainResponse<List<Task>> {
+        val response = fireStoreService.getTasks(userId)
 
         return response.fold(
             onSuccess = { taskDTOs ->
@@ -37,7 +36,7 @@ class HomeRepositoryImpl(
     }
 
     override suspend fun updateTask(task: Task): DomainResponse<String> {
-        val response = fireStoreService.deleteTask(task.toFireBase())
+        val response = fireStoreService.updateTask(task.toFireBase())
 
         return response.fold(
             onSuccess = {

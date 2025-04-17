@@ -20,9 +20,9 @@ import kotlinx.coroutines.tasks.await
 interface FirebaseAuthService {
     val isLoggedIn: Flow<Boolean>
 
-    suspend fun createAccount(userDTO: FirebaseRequest.UserDTO): FirebaseResponse<AuthResult>
+    suspend fun createAccount(credentialsDTO: FirebaseRequest.CredentialsDTO): FirebaseResponse<AuthResult>
 
-    suspend fun login(userDTO: FirebaseRequest.UserDTO): FirebaseResponse<AuthResult>
+    suspend fun login(credentialsDTO: FirebaseRequest.CredentialsDTO): FirebaseResponse<AuthResult>
 
     suspend fun signUpWithGoogle(idToken: String): FirebaseResponse<AuthResult>
 
@@ -46,10 +46,10 @@ internal class FirebaseAuthServiceImpl(
 
         }
 
-    override suspend fun createAccount(userDTO: FirebaseRequest.UserDTO): FirebaseResponse<AuthResult> {
+    override suspend fun createAccount(credentialsDTO: FirebaseRequest.CredentialsDTO): FirebaseResponse<AuthResult> {
         return try {
             val authResult = firebaseAuth
-                .createUserWithEmailAndPassword(userDTO.email, userDTO.password)
+                .createUserWithEmailAndPassword(credentialsDTO.email, credentialsDTO.password)
                 .await()
 
             FirebaseResponse.Success(authResult)
@@ -60,10 +60,10 @@ internal class FirebaseAuthServiceImpl(
         }
     }
 
-    override suspend fun login(userDTO: FirebaseRequest.UserDTO): FirebaseResponse<AuthResult> {
+    override suspend fun login(credentialsDTO: FirebaseRequest.CredentialsDTO): FirebaseResponse<AuthResult> {
         return try {
             val authResult = firebaseAuth
-                .signInWithEmailAndPassword(userDTO.email, userDTO.password)
+                .signInWithEmailAndPassword(credentialsDTO.email, credentialsDTO.password)
                 .await()
 
             FirebaseResponse.Success(authResult)
@@ -95,7 +95,7 @@ internal class FirebaseAuthServiceImpl(
     override suspend fun fetchUserInfo(): FirebaseResponse<FirebaseUser> {
         return try {
             val authResult = firebaseAuth.currentUser
-            FirebaseResponse.Success(authResult ?: throw FirebaseException("UserDTO not found"))
+            FirebaseResponse.Success(authResult ?: throw FirebaseException("CredentialsDTO not found"))
         } catch (exception: FirebaseAuthException) {
             Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
             FirebaseResponse.Failure(exception)
