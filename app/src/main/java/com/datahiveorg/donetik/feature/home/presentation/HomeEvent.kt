@@ -1,7 +1,7 @@
 package com.datahiveorg.donetik.feature.home.presentation
 
-sealed interface HomeEvent {
+interface HomeEvent {
     data object CreateTask: HomeEvent
-    data object GetTasks: HomeEvent
-    data object DeleteTask: HomeEvent
+    data class SelectTask(val taskId: String) : HomeEvent
+    data class ShowSnackBar(val message: String) : HomeEvent
 }
