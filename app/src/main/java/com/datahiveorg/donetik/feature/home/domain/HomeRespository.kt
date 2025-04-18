@@ -1,7 +1,6 @@
 package com.datahiveorg.donetik.feature.home.domain
 
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
-import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 
 interface HomeRepository {
