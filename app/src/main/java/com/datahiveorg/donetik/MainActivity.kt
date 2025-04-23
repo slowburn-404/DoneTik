@@ -20,6 +20,7 @@ import com.datahiveorg.donetik.feature.auth.presentation.navigation.Authenticati
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 import com.datahiveorg.donetik.ui.components.BottomNavBar
 import com.datahiveorg.donetik.ui.components.SnackBar
+import com.datahiveorg.donetik.ui.components.TopBar
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
 import com.datahiveorg.donetik.ui.navigation.RootNavGraph
@@ -40,7 +41,6 @@ class MainActivity : ComponentActivity() {
                 getCurrentScreen(destination = currentDestination)
             val snackBarHostState = SnackbarHostState()
 
-
             DoneTikTheme {
                 Scaffold(
                     snackbarHost = {
@@ -52,8 +52,20 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     },
+                    topBar = {
+                        currentScreen?.takeIf { featureScreen ->
+                            featureScreen.hasTopAppBar || featureScreen.hasBackButton
+                        }?.let { screen ->
+                            TopBar(
+                                onBackClick = { navController.navigateUp() },
+                                actions = screen.topBarActions
+                            )
+                        }
+                    },
                     bottomBar = {
-                        currentScreen?.takeIf { it.hasBottomBar }?.let {
+                        currentScreen?.takeIf { featureScreen ->
+                            featureScreen.hasBottomBar
+                        }?.let {
                             BottomNavBar(
                                 navController = navController,
                                 currentDestination = currentDestination

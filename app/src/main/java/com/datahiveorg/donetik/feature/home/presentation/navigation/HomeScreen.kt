@@ -23,7 +23,7 @@ sealed class HomeScreen : FeatureScreen {
             get() = "New Task"
         override val hasBottomBar: Boolean
             get() = true
-        override val showBackButton: Boolean
+        override val hasBackButton: Boolean
             get() = true
         override val hasTopAppBar: Boolean
             get() = true
@@ -39,7 +39,7 @@ sealed class HomeScreen : FeatureScreen {
             get() = true
         override val hasBottomBar: Boolean
             get() = true
-        override val showBackButton: Boolean
+        override val hasBackButton: Boolean
             get() = true
     }
 }

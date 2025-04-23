@@ -8,7 +8,7 @@ interface FeatureScreen {
     //have default values and override only when needed
     val hasTopAppBar: Boolean get() = false
     val hasBottomBar: Boolean get() = false
-    val showBackButton: Boolean get() = false
+    val hasBackButton: Boolean get() = false
     val topBarActions: List<TopBarAction> get() = emptyList()
 
     @get:DrawableRes
