@@ -1,4 +1,4 @@
-package com.datahiveorg.donetik.feature.home.presentation.home
+package com.datahiveorg.donetik.feature.home.presentation.feed
 
 import android.net.Uri
 import androidx.compose.runtime.Immutable
@@ -8,7 +8,7 @@ import com.datahiveorg.donetik.feature.home.domain.model.Task
 
 @Stable
 @Immutable
-data class HomeState(
+data class FeedState(
     val tasks: List<Task> = emptyList(),
     val selectedTask: Task? = null,
     val isLoading: Boolean = false,

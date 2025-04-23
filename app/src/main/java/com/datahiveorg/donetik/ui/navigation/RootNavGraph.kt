@@ -27,7 +27,7 @@ fun RootNavGraph(
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues,
     snackBarHostState: SnackbarHostState,
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
     routerViewModel: RouterViewModel = koinViewModel(),
     onBoardingViewModel: OnBoardingViewModel = koinViewModel()
 ) {

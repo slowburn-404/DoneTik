@@ -2,12 +2,11 @@ package com.datahiveorg.donetik.feature.auth.presentation.navigation
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.datahiveorg.donetik.feature.auth.presentation.screens.AuthenticationScreenWrapper
 import com.datahiveorg.donetik.feature.auth.presentation.screens.LoginScreen
-import com.datahiveorg.donetik.router.RouterScreen
 import com.datahiveorg.donetik.feature.auth.presentation.screens.SignUpScreen
+import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.NavigatorFactory
 import com.datahiveorg.donetik.ui.navigation.animatedComposable
 
@@ -21,7 +20,7 @@ fun NavGraphBuilder.authenticationNavGraph(
         startDestination = AuthenticationScreen.LoginScreen.route,
         route = route
     ) {
-        val authenticationNavigator = navigatorFactory.create<AuthenticationNavigator>()
+        val authenticationNavigator = navigatorFactory.create<DoneTikNavigator>()
 
         animatedComposable(AuthenticationScreen.LoginScreen.route) {
             AuthenticationScreenWrapper(

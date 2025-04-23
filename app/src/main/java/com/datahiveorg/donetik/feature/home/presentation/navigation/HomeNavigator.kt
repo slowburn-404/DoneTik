@@ -9,16 +9,19 @@ internal class HomeNavigatorImpl(
 ) : DoneTikNavigator {
     override fun navigate(screen: FeatureScreen) {
         when (screen) {
-            is HomeScreen.MainScreen -> navigateToMainScreen(screen.userId)
+            is HomeScreen.Feed -> navigateToMainScreen(screen.userId)
             is HomeScreen.NewTaskScreen -> navigateToNewTaskScreen()
-            is HomeScreen.TaskScreen -> navigateToTaskScreen(screen.taskId)
+            is HomeScreen.TaskScreen -> navigateToTaskScreen(
+                taskId = screen.taskId,
+                userId = screen.userId
+            )
         }
     }
 
     private fun navigateToMainScreen(userId: String) {
-        navController.navigate(HomeScreen.MainScreen(userId = userId).route) {
+        navController.navigate(HomeScreen.Feed(userId = userId).route) {
             launchSingleTop = true
-            popUpTo<HomeScreen.MainScreen> {
+            popUpTo<HomeScreen.Feed> {
                 inclusive = true
             }
         }
@@ -27,17 +30,17 @@ internal class HomeNavigatorImpl(
     private fun navigateToNewTaskScreen() {
         navController.navigate(HomeScreen.NewTaskScreen.route) {
             launchSingleTop = true
-            popUpTo<HomeScreen.MainScreen> {
+            popUpTo<HomeScreen.Feed> {
                 inclusive = true
             }
         }
 
     }
 
-    private fun navigateToTaskScreen(taskId: String) {
-        navController.navigate(HomeScreen.TaskScreen(taskId).route) {
+    private fun navigateToTaskScreen(taskId: String, userId: String) {
+        navController.navigate(HomeScreen.TaskScreen(taskId = taskId, userId = userId).route) {
             launchSingleTop = true
-            popUpTo(HomeScreen.MainScreen(userId = "").route) {
+            popUpTo(HomeScreen.Feed(userId = "").route) {
                 inclusive = true
             }
         }

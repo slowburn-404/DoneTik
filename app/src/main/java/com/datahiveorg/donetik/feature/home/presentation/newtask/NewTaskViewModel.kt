@@ -17,7 +17,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NewTaskViewModel(
-    private val homeRepository: HomeRepository, private val getUserInfoUseCase: GetUserInfoUseCase
+    private val homeRepository: HomeRepository,
+    private val getUserInfoUseCase: GetUserInfoUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(NewTaskState())
