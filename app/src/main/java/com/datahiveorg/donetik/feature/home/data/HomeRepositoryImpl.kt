@@ -27,7 +27,7 @@ class HomeRepositoryImpl(
 
         return response.fold(
             onSuccess = {
-                DomainResponse.Success("Task created successfully")
+                DomainResponse.Success("Task createdAt successfully")
             },
             onFailure = {
                 DomainResponse.Failure(it.toDomain())
@@ -40,7 +40,7 @@ class HomeRepositoryImpl(
 
         return response.fold(
             onSuccess = {
-                DomainResponse.Success("Marked as done")
+                DomainResponse.Success("Task updated")
             },
             onFailure = {
                 DomainResponse.Failure(it.toDomain())
@@ -57,6 +57,18 @@ class HomeRepositoryImpl(
             },
             onFailure = {
                 DomainResponse.Failure(it.toDomain())
+            }
+        )
+    }
+
+    override suspend fun getSingleTask(taskId: String, userId: String): DomainResponse<Task> {
+        val response = fireStoreService.getSingleTask(userId, taskId)
+        return response.fold(
+            onSuccess = { taskDTO ->
+                DomainResponse.Success(taskDTO.toDomain())
+            },
+            onFailure = { exception ->
+                DomainResponse.Failure(exception.toDomain())
             }
         )
     }

@@ -5,7 +5,7 @@ import com.google.firebase.BuildConfig
 
 object Logger {
     fun e(tag: String, message: String) {
-         Log.e(tag, message)
+        if (BuildConfig.DEBUG) Log.e(tag, message) //TODO(Change to production)
     }
 
     fun i(tag: String, message: String) {

@@ -1,16 +1,14 @@
 package com.datahiveorg.donetik.feature.auth.presentation.navigation
 
 import androidx.navigation.NavHostController
-
-interface AuthenticationNavigator {
-    fun navigate(screen: AuthenticationScreen)
-}
+import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 
 internal class AuthenticationNavigatorImpl(
     private val navController: NavHostController
-) : AuthenticationNavigator {
+) : DoneTikNavigator {
 
-    override fun navigate(screen: AuthenticationScreen) {
+    override fun navigate(screen: FeatureScreen) {
         when (screen) {
             is AuthenticationScreen.LoginScreen -> navigateToLogin()
             is AuthenticationScreen.SignUpScreen -> navigateToSignUp()
