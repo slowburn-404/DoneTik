@@ -1,15 +1,13 @@
 package com.datahiveorg.donetik.feature.home.presentation.navigation
 
 import androidx.navigation.NavHostController
-
-interface HomeNavigator {
-    fun navigate(screen: HomeScreen)
-}
+import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 
 internal class HomeNavigatorImpl(
     private val navController: NavHostController
-) : HomeNavigator {
-    override fun navigate(screen: HomeScreen) {
+) : DoneTikNavigator {
+    override fun navigate(screen: FeatureScreen) {
         when (screen) {
             is HomeScreen.MainScreen -> navigateToMainScreen(screen.userId)
             is HomeScreen.NewTaskScreen -> navigateToNewTaskScreen()
@@ -18,7 +16,7 @@ internal class HomeNavigatorImpl(
     }
 
     private fun navigateToMainScreen(userId: String) {
-        navController.navigate(HomeScreen.MainScreen(userId = userId)) {
+        navController.navigate(HomeScreen.MainScreen(userId = userId).route) {
             launchSingleTop = true
             popUpTo<HomeScreen.MainScreen> {
                 inclusive = true
@@ -37,9 +35,9 @@ internal class HomeNavigatorImpl(
     }
 
     private fun navigateToTaskScreen(taskId: String) {
-        navController.navigate(HomeScreen.TaskScreen(taskId)) {
+        navController.navigate(HomeScreen.TaskScreen(taskId).route) {
             launchSingleTop = true
-            popUpTo<HomeScreen.MainScreen> {
+            popUpTo(HomeScreen.MainScreen(userId = "").route) {
                 inclusive = true
             }
         }

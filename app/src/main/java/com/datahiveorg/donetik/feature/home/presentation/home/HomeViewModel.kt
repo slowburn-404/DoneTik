@@ -1,4 +1,4 @@
-package com.datahiveorg.donetik.feature.home.presentation
+package com.datahiveorg.donetik.feature.home.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

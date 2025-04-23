@@ -11,4 +11,6 @@ interface HomeRepository {
     suspend fun updateTask(task: Task): DomainResponse<String>
 
     suspend fun deleteTask(task: Task): DomainResponse<String>
+
+    suspend fun getSingleTask(taskId: String, userId: String): DomainResponse<Task>
 }

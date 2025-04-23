@@ -1,12 +1,16 @@
 package com.datahiveorg.donetik.feature.home.di
 
 import androidx.navigation.NavHostController
+import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
 import com.datahiveorg.donetik.feature.home.data.HomeRepositoryImpl
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
-import com.datahiveorg.donetik.feature.home.presentation.HomeViewModel
-import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
+import com.datahiveorg.donetik.feature.home.domain.usecase.GetUserInfoUseCase
+import com.datahiveorg.donetik.feature.home.domain.usecase.GetUserInfoUseCaseImpl
+import com.datahiveorg.donetik.feature.home.presentation.home.HomeViewModel
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigatorImpl
+import com.datahiveorg.donetik.feature.home.presentation.newtask.NewTaskViewModel
 import com.datahiveorg.donetik.firebase.firestore.FirebaseFireStoreService
+import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -24,11 +28,22 @@ val homeModule = module {
         )
 
     }
+    viewModel<NewTaskViewModel> {
+        NewTaskViewModel(
+            homeRepository = get<HomeRepository>(),
+            getUserInfoUseCase = get<GetUserInfoUseCase>()
+        )
+    }
 
-    factory<HomeNavigator> { (navController: NavHostController) ->
+    factory<DoneTikNavigator> { (navController: NavHostController) ->
         HomeNavigatorImpl(
             navController = navController
         )
     }
 
+    factory<GetUserInfoUseCase> {
+        GetUserInfoUseCaseImpl(
+            authRepository = get<AuthRepository>()
+        )
+    }
 }

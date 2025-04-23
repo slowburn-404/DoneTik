@@ -18,7 +18,7 @@ fun TaskDTO.toDomain(): Task {
         title = title,
         description = description,
         isDone = isDone,
-        createdAt = created.toDate().toDomain(),
+        createdAt = createdAt.toDate().toDomain(),
         lastModified = lastModified.toDate().toDomain()
     )
 }

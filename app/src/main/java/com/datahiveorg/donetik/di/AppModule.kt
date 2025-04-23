@@ -16,13 +16,14 @@ import org.koin.dsl.module
 
 val appModule = module {
     includes(
-        authModule,
+        firebaseModule,
+        dispatcherModule,
         datastoreModule,
+        authModule,
         onBoardingModule,
         homeModule,
-        firebaseModule,
-        dispatcherModule
-    )
+
+        )
 
     factory { (navHostController: NavHostController) ->
         NavigatorFactory(

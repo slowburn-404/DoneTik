@@ -19,7 +19,7 @@ sealed interface FirebaseRequest {
         val title: String,
         val description: String,
         @field: JvmField val isDone: Boolean,
-        @ServerTimestamp val created: Timestamp,
+        @ServerTimestamp val createdAt: Timestamp,
         @ServerTimestamp val lastModified: Timestamp
     ) : FirebaseRequest
 
