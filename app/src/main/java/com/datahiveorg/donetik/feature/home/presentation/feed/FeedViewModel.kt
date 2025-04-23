@@ -1,4 +1,4 @@
-package com.datahiveorg.donetik.feature.home.presentation.home
+package com.datahiveorg.donetik.feature.home.presentation.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,31 +13,31 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class FeedViewModel(
     private val homeRepository: HomeRepository,
     private val userId: String?
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(HomeState())
+    private val _state = MutableStateFlow(FeedState())
     val state = _state.stateIn(
         scope = viewModelScope,
-        initialValue = HomeState(),
+        initialValue = FeedState(),
         started = WhileSubscribed(5000)
     ).onStart {
-        emitIntent(HomeIntent.GetTasks)
+        emitIntent(FeedIntent.GetTasks)
     }
 
-    private val _intent = MutableSharedFlow<HomeIntent>(replay = 1)
+    private val _intent = MutableSharedFlow<FeedIntent>(replay = 1)
     private val intent = _intent.asSharedFlow()
 
-    private val _event = MutableSharedFlow<HomeEvent>(replay = 1)
+    private val _event = MutableSharedFlow<FeedEvent>(replay = 1)
     val event = _event.asSharedFlow()
 
     init {
         viewModelScope.launch {
             intent.collect { uiIntent ->
                 when (uiIntent) {
-                    is HomeIntent.GetTasks -> {
+                    is FeedIntent.GetTasks -> {
                         getTasks()
                     }
                 }
@@ -46,13 +46,13 @@ class HomeViewModel(
     }
 
 
-    fun emitIntent(intent: HomeIntent) {
+    fun emitIntent(intent: FeedIntent) {
         viewModelScope.launch {
             _intent.emit(intent)
         }
     }
 
-    fun emitEvent(event: HomeEvent) {
+    fun emitEvent(event: FeedEvent) {
         viewModelScope.launch {
             _event.emit(event)
         }
@@ -78,7 +78,7 @@ class HomeViewModel(
                             isLoading = false
                         )
                     }
-                    emitEvent(HomeEvent.ShowSnackBar(response.message))
+                    emitEvent(FeedEvent.ShowSnackBar(response.message))
                 }
             }
         }

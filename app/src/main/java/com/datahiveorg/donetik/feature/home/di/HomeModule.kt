@@ -6,7 +6,7 @@ import com.datahiveorg.donetik.feature.home.data.HomeRepositoryImpl
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.usecase.GetUserInfoUseCase
 import com.datahiveorg.donetik.feature.home.domain.usecase.GetUserInfoUseCaseImpl
-import com.datahiveorg.donetik.feature.home.presentation.home.HomeViewModel
+import com.datahiveorg.donetik.feature.home.presentation.feed.FeedViewModel
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigatorImpl
 import com.datahiveorg.donetik.feature.home.presentation.newtask.NewTaskViewModel
 import com.datahiveorg.donetik.firebase.firestore.FirebaseFireStoreService
@@ -22,7 +22,7 @@ val homeModule = module {
     }
 
     viewModel { (userId: String?) ->
-        HomeViewModel(
+        FeedViewModel(
             homeRepository = get<HomeRepository>(),
             userId = userId
         )

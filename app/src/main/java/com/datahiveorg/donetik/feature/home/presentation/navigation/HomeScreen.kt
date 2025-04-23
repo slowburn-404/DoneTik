@@ -4,25 +4,42 @@ import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class HomeScreen(
-    override val route: String,
-    override val title: String
-) : FeatureScreen {
+sealed class HomeScreen : FeatureScreen {
     @Serializable
-    data class MainScreen(val userId: String) : HomeScreen(
-        route = "main_screen",
-        title = "Home"
-    )
+    data class Feed(val userId: String) : HomeScreen() {
+        override val route: String
+            get() = "main_screen"
+        override val title: String
+            get() = "Home"
+        override val hasBottomBar: Boolean
+            get() = true
+    }
 
     @Serializable
-    data object NewTaskScreen : HomeScreen(
-        route = "new_task",
-        title = "New Task"
-    )
+    data object NewTaskScreen : HomeScreen() {
+        override val route: String
+            get() = "new_task_screen"
+        override val title: String
+            get() = "New Task"
+        override val hasBottomBar: Boolean
+            get() = true
+        override val showBackButton: Boolean
+            get() = true
+        override val hasTopAppBar: Boolean
+            get() = true
+    }
 
     @Serializable
-    data class TaskScreen(val taskId: String) : HomeScreen(
-        route = "task_screen",
-        title = "Task"
-    )
+    data class TaskScreen(val taskId: String, val userId: String) : HomeScreen() {
+        override val route: String
+            get() = "task_screen"
+        override val title: String
+            get() = "Task"
+        override val hasTopAppBar: Boolean
+            get() = true
+        override val hasBottomBar: Boolean
+            get() = true
+        override val showBackButton: Boolean
+            get() = true
+    }
 }
