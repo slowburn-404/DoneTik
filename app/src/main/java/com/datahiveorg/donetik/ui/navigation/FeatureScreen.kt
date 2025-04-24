@@ -1,15 +1,18 @@
 package com.datahiveorg.donetik.ui.navigation
 
 import androidx.annotation.DrawableRes
+import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 
 interface FeatureScreen {
     val route: String
     val title: String
+
     //have default values and override only when needed
     val hasTopAppBar: Boolean get() = false
     val hasBottomBar: Boolean get() = false
     val hasBackButton: Boolean get() = false
     val topBarActions: List<TopBarAction> get() = emptyList()
+    val hasFAB: Boolean get() = false
 
     @get:DrawableRes
     val iconRes: Int? get() = null

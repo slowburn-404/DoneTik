@@ -4,6 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.Scaffold
@@ -19,6 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationScreen
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 import com.datahiveorg.donetik.ui.components.BottomNavBar
+import com.datahiveorg.donetik.ui.components.FAB
 import com.datahiveorg.donetik.ui.components.SnackBar
 import com.datahiveorg.donetik.ui.components.TopBar
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
@@ -73,6 +79,20 @@ class MainActivity : ComponentActivity() {
                         }
 
                     },
+                    floatingActionButton = {
+                        AnimatedVisibility(
+                            visible = currentScreen?.hasFAB == true,
+                            enter = scaleIn() + fadeIn(),
+                            exit = scaleOut() + fadeOut()
+                        ) {
+                            currentScreen?.let { screen ->
+                                val route = screen.getFABDestination()
+                                FAB {
+                                    navController.navigate(route)
+                                }
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .imePadding()
@@ -103,9 +123,15 @@ private fun getCurrentScreen(
     }
 }
 
+fun FeatureScreen.getFABDestination(): String {
+    return when (this) {
+        is HomeScreen.Feed -> HomeScreen.NewTaskScreen.route
+        else -> ""
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    DoneTikTheme {
-    }
+    DoneTikTheme {}
 }

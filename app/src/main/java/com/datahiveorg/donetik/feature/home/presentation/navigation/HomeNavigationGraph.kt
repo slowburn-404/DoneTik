@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navigation
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.NavigatorFactory
+import com.datahiveorg.donetik.ui.navigation.animatedComposable
 
 fun NavGraphBuilder.homeNavigationGraph(
     navigatorFactory: NavigatorFactory,
@@ -13,10 +14,14 @@ fun NavGraphBuilder.homeNavigationGraph(
 
     ) {
     navigation(
-        startDestination = HomeScreen.Feed.route,
+        startDestination = HomeScreen.Feed("").route,
         route = route
     ) {
         val homeNavigator = navigatorFactory.create<DoneTikNavigator>()
+
+        animatedComposable(HomeScreen.Feed("").route) {
+            
+        }
 
 
     }

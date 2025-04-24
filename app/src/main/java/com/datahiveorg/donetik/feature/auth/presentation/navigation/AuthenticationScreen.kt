@@ -9,7 +9,7 @@ sealed class AuthenticationScreen : FeatureScreen {
     data object LoginScreen : AuthenticationScreen(
     ) {
         override val route: String
-            get() = "login_screen"
+            get() = "auth/login"
         override val title: String
             get() = "Login"
     }
@@ -18,7 +18,7 @@ sealed class AuthenticationScreen : FeatureScreen {
     data object SignUpScreen : AuthenticationScreen(
     ) {
         override val route: String
-            get() = "sign_up_screen"
+            get() = "auth/sign_up"
         override val title: String
             get() = "Sign Up"
     }
