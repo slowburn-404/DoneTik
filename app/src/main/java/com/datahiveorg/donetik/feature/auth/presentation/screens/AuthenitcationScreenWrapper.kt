@@ -11,15 +11,15 @@ import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationIntent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiEvent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiState
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationViewModel
-import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationNavigator
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationScreen
+import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.util.GoogleSignHelper
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AuthenticationScreenWrapper(
     viewModel: AuthenticationViewModel = koinViewModel(),
-    navigator: AuthenticationNavigator,
+    navigator: DoneTikNavigator,
     snackBarHostState: SnackbarHostState,
     content: @Composable (
         state: AuthenticationUiState,
@@ -30,16 +30,15 @@ fun AuthenticationScreenWrapper(
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.uiEvents.collectAsStateWithLifecycle(initialValue = null)
+    val uiEvent by viewModel.uiEvents.collectAsStateWithLifecycle(initialValue = AuthenticationUiEvent.None)
     val googleSignHelper = remember { GoogleSignHelper(context) }
 
     LaunchedEffect(uiEvent) {
-        uiEvent?.let {
-            when (it) {
-                is AuthenticationUiEvent.Idle -> {}
+            when (uiEvent) {
+                is AuthenticationUiEvent.None -> {}
                 is AuthenticationUiEvent.ShowSnackBar -> {
                     snackBarHostState
-                        .showSnackbar(it.message)
+                        .showSnackbar((uiEvent as AuthenticationUiEvent.ShowSnackBar).message)
                 }
 
                 is AuthenticationUiEvent.Navigate.Login -> {
@@ -50,7 +49,6 @@ fun AuthenticationScreenWrapper(
                     navigator.navigate(AuthenticationScreen.SignUpScreen)
                 }
             }
-        }
     }
 
     content(
