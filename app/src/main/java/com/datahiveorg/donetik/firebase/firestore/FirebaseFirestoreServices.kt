@@ -101,11 +101,11 @@ internal class FirebaseFireStoreServiceImpl(
     override suspend fun getTasks(userId: String): Result<List<TaskDTO>> =
         safeFireStoreCall(FireStoreOperation.GET_TASKS) {
             val snapshot = getTaskCollectionReference(userId)
-                .orderBy("created", Query.Direction.DESCENDING)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .await()
 
-            snapshot.documents.mapNotNull { it.toObject(TaskDTO::class.java) }
+            snapshot.documents.mapNotNull { it.toTaskDTO() }
         }
 
     override suspend fun getSingleTask(userId: String, taskId: String): Result<TaskDTO> =
