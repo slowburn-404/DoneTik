@@ -23,7 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationScreen
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
-import com.datahiveorg.donetik.ui.components.BottomNavBar
+import com.datahiveorg.donetik.ui.components.AnimatedBottomNavBar
 import com.datahiveorg.donetik.ui.components.FAB
 import com.datahiveorg.donetik.ui.components.SnackBar
 import com.datahiveorg.donetik.ui.components.TopBar
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                         currentScreen?.takeIf { featureScreen ->
                             featureScreen.hasBottomBar
                         }?.let {
-                            BottomNavBar(
+                            AnimatedBottomNavBar(
                                 navController = navController,
                                 currentDestination = currentDestination
                             )
@@ -116,7 +116,7 @@ private fun getCurrentScreen(
         AuthenticationScreen.SignUpScreen.route -> AuthenticationScreen.SignUpScreen
         OnBoardingFeature.route -> OnBoardingFeature
         RouterScreen.route -> RouterScreen
-        HomeScreen.Feed("").route -> HomeScreen.Feed("")
+        HomeScreen.Feed.route -> HomeScreen.Feed
         HomeScreen.TaskScreen("", "").route -> HomeScreen.TaskScreen("", "")
         HomeScreen.NewTaskScreen.route -> HomeScreen.NewTaskScreen
         else -> null

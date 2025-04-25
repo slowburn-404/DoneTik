@@ -1,6 +1,5 @@
 package com.datahiveorg.donetik.feature.auth.domain.repository
 
-import android.content.Context
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 
@@ -15,5 +14,5 @@ interface AuthRepository {
 
     suspend fun getUser(): DomainResponse<User>
 
-    suspend fun isUserLoggedIn(): DomainResponse<Boolean>
+    suspend fun checkLoginStatus(): DomainResponse<Boolean>
 }

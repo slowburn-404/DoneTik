@@ -1,4 +1,4 @@
-package com.datahiveorg.donetik.router
+package com.datahiveorg.donetik.feature.router
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

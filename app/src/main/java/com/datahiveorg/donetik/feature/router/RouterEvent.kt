@@ -1,4 +1,4 @@
-package com.datahiveorg.donetik.router
+package com.datahiveorg.donetik.feature.router
 
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 

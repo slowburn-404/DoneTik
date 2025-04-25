@@ -1,13 +1,11 @@
 package com.datahiveorg.donetik.ui.navigation
 
 import androidx.annotation.DrawableRes
-import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 
 interface FeatureScreen {
     val route: String
     val title: String
-
-    //have default values and override only when needed
+    //have default values and override only when necessary
     val hasTopAppBar: Boolean get() = false
     val hasBottomBar: Boolean get() = false
     val hasBackButton: Boolean get() = false
@@ -37,7 +35,7 @@ data object AuthFeature : FeatureScreen {
         get() = ""
 
     override val route: String
-        get() = "auth"
+        get() = "auth_feature"
 }
 
 data object OnBoardingFeature : FeatureScreen {
@@ -45,12 +43,12 @@ data object OnBoardingFeature : FeatureScreen {
         get() = ""
 
     override val route: String
-        get() = "onboarding"
+        get() = "onboarding_feature"
 }
 
 data object HomeFeature : FeatureScreen {
     override val route: String
-        get() = "home"
+        get() = "home_feature"
     override val title: String
         get() = "Home"
 }

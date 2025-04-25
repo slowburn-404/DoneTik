@@ -9,7 +9,7 @@ internal class HomeNavigatorImpl(
 ) : DoneTikNavigator {
     override fun navigate(screen: FeatureScreen) {
         when (screen) {
-            is HomeScreen.Feed -> navigateToMainScreen(screen.userId)
+            is HomeScreen.Feed -> navigateToFeedScreen()
             is HomeScreen.NewTaskScreen -> navigateToNewTaskScreen()
             is HomeScreen.TaskScreen -> navigateToTaskScreen(
                 taskId = screen.taskId,
@@ -18,8 +18,8 @@ internal class HomeNavigatorImpl(
         }
     }
 
-    private fun navigateToMainScreen(userId: String) {
-        navController.navigate(HomeScreen.Feed(userId = userId).route) {
+    private fun navigateToFeedScreen() {
+        navController.navigate(HomeScreen.Feed.route) {
             launchSingleTop = true
             popUpTo<HomeScreen.Feed> {
                 inclusive = true
@@ -40,7 +40,7 @@ internal class HomeNavigatorImpl(
     private fun navigateToTaskScreen(taskId: String, userId: String) {
         navController.navigate(HomeScreen.TaskScreen(taskId = taskId, userId = userId).route) {
             launchSingleTop = true
-            popUpTo(HomeScreen.Feed(userId = "").route) {
+            popUpTo(HomeScreen.Feed.route) {
                 inclusive = true
             }
         }

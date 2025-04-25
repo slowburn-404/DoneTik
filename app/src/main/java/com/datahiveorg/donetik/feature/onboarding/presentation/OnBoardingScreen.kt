@@ -91,7 +91,6 @@ fun OnBoardingScreen(
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(
                             page = pagerState.currentPage + 1,
-                            animationSpec = tween(ANIMATION_DURATION_SHORT)
                         )
                     }
                 } else {

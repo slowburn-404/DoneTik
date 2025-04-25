@@ -2,6 +2,9 @@ package com.datahiveorg.donetik.ui.navigation
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
@@ -27,20 +30,19 @@ fun NavGraphBuilder.animatedComposable(
     enterTransition = {
         slideIntoContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Start,
-//            animationSpec = tween(ANIMATION_DURATION_LONG, easing = EaseIn)
+            animationSpec = tween(easing = EaseIn)
         ) +
                 fadeIn(
-//                    animationSpec = tween(ANIMATION_DURATION_LONG, easing = LinearEasing)
+                    animationSpec = tween(easing = LinearEasing)
                 )
 
     },
     exitTransition = {
         slideOutOfContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Start,
-//            animationSpec = tween(ANIMATION_DURATION_LONG)
         ) +
                 fadeOut(
-//                    animationSpec = tween(ANIMATION_DURATION_LONG, easing = LinearEasing),
+                    animationSpec = tween(easing = LinearEasing),
                 )
 
 

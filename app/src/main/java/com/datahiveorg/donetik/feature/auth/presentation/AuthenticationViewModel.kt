@@ -5,15 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,22 +20,22 @@ class AuthenticationViewModel(
     private val _state = MutableStateFlow(AuthenticationUiState())
     val state: StateFlow<AuthenticationUiState> = _state.asStateFlow()
 
-    private val _uiEvents: Channel<AuthenticationUiEvent> = Channel(Channel.BUFFERED)
-    val uiEvents: Flow<AuthenticationUiEvent> = _uiEvents.receiveAsFlow()
+    private val _uiEvents: MutableSharedFlow<AuthenticationUiEvent> = MutableSharedFlow()
+    val uiEvents: SharedFlow<AuthenticationUiEvent> = _uiEvents.asSharedFlow()
 
     private val _uiIntents: MutableSharedFlow<AuthenticationIntent> = MutableSharedFlow()
     private val uiIntents: SharedFlow<AuthenticationIntent> = _uiIntents.asSharedFlow()
 
     init {
         viewModelScope.launch {
-            uiIntents.collect { event ->
-                when (event) {
-                    is AuthenticationIntent.EnterEmail -> enterEmail(event.email)
-                    is AuthenticationIntent.EnterPassword -> enterPassword(event.password)
+            uiIntents.collect { intent ->
+                when (intent) {
+                    is AuthenticationIntent.EnterEmail -> enterEmail(intent.email)
+                    is AuthenticationIntent.EnterPassword -> enterPassword(intent.password)
                     is AuthenticationIntent.SignUp -> signUp()
                     is AuthenticationIntent.Login -> login()
                     is AuthenticationIntent.ValidateForm -> validateAndUpdateFormState()
-                    is AuthenticationIntent.SignInWithGoogle -> signInWithGoogle(event.idToken)
+                    is AuthenticationIntent.SignInWithGoogle -> signInWithGoogle(intent.idToken)
                 }
             }
         }
@@ -46,7 +43,7 @@ class AuthenticationViewModel(
 
     fun emitEvent(event: AuthenticationUiEvent) {
         viewModelScope.launch {
-            _uiEvents.send(event)
+            _uiEvents.emit(event)
         }
     }
 
@@ -126,9 +123,10 @@ class AuthenticationViewModel(
                         isLoading = false,
                     )
                 }
+                emitEvent(AuthenticationUiEvent.AuthenticationSuccessful)
             }
         }
-        validateAndUpdateFormState() // Revalidate form after login attempt
+        validateAndUpdateFormState()
     }
 
     private suspend fun signUp() {
@@ -150,9 +148,10 @@ class AuthenticationViewModel(
                         isLoading = false,
                     )
                 }
+                emitEvent(AuthenticationUiEvent.AuthenticationSuccessful)
             }
         }
-        validateAndUpdateFormState() // Revalidate form after signup attempt
+        validateAndUpdateFormState()
     }
 
     private fun validateForm(): Boolean {
@@ -183,6 +182,7 @@ class AuthenticationViewModel(
                         isLoading = false
                     )
                 }
+                emitEvent(AuthenticationUiEvent.AuthenticationSuccessful)
             }
 
             is DomainResponse.Failure -> {

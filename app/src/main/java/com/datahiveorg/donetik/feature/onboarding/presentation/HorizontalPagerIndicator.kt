@@ -48,11 +48,11 @@ fun HorizontalPagerIndicator(
                 animationSpec = tween(durationMillis = ANIMATION_DURATION_SHORT)
             )
             val backgroundColor by animateColorAsState(
-                targetValue = if(isSelected) colorScheme.primary else Color.LightGray,
-                animationSpec = tween(durationMillis = ANIMATION_DURATION_SHORT )
+                targetValue = if (isSelected) colorScheme.primary else Color.LightGray,
+                animationSpec = tween(durationMillis = ANIMATION_DURATION_SHORT)
             )
 
-            val shape = if(isSelected) {
+            val shape = if (isSelected) {
                 RoundedCornerShape(percent = 50)
             } else {
                 CircleShape
