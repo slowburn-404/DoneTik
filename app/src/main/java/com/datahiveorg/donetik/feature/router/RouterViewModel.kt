@@ -1,4 +1,4 @@
-package com.datahiveorg.donetik.router
+package com.datahiveorg.donetik.feature.router
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 class RouterViewModel(
     private val authRepository: AuthRepository,
-    private val onBoardingRepository: OnBoardingRepository
+    private val onBoardingRepository: OnBoardingRepository,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<RouterState> = MutableStateFlow(RouterState())
@@ -74,7 +74,7 @@ class RouterViewModel(
         }
 
         launch {
-            val response = authRepository.isUserLoggedIn()
+            val response = authRepository.checkLoginStatus()
             if (response is DomainResponse.Success) {
                 _state.update { currentState ->
                     currentState.copy(
@@ -86,6 +86,4 @@ class RouterViewModel(
         }
 
     }
-
-
 }

@@ -10,12 +10,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.datahiveorg.donetik.ui.components.ScreenTitle
+import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationScreen
+import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
+import com.datahiveorg.donetik.ui.components.AnimatedBottomNavBar
+import com.datahiveorg.donetik.ui.components.AnimatedFAB
 import com.datahiveorg.donetik.ui.components.SnackBar
+import com.datahiveorg.donetik.ui.components.TopBar
+import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
 import com.datahiveorg.donetik.ui.navigation.RootNavGraph
+import com.datahiveorg.donetik.ui.navigation.RouterScreen
+import com.datahiveorg.donetik.ui.navigation.getFABDestination
 import com.datahiveorg.donetik.ui.theme.DoneTikTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,28 +36,57 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            val navHostController = rememberNavController()
+            val navController = rememberNavController()
+            val backStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = backStackEntry?.destination
+            val currentScreen =
+                getCurrentScreen(destination = currentDestination)
             val snackBarHostState = SnackbarHostState()
-
-            //val currentScreen = navHostController.currentBackStackEntry?.destination?.route
 
             DoneTikTheme {
                 Scaffold(
-//                    topBar = {
-//                        ScreenTitle(
-//                            title = "DoneTik",
-////                            onNavigateUp = {
-////                                navHostController.navigateUp()
-////                            },
-////                            feature = AuthenticationScreen.LoginScreen
-//                        )
-//                    },
                     snackbarHost = {
                         SnackbarHost(
                             hostState = snackBarHostState,
                         ) {
                             SnackBar(
                                 message = it.visuals.message
+                            )
+                        }
+                    },
+                    topBar = {
+                        currentScreen?.takeIf { featureScreen ->
+                            featureScreen.hasTopAppBar
+                        }?.let { screen ->
+                            TopBar(
+                                showNavigationIcon = screen.hasNavIcon,
+                                onBackClick = {
+                                    navController.navigateUp()
+                                },
+                                actions = screen.topBarActions,
+                                title = screen.title
+                            )
+                        }
+                    },
+                    bottomBar = {
+                        currentScreen?.takeIf { featureScreen ->
+                            featureScreen.hasBottomBar
+                        }?.let {
+                            AnimatedBottomNavBar(
+                                navController = navController,
+                                currentDestination = currentDestination
+                            )
+                        }
+
+                    },
+                    floatingActionButton = {
+                        currentScreen?.takeIf { featureScreen ->
+                            featureScreen.hasFAB
+                        }?.let { screen ->
+                            val route = screen.getFABDestination()
+                            AnimatedFAB(
+                                isVisible = true,
+                                onClick = { navController.navigate(route) }
                             )
                         }
                     },
@@ -57,7 +97,7 @@ class MainActivity : ComponentActivity() {
                     RootNavGraph(
                         paddingValues = innerPadding,
                         snackBarHostState = snackBarHostState,
-                        navHostController = navHostController,
+                        navController = navController
                     )
                 }
             }
@@ -65,9 +105,23 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+private fun getCurrentScreen(
+    destination: NavDestination?,
+): FeatureScreen? {
+    return when (destination?.route) {
+        AuthenticationScreen.LoginScreen.route -> AuthenticationScreen.LoginScreen
+        AuthenticationScreen.SignUpScreen.route -> AuthenticationScreen.SignUpScreen
+        OnBoardingFeature.route -> OnBoardingFeature
+        RouterScreen.route -> RouterScreen
+        HomeScreen.Feed.route -> HomeScreen.Feed
+        HomeScreen.TaskScreen("", "").route -> HomeScreen.TaskScreen("", "")
+        HomeScreen.NewTaskScreen.route -> HomeScreen.NewTaskScreen
+        else -> null
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    DoneTikTheme {
-    }
+    DoneTikTheme {}
 }

@@ -4,21 +4,22 @@ import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class AuthenticationScreen(
-    override val route: String,
-    override val title: String
-) : FeatureScreen {
-
+sealed class AuthenticationScreen : FeatureScreen {
     @Serializable
     data object LoginScreen : AuthenticationScreen(
-        route = "login_screen",
-        title = "Login"
-    )
+    ) {
+        override val route: String
+            get() = "auth/login"
+        override val title: String
+            get() = "Login"
+    }
 
     @Serializable
     data object SignUpScreen : AuthenticationScreen(
-        route = "sign_up_screen",
-        title = "Sign Up"
-    )
-
+    ) {
+        override val route: String
+            get() = "auth/sign_up"
+        override val title: String
+            get() = "Sign Up"
+    }
 }

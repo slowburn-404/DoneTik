@@ -19,7 +19,7 @@ import com.google.firebase.appcheck.AppCheckToken
 //class DoneTikAppCheckTokenProvider(
 //    firebaseApp: FirebaseApp
 //): AppCheckProvider{
-//    override fun getToken(): Task<AppCheckToken> {
+//    override fun getToken(): TaskDTO<AppCheckToken> {
 //        val expMillis =
 //    }
 //
