@@ -84,7 +84,7 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun isUserLoggedIn(): DomainResponse<Boolean> {
+    override suspend fun checkLoginStatus(): DomainResponse<Boolean> {
         return withContext(dispatcher.io) {
             val response = authService.isLoggedIn.first()
             DomainResponse.Success(response)

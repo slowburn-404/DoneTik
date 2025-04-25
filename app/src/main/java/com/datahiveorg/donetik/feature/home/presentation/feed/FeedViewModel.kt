@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
+import com.datahiveorg.donetik.feature.home.domain.usecase.GetUserInfoUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class FeedViewModel(
     private val homeRepository: HomeRepository,
-    private val userId: String?
+    private val getUserInfoUseCase: GetUserInfoUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(FeedState())
@@ -24,13 +25,13 @@ class FeedViewModel(
         initialValue = FeedState(),
         started = WhileSubscribed(5000)
     ).onStart {
-        emitIntent(FeedIntent.GetTasks)
+        emitIntent(FeedIntent.GetUserInfo)
     }
 
-    private val _intent = MutableSharedFlow<FeedIntent>(replay = 1)
+    private val _intent = MutableSharedFlow<FeedIntent>()
     private val intent = _intent.asSharedFlow()
 
-    private val _event = MutableSharedFlow<FeedEvent>(replay = 1)
+    private val _event = MutableSharedFlow<FeedEvent>()
     val event = _event.asSharedFlow()
 
     init {
@@ -38,7 +39,11 @@ class FeedViewModel(
             intent.collect { uiIntent ->
                 when (uiIntent) {
                     is FeedIntent.GetTasks -> {
-                        getTasks()
+                        getTasks(uiIntent.userId)
+                    }
+
+                    is FeedIntent.GetUserInfo -> {
+                        getUserInfo()
                     }
                 }
             }
@@ -58,31 +63,52 @@ class FeedViewModel(
         }
     }
 
-    private suspend fun getTasks() {
+    private suspend fun getTasks(userId: String) {
         showLoading()
-        userId?.let { id ->
-            when (val response = homeRepository.getTasks(id)) {
-                is DomainResponse.Success -> {
-                    _state.update { currentState ->
-                        currentState.copy(
-                            tasks = response.data,
-                            isLoading = false
-                        )
-                    }
-                }
-
-                is DomainResponse.Failure -> {
-                    _state.update { currentState ->
-                        currentState.copy(
-                            error = response.message,
-                            isLoading = false
-                        )
-                    }
-                    emitEvent(FeedEvent.ShowSnackBar(response.message))
+        when (val response = homeRepository.getTasks(userId)) {
+            is DomainResponse.Success -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        tasks = response.data,
+                        isLoading = false
+                    )
                 }
             }
-        }
 
+            is DomainResponse.Failure -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        error = response.message,
+                        isLoading = false
+                    )
+                }
+                emitEvent(FeedEvent.ShowSnackBar(response.message))
+            }
+        }
+    }
+
+    private suspend fun getUserInfo() {
+        showLoading()
+        when (val response = getUserInfoUseCase()) {
+            is DomainResponse.Success -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        user = response.data,
+                        isLoading = false
+                    )
+                }
+                getTasks(_state.value.user.uid)
+            }
+
+            is DomainResponse.Failure -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        isLoading = false
+                    )
+                }
+                emitEvent(FeedEvent.ShowSnackBar(response.message))
+            }
+        }
     }
 
     private fun showLoading() {

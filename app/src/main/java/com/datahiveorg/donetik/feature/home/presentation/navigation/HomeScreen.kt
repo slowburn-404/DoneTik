@@ -1,12 +1,13 @@
 package com.datahiveorg.donetik.feature.home.presentation.navigation
 
+import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class HomeScreen : FeatureScreen {
     @Serializable
-    data class Feed(val userId: String) : HomeScreen() {
+    data object Feed : HomeScreen() {
         override val route: String
             get() = "home/feed"
         override val title: String
@@ -15,6 +16,8 @@ sealed class HomeScreen : FeatureScreen {
             get() = true
         override val hasFAB: Boolean
             get() = true
+        override val iconRes: Int
+            get() = R.drawable.ic_home
     }
 
     @Serializable

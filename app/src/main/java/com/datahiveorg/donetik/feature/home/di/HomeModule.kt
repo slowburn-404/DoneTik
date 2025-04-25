@@ -21,10 +21,10 @@ val homeModule = module {
         )
     }
 
-    viewModel { (userId: String?) ->
+    viewModel<FeedViewModel> {
         FeedViewModel(
             homeRepository = get<HomeRepository>(),
-            userId = userId
+            getUserInfoUseCase = get<GetUserInfoUseCase>()
         )
 
     }
@@ -41,7 +41,7 @@ val homeModule = module {
         )
     }
 
-    factory<GetUserInfoUseCase> {
+    single<GetUserInfoUseCase> {
         GetUserInfoUseCaseImpl(
             authRepository = get<AuthRepository>()
         )

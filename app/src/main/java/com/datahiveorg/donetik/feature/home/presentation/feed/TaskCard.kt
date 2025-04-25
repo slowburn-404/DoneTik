@@ -38,7 +38,7 @@ fun TaskCard(
         //TODO(Use constraint layout instead)
         Column(
             modifier = Modifier
-                .padding(4.dp)
+                .padding(10.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -50,7 +50,7 @@ fun TaskCard(
                     text = task.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = typography.headlineMedium
+                    style = typography.titleMedium
                 )
                 if (task.isDone) {
                     Icon(
