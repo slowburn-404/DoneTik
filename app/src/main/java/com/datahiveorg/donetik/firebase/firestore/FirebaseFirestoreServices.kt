@@ -122,11 +122,16 @@ internal class FirebaseFireStoreServiceImpl(
         }
 
     private fun getTaskDocumentReference(taskDTO: Map<String, Any>): DocumentReference {
-        val authorRef = taskDTO["author"] as? DocumentReference
-            ?: throw IllegalArgumentException("Missing or invalid author reference")
-        val id = taskDTO["id"] as? String
+        val authorMap = taskDTO["author"] as? Map<*, *>
+            ?: throw IllegalArgumentException("Missing or invalid user object")
+        val userId = authorMap["uid"] as? String
+            ?: throw IllegalArgumentException("Missing or invalid user id")
+        val taskId = taskDTO["id"] as? String
             ?: throw IllegalArgumentException("Missing or invalid task id")
-        return authorRef.collection(TASKS_COLLECTION).document(id)
+        return usersCollection
+            .document(userId)
+            .collection(TASKS_COLLECTION)
+            .document(taskId)
     }
 
     private fun getTaskCollectionReference(userId: String): CollectionReference =

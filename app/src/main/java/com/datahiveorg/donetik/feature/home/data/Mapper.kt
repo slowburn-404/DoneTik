@@ -64,9 +64,9 @@ fun Date.toDomain(): String {
 }
 
 fun String.toDate(): Date {
-    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+    val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
     sdf.timeZone = TimeZone.getTimeZone("UTC")
-    return sdf.parse(this)!! // remember to handle null dates
+    return sdf.parse(this)!! // TODO(remember to handle null dates)
 }
 
 fun String.toFireStoreTimeStamp(): Timestamp {

@@ -11,13 +11,15 @@ sealed class HomeScreen : FeatureScreen {
         override val route: String
             get() = "home/feed"
         override val title: String
-            get() = "Home"
+            get() = "Feed"
         override val hasBottomBar: Boolean
             get() = true
         override val hasFAB: Boolean
             get() = true
-        override val iconRes: Int
+        override val bottomNavIconRes: Int
             get() = R.drawable.ic_home
+        override val hasTopAppBar: Boolean
+            get() = true
     }
 
     @Serializable
@@ -27,11 +29,13 @@ sealed class HomeScreen : FeatureScreen {
         override val title: String
             get() = "New Task"
         override val hasBottomBar: Boolean
-            get() = true
-        override val hasBackButton: Boolean
+            get() = false
+        override val hasNavIcon: Boolean
             get() = true
         override val hasTopAppBar: Boolean
             get() = true
+        override val navIconRes: Int
+            get() = R.drawable.ic_arrow_back
     }
 
     @Serializable
@@ -44,7 +48,7 @@ sealed class HomeScreen : FeatureScreen {
             get() = true
         override val hasBottomBar: Boolean
             get() = true
-        override val hasBackButton: Boolean
+        override val hasNavIcon: Boolean
             get() = true
     }
 }

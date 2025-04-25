@@ -1,8 +1,8 @@
 package com.datahiveorg.donetik.feature.home.presentation.newtask
 
-import com.datahiveorg.donetik.feature.home.domain.model.Task
-
 sealed interface NewTaskIntent {
     data object GetUserInfo : NewTaskIntent
-    data class CreateTask(val task: Task) : NewTaskIntent
+    data object CreateTask : NewTaskIntent
+    data class EnterTitle(val title: String) : NewTaskIntent
+    data class EnterDescription(val description: String) : NewTaskIntent
 }

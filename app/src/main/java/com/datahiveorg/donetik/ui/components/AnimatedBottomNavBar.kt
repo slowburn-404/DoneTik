@@ -35,7 +35,7 @@ fun AnimatedBottomNavBar(
         enter = slideInVertically(
             tween(
                 durationMillis = ANIMATION_DURATION_SHORT,
-                delayMillis = 1000
+//                delayMillis = 1000
             )
         ) { it } + fadeIn(),
         exit = slideOutVertically {it} + fadeOut()
@@ -44,7 +44,7 @@ fun AnimatedBottomNavBar(
             bottomBarScreens.forEach { screen: FeatureScreen ->
                 NavigationBarItem(
                     icon = {
-                        screen.iconRes?.let { iconId ->
+                        screen.bottomNavIconRes?.let { iconId ->
                             painterResource(iconId)
                         }?.let { icon ->
                             Icon(

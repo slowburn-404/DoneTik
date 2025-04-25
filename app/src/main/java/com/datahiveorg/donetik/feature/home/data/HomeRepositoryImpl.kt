@@ -27,7 +27,7 @@ class HomeRepositoryImpl(
 
         return response.fold(
             onSuccess = {
-                DomainResponse.Success("Task createdAt successfully")
+                DomainResponse.Success("Task saved. What’s next?")
             },
             onFailure = {
                 DomainResponse.Failure(it.toDomain())
