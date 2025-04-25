@@ -27,5 +27,9 @@ data class NewTaskState(
         createdAt = Date().toDomain(),
         lastModified = Date().toDomain()
     ),
-    val error: String = ""
+    val error: String = "",
+    val titleError: String = "",
+    val descriptionError: String = "",
+    val isLoading: Boolean = false,
+    val isFormValid: Boolean = false
 )

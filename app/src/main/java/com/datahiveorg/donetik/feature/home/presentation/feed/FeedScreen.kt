@@ -86,17 +86,10 @@ fun FeedContent(
     ) {
         LazyColumn(
             modifier = modifier
-                .padding(horizontal = 20.dp)
                 .fillMaxSize(),
             contentPadding = PaddingValues(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            item {
-                ScreenTitle(
-                    title = "Feed"
-                )
-            }
-
             items(
                 items = state.tasks,
                 key = { task -> task.id }

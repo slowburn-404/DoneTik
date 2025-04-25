@@ -4,11 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.Scaffold
@@ -24,13 +19,14 @@ import androidx.navigation.compose.rememberNavController
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationScreen
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 import com.datahiveorg.donetik.ui.components.AnimatedBottomNavBar
-import com.datahiveorg.donetik.ui.components.FAB
+import com.datahiveorg.donetik.ui.components.AnimatedFAB
 import com.datahiveorg.donetik.ui.components.SnackBar
 import com.datahiveorg.donetik.ui.components.TopBar
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
 import com.datahiveorg.donetik.ui.navigation.RootNavGraph
 import com.datahiveorg.donetik.ui.navigation.RouterScreen
+import com.datahiveorg.donetik.ui.navigation.getFABDestination
 import com.datahiveorg.donetik.ui.theme.DoneTikTheme
 
 class MainActivity : ComponentActivity() {
@@ -60,11 +56,15 @@ class MainActivity : ComponentActivity() {
                     },
                     topBar = {
                         currentScreen?.takeIf { featureScreen ->
-                            featureScreen.hasTopAppBar || featureScreen.hasBackButton
+                            featureScreen.hasTopAppBar
                         }?.let { screen ->
                             TopBar(
-                                onBackClick = { navController.navigateUp() },
-                                actions = screen.topBarActions
+                                showNavigationIcon = screen.hasNavIcon,
+                                onBackClick = {
+                                    navController.navigateUp()
+                                },
+                                actions = screen.topBarActions,
+                                title = screen.title
                             )
                         }
                     },
@@ -80,17 +80,14 @@ class MainActivity : ComponentActivity() {
 
                     },
                     floatingActionButton = {
-                        AnimatedVisibility(
-                            visible = currentScreen?.hasFAB == true,
-                            enter = scaleIn() + fadeIn(),
-                            exit = scaleOut() + fadeOut()
-                        ) {
-                            currentScreen?.let { screen ->
-                                val route = screen.getFABDestination()
-                                FAB {
-                                    navController.navigate(route)
-                                }
-                            }
+                        currentScreen?.takeIf { featureScreen ->
+                            featureScreen.hasFAB
+                        }?.let { screen ->
+                            val route = screen.getFABDestination()
+                            AnimatedFAB(
+                                isVisible = true,
+                                onClick = { navController.navigate(route) }
+                            )
                         }
                     },
                     modifier = Modifier
@@ -120,13 +117,6 @@ private fun getCurrentScreen(
         HomeScreen.TaskScreen("", "").route -> HomeScreen.TaskScreen("", "")
         HomeScreen.NewTaskScreen.route -> HomeScreen.NewTaskScreen
         else -> null
-    }
-}
-
-fun FeatureScreen.getFABDestination(): String {
-    return when (this) {
-        is HomeScreen.Feed -> HomeScreen.NewTaskScreen.route
-        else -> ""
     }
 }
 

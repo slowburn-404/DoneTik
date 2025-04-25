@@ -1,8 +1,7 @@
 package com.datahiveorg.donetik.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,24 +15,36 @@ import com.datahiveorg.donetik.ui.navigation.TopBarAction
 @Composable
 fun TopBar(
     modifier: Modifier = Modifier,
+    showNavigationIcon: Boolean = false,
+    @DrawableRes navigationIcon: Int? = null,
     onBackClick: () -> Unit,
     actions: List<TopBarAction>?,
+    title: String
 ) {
     MediumTopAppBar(
         modifier = modifier.fillMaxWidth(),
         navigationIcon = {
-            IconButton(
-                onClick = onBackClick
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = "Back",
-                )
+            if (showNavigationIcon) {
+                IconButton(
+                    onClick = onBackClick
+                ) {
+                    navigationIcon?.let { id ->
+                        Icon(
+                            painter = painterResource(id),
+                            contentDescription = "Back",
+                        )
+                    }
+                }
             }
         },
-        title = {},
+        title = {
+            ScreenTitle(
+                title = title
+            )
+
+        },
         actions = {
-            actions?.let{
+            actions?.let {
                 it.forEach { action ->
                     IconButton(
                         onClick = action.onClick
