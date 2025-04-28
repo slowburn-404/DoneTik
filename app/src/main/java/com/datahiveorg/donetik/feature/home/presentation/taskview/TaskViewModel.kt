@@ -23,7 +23,7 @@ class TaskViewModel(
         replay = 0,
         extraBufferCapacity = 1
     )
-    val intent = _intent.asSharedFlow()
+    private val intent = _intent.asSharedFlow()
 
     private val _event = MutableSharedFlow<TaskViewEvent>(
         replay = 0,

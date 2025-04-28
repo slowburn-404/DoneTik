@@ -28,7 +28,7 @@ fun PrimaryButton(
     modifier: Modifier = Modifier,
     label: String,
     onClick: () -> Unit,
-    isFormValid: Boolean,
+    isEnabled: Boolean,
     isLoading: Boolean
 ) {
     Button(
@@ -36,7 +36,7 @@ fun PrimaryButton(
             .fillMaxWidth(),
         onClick = onClick,
         shape = RoundedCornerShape(14.dp),
-        enabled = isFormValid,
+        enabled = isEnabled,
     ) {
         Box(
             contentAlignment = Alignment.Center

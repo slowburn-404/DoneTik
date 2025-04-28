@@ -111,7 +111,7 @@ fun NewTaskContent(
             onClick = {
                 onIntent(NewTaskIntent.CreateTask)
             },
-            isFormValid = state.isFormValid,
+            isEnabled = state.isFormValid,
             isLoading = state.isLoading
         )
     }

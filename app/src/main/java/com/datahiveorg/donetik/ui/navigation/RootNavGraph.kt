@@ -15,9 +15,7 @@ import com.datahiveorg.donetik.feature.home.presentation.navigation.homeNavigati
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingEvents
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingScreen
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingViewModel
-import com.datahiveorg.donetik.feature.router.RouterEvent
 import com.datahiveorg.donetik.feature.router.RouterScreen
-import com.datahiveorg.donetik.feature.router.RouterViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.getKoin
 import org.koin.core.parameter.parametersOf
@@ -28,7 +26,6 @@ fun RootNavGraph(
     paddingValues: PaddingValues,
     snackBarHostState: SnackbarHostState,
     navController: NavHostController,
-    routerViewModel: RouterViewModel = koinViewModel(),
     onBoardingViewModel: OnBoardingViewModel = koinViewModel()
 ) {
     val navigator =
@@ -38,7 +35,7 @@ fun RootNavGraph(
             .padding(paddingValues)
             .padding(horizontal = 20.dp),
         navController = navController,
-        startDestination = RouterScreen.route
+        startDestination = RouterScreen
     ) {
         authenticationNavGraph(
             navigator = navigator,
@@ -50,16 +47,12 @@ fun RootNavGraph(
             snackBarHostState = snackBarHostState,
         )
 
-        animatedComposable(RouterScreen.route) {
-            val event by routerViewModel.event.collectAsStateWithLifecycle(initialValue = RouterEvent.None)
-            val state by routerViewModel.state.collectAsStateWithLifecycle()
-
+        animatedComposable<RouterScreen> {
             RouterScreen(
-                event = event,
                 onNavigate = { screen ->
-                    navController.navigate(screen.route) {
+                    navController.navigate(screen) {
                         launchSingleTop = true
-                        popUpTo(RouterScreen.route) {
+                        popUpTo<RouterScreen> {
                             inclusive = true
                         }
                     }
@@ -67,15 +60,15 @@ fun RootNavGraph(
             )
         }
 
-        animatedComposable(OnBoardingFeature.route) {
+        animatedComposable<OnBoardingFeature> {
             val event by onBoardingViewModel.events.collectAsStateWithLifecycle(initialValue = OnBoardingEvents.None)
             val state by onBoardingViewModel.state.collectAsStateWithLifecycle()
 
             OnBoardingScreen(
                 onNavigate = { screen ->
-                    navController.navigate(screen.route) {
+                    navController.navigate(screen) {
                         launchSingleTop = true
-                        popUpTo(OnBoardingFeature.route) {
+                        popUpTo(OnBoardingFeature) {
                             inclusive = true
                         }
                     }

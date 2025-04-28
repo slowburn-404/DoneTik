@@ -100,7 +100,7 @@ fun OnBoardingScreen(
                 }
             },
             isLoading = false,
-            isFormValid = true
+            isEnabled = true
         )
 
     }

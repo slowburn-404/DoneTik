@@ -1,6 +1,7 @@
 package com.datahiveorg.donetik.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -14,6 +15,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
 @Composable
 fun AnimatedFAB(
@@ -23,15 +25,23 @@ fun AnimatedFAB(
 ) {
     AnimatedVisibility(
         visible = isVisible,
-        enter = scaleIn() + fadeIn(),
-        exit = scaleOut() + fadeOut()
+        enter = scaleIn(
+            tween(
+                durationMillis = ANIMATION_DURATION_SHORT
+            )
+        ) + fadeIn(),
+        exit = scaleOut(
+            tween(
+                durationMillis = ANIMATION_DURATION_SHORT
+            )
+        ) + fadeOut()
     ) {
         FloatingActionButton(
             modifier = modifier,
             onClick = onClick,
             shape = RoundedCornerShape(14.dp),
-            containerColor = colorScheme.primaryContainer,
-            contentColor = colorScheme.primary
+            containerColor = colorScheme.primary,
+            contentColor = colorScheme.onPrimary,
         ) {
             Icon(
                 imageVector = Icons.Rounded.Add,

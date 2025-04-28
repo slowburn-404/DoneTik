@@ -11,7 +11,7 @@ internal class HomeNavigatorImpl(
         when (screen) {
             is HomeScreen.Feed -> navigateToFeedScreen()
             is HomeScreen.NewTaskScreen -> navigateToNewTaskScreen()
-            is HomeScreen.TaskScreen -> navigateToTaskScreen(
+            is HomeScreen.TaskScreen -> navigateToTaskViewScreen(
                 taskId = screen.taskId,
                 userId = screen.userId
             )
@@ -19,7 +19,7 @@ internal class HomeNavigatorImpl(
     }
 
     private fun navigateToFeedScreen() {
-        navController.navigate(HomeScreen.Feed.route) {
+        navController.navigate(HomeScreen.Feed) {
             launchSingleTop = true
             popUpTo<HomeScreen.Feed> {
                 inclusive = true
@@ -28,19 +28,18 @@ internal class HomeNavigatorImpl(
     }
 
     private fun navigateToNewTaskScreen() {
-        navController.navigate(HomeScreen.NewTaskScreen.route) {
+        navController.navigate(HomeScreen.NewTaskScreen) {
             launchSingleTop = true
             popUpTo<HomeScreen.Feed> {
                 inclusive = true
             }
         }
-
     }
 
-    private fun navigateToTaskScreen(taskId: String, userId: String) {
-        navController.navigate(HomeScreen.TaskScreen(taskId = taskId, userId = userId).route) {
+    private fun navigateToTaskViewScreen(taskId: String, userId: String) {
+        navController.navigate(HomeScreen.TaskScreen(taskId = taskId, userId = userId)) {
             launchSingleTop = true
-            popUpTo(HomeScreen.Feed.route) {
+            popUpTo<HomeScreen.Feed> {
                 inclusive = true
             }
         }

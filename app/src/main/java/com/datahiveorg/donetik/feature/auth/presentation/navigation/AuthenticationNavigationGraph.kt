@@ -15,12 +15,10 @@ fun NavGraphBuilder.authenticationNavGraph(
     navigator: DoneTikNavigator,
     snackBarHostState: SnackbarHostState,
 ) {
-    navigation(
-        startDestination = AuthenticationScreen.LoginScreen.route,
-        route = AuthFeature.route
+    navigation<AuthFeature>(
+        startDestination = AuthenticationScreen.LoginScreen,
     ) {
-
-        animatedComposable(AuthenticationScreen.LoginScreen.route) {
+        animatedComposable<AuthenticationScreen.LoginScreen> {
             AuthenticationScreenWrapper(
                 navigator = navigator,
                 snackBarHostState = snackBarHostState,
@@ -34,7 +32,7 @@ fun NavGraphBuilder.authenticationNavGraph(
             }
         }
 
-        animatedComposable(AuthenticationScreen.SignUpScreen.route) {
+        animatedComposable<AuthenticationScreen.SignUpScreen> {
             AuthenticationScreenWrapper(
                 navigator = navigator,
                 snackBarHostState = snackBarHostState,

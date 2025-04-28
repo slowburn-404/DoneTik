@@ -20,7 +20,7 @@ class OnBoardingViewModel(
     private val _state: MutableStateFlow<OnBoardingState> = MutableStateFlow(OnBoardingState())
     val state: StateFlow<OnBoardingState> = _state.asStateFlow()
 
-    private val _events: MutableSharedFlow<OnBoardingEvents> = MutableSharedFlow(replay = 1)
+    private val _events: MutableSharedFlow<OnBoardingEvents> = MutableSharedFlow()
     val events: SharedFlow<OnBoardingEvents> = _events.asSharedFlow()
 
     init {
