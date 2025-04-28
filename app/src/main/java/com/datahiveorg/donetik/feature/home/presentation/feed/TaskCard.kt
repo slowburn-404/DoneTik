@@ -32,7 +32,7 @@ fun TaskCard(
 ) {
     Card(
         modifier = modifier
-            .clip(RoundedCornerShape(14.dp)),
+            .clip(RoundedCornerShape(10.dp)),
         onClick = onClick
     ) {
         //TODO(Use constraint layout instead)

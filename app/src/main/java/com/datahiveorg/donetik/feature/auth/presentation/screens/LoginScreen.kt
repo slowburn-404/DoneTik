@@ -140,7 +140,7 @@ fun LoginScreen(
             onClick = {
                 onIntent(AuthenticationIntent.Login)
             },
-            isFormValid = state.isFormValid,
+            isEnabled = state.isFormValid,
             isLoading = state.isLoading
         )
 

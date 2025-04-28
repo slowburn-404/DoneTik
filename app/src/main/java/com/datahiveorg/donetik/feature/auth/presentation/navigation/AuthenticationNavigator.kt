@@ -16,18 +16,18 @@ internal class AuthenticationNavigatorImpl(
     }
 
     private fun navigateToLogin() {
-        navController.navigate(AuthenticationScreen.LoginScreen.route) {
+        navController.navigate(AuthenticationScreen.LoginScreen) {
             launchSingleTop = true
-            popUpTo(AuthenticationScreen.LoginScreen.route) {
+            popUpTo<AuthenticationScreen.LoginScreen> {
                 inclusive = true
             }
         }
     }
 
     private fun navigateToSignUp() {
-        navController.navigate(AuthenticationScreen.SignUpScreen.route) {
+        navController.navigate(AuthenticationScreen.SignUpScreen) {
             launchSingleTop = true
-            popUpTo(AuthenticationScreen.SignUpScreen.route) {
+            popUpTo<AuthenticationScreen.SignUpScreen> {
                 inclusive = true
             }
         }

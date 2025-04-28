@@ -97,7 +97,7 @@ class MainActivity : ComponentActivity() {
                     RootNavGraph(
                         paddingValues = innerPadding,
                         snackBarHostState = snackBarHostState,
-                        navController = navController
+                        navController = navController,
                     )
                 }
             }
@@ -108,14 +108,18 @@ class MainActivity : ComponentActivity() {
 private fun getCurrentScreen(
     destination: NavDestination?,
 ): FeatureScreen? {
-    return when (destination?.route) {
-        AuthenticationScreen.LoginScreen.route -> AuthenticationScreen.LoginScreen
-        AuthenticationScreen.SignUpScreen.route -> AuthenticationScreen.SignUpScreen
-        OnBoardingFeature.route -> OnBoardingFeature
-        RouterScreen.route -> RouterScreen
-        HomeScreen.Feed.route -> HomeScreen.Feed
-        HomeScreen.TaskScreen("", "").route -> HomeScreen.TaskScreen("", "")
-        HomeScreen.NewTaskScreen.route -> HomeScreen.NewTaskScreen
+    if (destination == null) return null
+
+    val route = destination.route ?: return null
+
+    return when {
+        AuthenticationScreen.LoginScreen::class.simpleName.orEmpty() in route -> AuthenticationScreen.LoginScreen
+        AuthenticationScreen.SignUpScreen::class.simpleName.orEmpty() in route -> AuthenticationScreen.SignUpScreen
+        OnBoardingFeature::class.simpleName.orEmpty() in route -> OnBoardingFeature
+        RouterScreen::class.simpleName.orEmpty() in route -> RouterScreen
+        HomeScreen.Feed::class.simpleName.orEmpty() in route -> HomeScreen.Feed
+        HomeScreen.TaskScreen::class.simpleName.orEmpty() in route -> HomeScreen.TaskScreen("", "")
+        HomeScreen.NewTaskScreen::class.simpleName.orEmpty() in route -> HomeScreen.NewTaskScreen
         else -> null
     }
 }

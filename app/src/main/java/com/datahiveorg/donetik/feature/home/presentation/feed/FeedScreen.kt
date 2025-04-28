@@ -1,14 +1,11 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -16,13 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.datahiveorg.donetik.feature.auth.domain.model.User
-import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
-import com.datahiveorg.donetik.ui.components.ScreenTitle
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import org.koin.androidx.compose.koinViewModel
 
@@ -33,28 +26,28 @@ fun FeedScreen(
     snackBarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
-    val event by viewModel.event.collectAsStateWithLifecycle(initialValue = FeedEvent.None)
 
-    LaunchedEffect(event) {
-        when (event) {
-            is FeedEvent.None -> {}
-            is FeedEvent.Navigate.NewTask -> {
-                navigator.navigate(HomeScreen.NewTaskScreen)
-            }
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is FeedEvent.Navigate -> {
+                    navigator.navigate(HomeScreen.NewTaskScreen)
+                }
 
-            is FeedEvent.SelectTask -> {
-                navigator.navigate(
-                    HomeScreen.TaskScreen(
-                        taskId = (event as FeedEvent.SelectTask).taskId,
-                        userId = (event as FeedEvent.SelectTask).userId
+                is FeedEvent.SelectTask -> {
+                    navigator.navigate(
+                        HomeScreen.TaskScreen(
+                            taskId = event.taskId,
+                            userId = event.userId
+                        )
                     )
-                )
-            }
+                }
 
-            is FeedEvent.ShowSnackBar -> {
-                snackBarHostState.showSnackbar((event as FeedEvent.ShowSnackBar).message)
-            }
+                is FeedEvent.ShowSnackBar -> {
+                    snackBarHostState.showSnackbar(event.message)
+                }
 
+            }
         }
     }
 
@@ -87,8 +80,7 @@ fun FeedContent(
         LazyColumn(
             modifier = modifier
                 .fillMaxSize(),
-            contentPadding = PaddingValues(vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(
                 items = state.tasks,

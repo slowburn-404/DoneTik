@@ -2,9 +2,9 @@ package com.datahiveorg.donetik.ui.navigation
 
 import androidx.annotation.DrawableRes
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
+import kotlinx.serialization.Serializable
 
 interface FeatureScreen {
-    val route: String
     val title: String
 
     //have default values and override only when necessary
@@ -27,40 +27,33 @@ data class TopBarAction(
     val onClick: () -> Unit
 )
 
+@Serializable
 data object RouterScreen : FeatureScreen {
-    override val route: String
-        get() = "router_screen"
-
     override val title: String
         get() = ""
 }
 
+@Serializable
 data object AuthFeature : FeatureScreen {
     override val title: String
         get() = ""
-
-    override val route: String
-        get() = "auth_feature"
 }
 
+@Serializable
 data object OnBoardingFeature : FeatureScreen {
     override val title: String
         get() = ""
-
-    override val route: String
-        get() = "onboarding_feature"
 }
 
+@Serializable
 data object HomeFeature : FeatureScreen {
-    override val route: String
-        get() = "home_feature"
     override val title: String
         get() = "Home"
 }
 
-fun FeatureScreen.getFABDestination(): String {
+fun FeatureScreen.getFABDestination(): FeatureScreen {
     return when (this) {
-        is HomeScreen.Feed -> HomeScreen.NewTaskScreen.route
-        else -> ""
+        is HomeScreen.Feed -> HomeScreen.NewTaskScreen
+        else -> this//trash code TODO(Find better way when adding more screens)
     }
 }

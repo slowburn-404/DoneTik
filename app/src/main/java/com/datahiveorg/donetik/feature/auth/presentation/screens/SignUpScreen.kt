@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -123,7 +122,7 @@ fun SignUpScreen(
             onClick = {
                 onIntent(AuthenticationIntent.SignUp)
             },
-            isFormValid = state.isFormValid,
+            isEnabled = state.isFormValid,
             isLoading = state.isLoading
         )
 

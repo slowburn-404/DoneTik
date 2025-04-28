@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.usecase.GetUserInfoUseCase
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,11 +30,11 @@ class FeedViewModel(
         emitIntent(FeedIntent.GetUserInfo)
     }
 
-    private val _intent = MutableSharedFlow<FeedIntent>()
+    private val _intent = MutableSharedFlow<FeedIntent>(replay = 1)
     private val intent = _intent.asSharedFlow()
 
-    private val _event = MutableSharedFlow<FeedEvent>()
-    val event = _event.asSharedFlow()
+    private val _event = Channel<FeedEvent>()
+    val event = _event.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -59,7 +61,7 @@ class FeedViewModel(
 
     fun emitEvent(event: FeedEvent) {
         viewModelScope.launch {
-            _event.emit(event)
+            _event.send(event)
         }
     }
 

@@ -26,19 +26,22 @@ fun AnimatedBottomNavBar(
     val bottomBarScreens = listOf(
         HomeScreen.Feed
     )
-    val isBottomBarVisible = currentDestination?.route in listOf(
-        HomeScreen.Feed.route
-    )
+    val isBottomBarVisible = currentDestination?.route?.let { route ->
+        HomeScreen.Feed::class.simpleName.orEmpty() in route
+    } ?: false
 
     AnimatedVisibility(
         visible = isBottomBarVisible,
         enter = slideInVertically(
             tween(
-                durationMillis = ANIMATION_DURATION_SHORT,
-//                delayMillis = 1000
+                durationMillis = ANIMATION_DURATION_SHORT
             )
         ) { it } + fadeIn(),
-        exit = slideOutVertically {it} + fadeOut()
+        exit = slideOutVertically(
+            tween(
+                durationMillis = ANIMATION_DURATION_SHORT
+            )
+        ) { it } + fadeOut()
     ) {
         BottomAppBar {
             bottomBarScreens.forEach { screen: FeatureScreen ->
@@ -58,9 +61,11 @@ fun AnimatedBottomNavBar(
                             screen.title
                         )
                     },
-                    selected = currentDestination?.route == screen.route,
+                    selected = currentDestination?.route?.let { route ->
+                        screen::class.simpleName.orEmpty() in route
+                    } ?: false,
                     onClick = {
-                        navController.navigate(screen.route) {
+                        navController.navigate(screen) {
                             popUpTo(navController.graph.startDestinationRoute!!) {
                                 saveState = true
                             }

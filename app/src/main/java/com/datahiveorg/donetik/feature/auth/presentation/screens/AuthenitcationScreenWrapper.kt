@@ -31,15 +31,14 @@ fun AuthenticationScreenWrapper(
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val event by viewModel.uiEvents.collectAsStateWithLifecycle(AuthenticationUiEvent.None)
     val googleSignHelper = remember { GoogleSignHelper(context) }
 
-    LaunchedEffect(event) {
+    LaunchedEffect(Unit) {
+        viewModel.uiEvents.collect { event ->
         when (event) {
-            is AuthenticationUiEvent.None -> {}
             is AuthenticationUiEvent.ShowSnackBar -> {
                 snackBarHostState
-                    .showSnackbar((event as AuthenticationUiEvent.ShowSnackBar).message)
+                    .showSnackbar(event.message)
             }
 
             is AuthenticationUiEvent.Navigate.Login -> {
@@ -54,6 +53,7 @@ fun AuthenticationScreenWrapper(
                 navigator.navigate(HomeFeature)
             }
         }
+    }
     }
 
     content(

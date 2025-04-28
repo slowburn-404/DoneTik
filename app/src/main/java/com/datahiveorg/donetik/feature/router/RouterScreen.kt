@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -15,11 +16,12 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RouterScreen(
-    event: RouterEvent,
     modifier: Modifier = Modifier,
+    viewModel: RouterViewModel = koinViewModel(),
     onNavigate: (FeatureScreen) -> Unit
 ) {
 
@@ -30,17 +32,18 @@ fun RouterScreen(
         composition = composition,
         iterations = LottieConstants.IterateForever
     )
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(event) {
-        when (event) {
-            is RouterEvent.Navigate -> {
-                delay(1500L) //mbogi lazima waone animation
-                onNavigate(
-                    event.screen
-                )
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is RouterEvent.Navigate -> {
+                    delay(1500L) //getting user info is asynchronous TODO(Find better solution)
+                    onNavigate(
+                        event.screen
+                    )
+                }
             }
-
-            is RouterEvent.None -> {}
         }
     }
 
