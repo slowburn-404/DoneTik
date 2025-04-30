@@ -23,7 +23,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TaskViewScreen(
-    viewModel: TaskViewModel = koinViewModel(),
+    viewModel: TaskViewModel,
     navigator: DoneTikNavigator,
     snackBarHostState: SnackbarHostState,
     taskId: String,

@@ -8,8 +8,8 @@ internal class AuthenticationNavigatorImpl(
     private val navController: NavHostController
 ) : DoneTikNavigator {
 
-    override fun navigate(screen: FeatureScreen) {
-        when (screen) {
+    override fun navigate(destination: FeatureScreen) {
+        when (destination) {
             is AuthenticationScreen.LoginScreen -> navigateToLogin()
             is AuthenticationScreen.SignUpScreen -> navigateToSignUp()
         }

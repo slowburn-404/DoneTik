@@ -7,13 +7,13 @@ import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 internal class HomeNavigatorImpl(
     private val navController: NavHostController
 ) : DoneTikNavigator {
-    override fun navigate(screen: FeatureScreen) {
-        when (screen) {
+    override fun navigate(destination: FeatureScreen) {
+        when (destination) {
             is HomeScreen.Feed -> navigateToFeedScreen()
             is HomeScreen.NewTaskScreen -> navigateToNewTaskScreen()
             is HomeScreen.TaskScreen -> navigateToTaskViewScreen(
-                taskId = screen.taskId,
-                userId = screen.userId
+                taskId = destination.taskId,
+                userId = destination.userId
             )
         }
     }

@@ -1,6 +1,8 @@
 package com.datahiveorg.donetik.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,7 +18,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
+import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_LONG
 
 @Composable
 fun AnimatedBottomNavBar(
@@ -34,14 +36,30 @@ fun AnimatedBottomNavBar(
         visible = isBottomBarVisible,
         enter = slideInVertically(
             tween(
-                durationMillis = ANIMATION_DURATION_SHORT
+                durationMillis = ANIMATION_DURATION_LONG,
+                delayMillis = ANIMATION_DURATION_LONG,
+                easing = EaseIn
             )
-        ) { it } + fadeIn(),
+        ) { it } + fadeIn(
+            tween(
+                durationMillis = ANIMATION_DURATION_LONG,
+                delayMillis = ANIMATION_DURATION_LONG,
+                easing = EaseIn
+            )
+        ),
         exit = slideOutVertically(
             tween(
-                durationMillis = ANIMATION_DURATION_SHORT
+                durationMillis = ANIMATION_DURATION_LONG,
+                delayMillis = ANIMATION_DURATION_LONG,
+                easing = EaseOut
             )
-        ) { it } + fadeOut()
+        ) { it } + fadeOut(
+            tween(
+                durationMillis = ANIMATION_DURATION_LONG,
+                delayMillis = ANIMATION_DURATION_LONG,
+                easing = EaseIn
+            )
+        )
     ) {
         BottomAppBar {
             bottomBarScreens.forEach { screen: FeatureScreen ->
