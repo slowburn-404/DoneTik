@@ -8,7 +8,7 @@ sealed class HomeScreen : FeatureScreen {
     @Serializable
     data object Feed : HomeScreen() {
         override val title: String
-            get() = "Feed"
+            get() = "Home"
         override val hasBottomBar: Boolean
             get() = true
         override val hasFAB: Boolean

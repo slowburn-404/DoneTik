@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
+import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_LONG
 
 
 @Composable
@@ -41,15 +41,15 @@ fun HorizontalPagerIndicator(
 
             val width by animateDpAsState(
                 targetValue = if (isSelected) 24.dp else 8.dp,
-                animationSpec = tween(durationMillis = ANIMATION_DURATION_SHORT)
+                animationSpec = tween(durationMillis = ANIMATION_DURATION_LONG)
             )
             val height by animateDpAsState(
                 targetValue = 8.dp,
-                animationSpec = tween(durationMillis = ANIMATION_DURATION_SHORT)
+                animationSpec = tween(durationMillis = ANIMATION_DURATION_LONG)
             )
             val backgroundColor by animateColorAsState(
                 targetValue = if (isSelected) colorScheme.primary else Color.LightGray,
-                animationSpec = tween(durationMillis = ANIMATION_DURATION_SHORT)
+                animationSpec = tween(durationMillis = ANIMATION_DURATION_LONG)
             )
 
             val shape = if (isSelected) {

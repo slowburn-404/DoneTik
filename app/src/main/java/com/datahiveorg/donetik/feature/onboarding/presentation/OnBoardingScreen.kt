@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.datahiveorg.donetik.ui.components.PrimaryButton
 import com.datahiveorg.donetik.ui.navigation.AuthFeature
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
+import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_LONG
 import com.datahiveorg.donetik.util.Logger
 import kotlinx.coroutines.launch
 
@@ -57,7 +57,7 @@ fun OnBoardingScreen(
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(
                             page = pagerState.pageCount - 1,
-                            animationSpec = tween(ANIMATION_DURATION_SHORT)
+                            animationSpec = tween(ANIMATION_DURATION_LONG)
                         )
                     }
                 }

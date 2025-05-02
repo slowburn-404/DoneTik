@@ -7,20 +7,20 @@ import com.datahiveorg.donetik.feature.auth.presentation.screens.AuthenticationS
 import com.datahiveorg.donetik.feature.auth.presentation.screens.LoginScreen
 import com.datahiveorg.donetik.feature.auth.presentation.screens.SignUpScreen
 import com.datahiveorg.donetik.ui.navigation.AuthFeature
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.animatedComposable
 
 
 fun NavGraphBuilder.authenticationNavGraph(
-    navigator: DoneTikNavigator,
+    authenticationNavigator: AuthenticationNavigator,
     snackBarHostState: SnackbarHostState,
 ) {
+
     navigation<AuthFeature>(
         startDestination = AuthenticationScreen.LoginScreen,
     ) {
         animatedComposable<AuthenticationScreen.LoginScreen> {
             AuthenticationScreenWrapper(
-                navigator = navigator,
+                navigator = authenticationNavigator,
                 snackBarHostState = snackBarHostState,
             ) { state, onEvent, onIntent, googleSignHelper ->
                 LoginScreen(
@@ -34,7 +34,7 @@ fun NavGraphBuilder.authenticationNavGraph(
 
         animatedComposable<AuthenticationScreen.SignUpScreen> {
             AuthenticationScreenWrapper(
-                navigator = navigator,
+                navigator = authenticationNavigator,
                 snackBarHostState = snackBarHostState,
             ) { state, onEvent, onIntent, googleSignInHelper ->
                 SignUpScreen(
