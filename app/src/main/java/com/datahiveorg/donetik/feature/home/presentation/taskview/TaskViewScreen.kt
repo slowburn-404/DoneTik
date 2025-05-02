@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
 import com.datahiveorg.donetik.ui.components.PrimaryButton
 import com.datahiveorg.donetik.ui.components.ScreenTitle
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
@@ -24,7 +25,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun TaskViewScreen(
     viewModel: TaskViewModel,
-    navigator: DoneTikNavigator,
+    navigator: HomeNavigator,
     snackBarHostState: SnackbarHostState,
     taskId: String,
     userId: String
@@ -40,10 +41,6 @@ fun TaskViewScreen(
             when (event) {
                 is TaskViewEvent.ShowSnackBar -> {
                     snackBarHostState.showSnackbar(event.message)
-                }
-
-                is TaskViewEvent.Navigate -> {
-                    navigator.navigate(event.screen)
                 }
             }
         }

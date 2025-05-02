@@ -2,6 +2,7 @@ package com.datahiveorg.donetik
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,9 +11,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -22,26 +27,49 @@ import com.datahiveorg.donetik.ui.components.AnimatedBottomNavBar
 import com.datahiveorg.donetik.ui.components.AnimatedFAB
 import com.datahiveorg.donetik.ui.components.SnackBar
 import com.datahiveorg.donetik.ui.components.TopBar
+import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.ui.navigation.NavOptions
 import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
 import com.datahiveorg.donetik.ui.navigation.RootNavGraph
 import com.datahiveorg.donetik.ui.navigation.RouterScreen
 import com.datahiveorg.donetik.ui.navigation.getFABDestination
 import com.datahiveorg.donetik.ui.theme.DoneTikTheme
+import com.datahiveorg.donetik.util.Logger
+import org.koin.compose.getKoin
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            navigationBarStyle = SystemBarStyle.auto(
+                Color.Transparent.toArgb(),
+                Color.Transparent.toArgb()
+            )
+        )
         setContent {
             val navController = rememberNavController()
+            val navigator = getKoin().get<DoneTikNavigator> { parametersOf(navController) }
             val backStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = backStackEntry?.destination
             val currentScreen =
                 getCurrentScreen(destination = currentDestination)
             val snackBarHostState = SnackbarHostState()
+
+            DisposableEffect(navController) {
+                val listener =
+                    NavController.OnDestinationChangedListener { _, destination, arguments ->
+                        Logger.i("RootNavigation", "Destination changed to: ${destination.route}")
+                        Logger.i("RootNavigation", "Arguments: $arguments")
+
+                    }
+                navController.addOnDestinationChangedListener(listener)
+                onDispose {
+                    navController.removeOnDestinationChangedListener(listener)
+                }
+            }
 
             DoneTikTheme {
                 Scaffold(
@@ -61,7 +89,7 @@ class MainActivity : ComponentActivity() {
                             TopBar(
                                 showNavigationIcon = screen.hasNavIcon,
                                 onBackClick = {
-                                    navController.navigateUp()
+                                    navigator.navigateUp()
                                 },
                                 actions = screen.topBarActions,
                                 title = screen.title
@@ -73,7 +101,7 @@ class MainActivity : ComponentActivity() {
                             featureScreen.hasBottomBar
                         }?.let {
                             AnimatedBottomNavBar(
-                                navController = navController,
+                                navigator = navigator,
                                 currentDestination = currentDestination
                             )
                         }
@@ -83,10 +111,14 @@ class MainActivity : ComponentActivity() {
                         currentScreen?.takeIf { featureScreen ->
                             featureScreen.hasFAB
                         }?.let { screen ->
-                            val route = screen.getFABDestination()
+                            val destination = screen.getFABDestination()
+                            val navOptions = NavOptions(
+                                popUpToDestination = screen,
+                                inclusive = true,
+                            )
                             AnimatedFAB(
                                 isVisible = true,
-                                onClick = { navController.navigate(route) }
+                                onClick = { navigator.navigate(destination, navOptions) }
                             )
                         }
                     },
@@ -97,7 +129,8 @@ class MainActivity : ComponentActivity() {
                     RootNavGraph(
                         paddingValues = innerPadding,
                         snackBarHostState = snackBarHostState,
-                        navController = navController,
+                        navigator = navigator,
+                        navController = navController
                     )
                 }
             }
@@ -105,6 +138,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+//will fail when obfuscation is done
 private fun getCurrentScreen(
     destination: NavDestination?,
 ): FeatureScreen? {

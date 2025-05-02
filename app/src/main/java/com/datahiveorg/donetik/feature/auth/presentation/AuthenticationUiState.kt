@@ -22,4 +22,5 @@ data class AuthenticationUiState(
     val passwordError: String = "",
     val isPasswordVisible: Boolean = false,
     val isFormValid: Boolean = false,
+    val isAuthenticated: Boolean = false,
 )

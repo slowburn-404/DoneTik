@@ -14,32 +14,36 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
 import com.datahiveorg.donetik.util.Logger
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun FeedScreen(
     viewModel: FeedViewModel,
-    navigator: DoneTikNavigator,
+    navigator: HomeNavigator,
     snackBarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
+    val uiEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = FeedEvent.None)
 
-    LaunchedEffect(key1 = true) {
-        viewModel.event.collect { event ->
+    LaunchedEffect(uiEvent) {
+        viewModel.event.collectLatest { event ->
             when (event) {
-                is FeedEvent.Navigate -> {
-                    navigator.navigate(HomeScreen.NewTaskScreen)
+                is FeedEvent.Navigate.Feed -> {
+                    navigator.navigateToFeedScreen()
+                }
+
+                is FeedEvent.Navigate.NewTask -> {
+                    navigator.navigateToNewTaskScreen()
                 }
 
                 is FeedEvent.SelectTask -> {
-                    navigator.navigate(
-                        HomeScreen.TaskScreen(
-                            taskId = event.taskId,
-                            userId = event.userId
-                        )
+                    Logger.i(
+                        "FeedEvent.SelectTask",
+                        "Task clicked: ${event.taskId} \n ${event.userId}"
                     )
+                    navigator.navigateToTaskViewScreen(taskId = event.taskId, userId = event.userId)
                 }
 
                 is FeedEvent.ShowSnackBar -> {
@@ -88,6 +92,10 @@ fun FeedContent(
                 TaskCard(
                     task = task,
                     onClick = {
+                        Logger.i(
+                            "Feed item click",
+                            "Task clicked: ${task.id} \n ${task.author.uid}"
+                        )
                         onEvent(
                             FeedEvent.SelectTask(
                                 taskId = task.id,

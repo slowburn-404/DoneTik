@@ -32,8 +32,8 @@ class FeedViewModel(
     private val intent = _intent.asSharedFlow()
 
     private val _event = MutableSharedFlow<FeedEvent>(
-        replay = 0,
-        extraBufferCapacity = 1
+        replay = 1,
+        extraBufferCapacity = 5
     )
     val event = _event.asSharedFlow()
 

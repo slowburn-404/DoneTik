@@ -16,16 +16,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
 import com.datahiveorg.donetik.ui.components.PrimaryButton
 import com.datahiveorg.donetik.ui.components.UserInputField
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.HomeFeature
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NewTaskScreen(
     viewModel: NewTaskViewModel,
-    navigator: DoneTikNavigator,
+    navigator: HomeNavigator,
     snackBarHostState: SnackbarHostState
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle(initialValue = NewTaskState())
@@ -39,7 +37,7 @@ fun NewTaskScreen(
                 }
 
                 is NewTaskEvent.SaveSuccessful -> {
-                    navigator.navigate(HomeFeature)
+                    navigator.navigateToFeedScreen()
                 }
             }
         }

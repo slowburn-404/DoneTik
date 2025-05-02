@@ -1,9 +1,9 @@
 package com.datahiveorg.donetik.feature.auth.di
 
-import androidx.navigation.NavHostController
 import com.datahiveorg.donetik.feature.auth.data.AuthRepositoryImpl
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationViewModel
+import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationNavigator
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationNavigatorImpl
 import com.datahiveorg.donetik.firebase.authentication.FirebaseAuthService
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
@@ -20,9 +20,9 @@ val authModule = module {
         )
     }
 
-    factory<DoneTikNavigator> { (navController: NavHostController) ->
+    factory<AuthenticationNavigator> { (doneTikNavigator: DoneTikNavigator) ->
         AuthenticationNavigatorImpl(
-            navController = navController
+            doneTikNavigator = doneTikNavigator,
         )
     }
 

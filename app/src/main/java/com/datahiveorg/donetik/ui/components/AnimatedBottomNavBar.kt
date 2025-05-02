@@ -15,14 +15,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavDestination
-import androidx.navigation.NavHostController
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
+import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.ui.navigation.NavOptions
 import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_LONG
 
 @Composable
 fun AnimatedBottomNavBar(
-    navController: NavHostController,
+    navigator: DoneTikNavigator,
     currentDestination: NavDestination?
 ) {
     val bottomBarScreens = listOf(
@@ -83,13 +84,12 @@ fun AnimatedBottomNavBar(
                         screen::class.simpleName.orEmpty() in route
                     } ?: false,
                     onClick = {
-                        navController.navigate(screen) {
-                            popUpTo(navController.graph.startDestinationRoute!!) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        val navOptions = NavOptions(
+                            popUpToDestination = HomeScreen.Feed,
+                            inclusive = true,
+                            launchSingleTop = true,
+                        )
+                        navigator.navigate(screen, navOptions = navOptions)
                     },
                     alwaysShowLabel = false
                 )
