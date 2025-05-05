@@ -1,6 +1,4 @@
-package com.datahiveorg.donetik.ui.navigation
-
-import androidx.navigation.NavHostController
+package com.datahiveorg.donetik.ui.navigatio
 
 interface DoneTikNavigator {
     fun navigate(screen: FeatureScreen)

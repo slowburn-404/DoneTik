@@ -16,7 +16,6 @@ import androidx.navigation.compose.composable
 /**
  * Animate navigation transitions
  */
-
 inline fun <reified R : Any> NavGraphBuilder.animatedComposable(
     deepLinks: List<NavDeepLink> = emptyList(),
     noinline content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit

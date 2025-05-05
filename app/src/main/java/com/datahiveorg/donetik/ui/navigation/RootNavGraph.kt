@@ -59,7 +59,7 @@ fun RootNavGraph(
                 }
             )
         }
-
+        
         animatedComposable<OnBoardingFeature> {
             val event by onBoardingViewModel.events.collectAsStateWithLifecycle(initialValue = OnBoardingEvents.None)
             val state by onBoardingViewModel.state.collectAsStateWithLifecycle()

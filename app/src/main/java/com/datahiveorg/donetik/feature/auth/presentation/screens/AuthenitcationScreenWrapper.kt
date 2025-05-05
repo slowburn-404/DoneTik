@@ -35,25 +35,25 @@ fun AuthenticationScreenWrapper(
 
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->
-        when (event) {
-            is AuthenticationUiEvent.ShowSnackBar -> {
-                snackBarHostState
-                    .showSnackbar(event.message)
-            }
+            when (event) {
+                is AuthenticationUiEvent.ShowSnackBar -> {
+                    snackBarHostState
+                        .showSnackbar(event.message)
+                }
 
-            is AuthenticationUiEvent.Navigate.Login -> {
-                navigator.navigate(AuthenticationScreen.LoginScreen)
-            }
+                is AuthenticationUiEvent.Navigate.Login -> {
+                    navigator.navigate(AuthenticationScreen.LoginScreen)
+                }
 
-            is AuthenticationUiEvent.Navigate.SignUp -> {
-                navigator.navigate(AuthenticationScreen.SignUpScreen)
-            }
+                is AuthenticationUiEvent.Navigate.SignUp -> {
+                    navigator.navigate(AuthenticationScreen.SignUpScreen)
+                }
 
-            is AuthenticationUiEvent.AuthenticationSuccessful -> {
-                navigator.navigate(HomeFeature)
+                is AuthenticationUiEvent.AuthenticationSuccessful -> {
+                    navigator.navigate(HomeFeature)
+                }
             }
         }
-    }
     }
 
     content(

@@ -24,7 +24,6 @@ fun NavGraphBuilder.homeNavigationGraph(
                 snackBarHostState = snackBarHostState
             )
         }
-
         animatedComposable<HomeScreen.NewTaskScreen> {
             NewTaskScreen(
                 navigator = navigator,

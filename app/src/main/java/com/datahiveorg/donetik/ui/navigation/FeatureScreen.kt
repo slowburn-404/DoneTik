@@ -45,8 +45,25 @@ data object OnBoardingFeature : FeatureScreen {
         get() = ""
 }
 
-@Serializable
+data object AuthFeature : FeatureScreen {
+    override val title: String
+        get() = ""
+
+    override val route: String
+        get() = "auth_feature"
+}
+
+data object OnBoardingFeature : FeatureScreen {
+    override val title: String
+        get() = ""
+
+    override val route: String
+        get() = "onboarding_feature"
+}
+
 data object HomeFeature : FeatureScreen {
+    override val route: String
+        get() = "home_feature"
     override val title: String
         get() = "Home"
 }
