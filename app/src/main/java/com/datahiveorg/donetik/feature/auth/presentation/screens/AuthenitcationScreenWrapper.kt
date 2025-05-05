@@ -11,16 +11,15 @@ import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationIntent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiEvent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiState
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationViewModel
-import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationScreen
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.HomeFeature
+import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationNavigator
 import com.datahiveorg.donetik.util.GoogleSignHelper
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AuthenticationScreenWrapper(
     viewModel: AuthenticationViewModel = koinViewModel(),
-    navigator: DoneTikNavigator,
+    navigator: AuthenticationNavigator,
     snackBarHostState: SnackbarHostState,
     content: @Composable (
         state: AuthenticationUiState,
@@ -33,26 +32,30 @@ fun AuthenticationScreenWrapper(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val googleSignHelper = remember { GoogleSignHelper(context) }
 
-    LaunchedEffect(Unit) {
-        viewModel.uiEvents.collect { event ->
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvents.collectLatest { event ->
             when (event) {
+                is AuthenticationUiEvent.None -> {}
+
                 is AuthenticationUiEvent.ShowSnackBar -> {
                     snackBarHostState
                         .showSnackbar(event.message)
                 }
 
                 is AuthenticationUiEvent.Navigate.Login -> {
-                    navigator.navigate(AuthenticationScreen.LoginScreen)
+                    navigator.navigateToLogin()
                 }
 
                 is AuthenticationUiEvent.Navigate.SignUp -> {
-                    navigator.navigate(AuthenticationScreen.SignUpScreen)
-                }
-
-                is AuthenticationUiEvent.AuthenticationSuccessful -> {
-                    navigator.navigate(HomeFeature)
+                    navigator.navigateToSignUp()
                 }
             }
+        }
+    }
+
+    LaunchedEffect(state) {
+        if (state.isAuthenticated) {
+            navigator.navigateToHomeFeature()
         }
     }
 

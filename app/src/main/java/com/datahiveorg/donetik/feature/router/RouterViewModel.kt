@@ -8,16 +8,13 @@ import com.datahiveorg.donetik.feature.onboarding.data.OnBoardingRepository
 import com.datahiveorg.donetik.ui.navigation.AuthFeature
 import com.datahiveorg.donetik.ui.navigation.HomeFeature
 import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
-import com.datahiveorg.donetik.util.Logger
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -26,17 +23,19 @@ class RouterViewModel(
     private val onBoardingRepository: OnBoardingRepository,
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<RouterState> = MutableStateFlow(RouterState())
-    val state: StateFlow<RouterState> = _state.onStart {
+    init {
         navigator()
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = RouterState()
-    )
+    }
 
-    private val _event: MutableSharedFlow<RouterEvent> = MutableSharedFlow()
+    private val _state: MutableStateFlow<RouterState> = MutableStateFlow(RouterState())
+    val state: StateFlow<RouterState> = _state.asStateFlow()
+
+    private val _event: MutableSharedFlow<RouterEvent> = MutableSharedFlow(replay = 1)
     val event: SharedFlow<RouterEvent> = _event.asSharedFlow()
+
+    //guard rails to ensure both async tasks complete
+    private var isLoggedInFetched = false
+    private var hasFinishedOnBoardingFetched = false
 
     private fun emitEvent(event: RouterEvent) {
         viewModelScope.launch {
@@ -44,7 +43,10 @@ class RouterViewModel(
         }
     }
 
+
     private fun decideNavigation() {
+        if (!isLoggedInFetched || !hasFinishedOnBoardingFetched) return
+
         val currentState = _state.value
 
         when {
@@ -62,28 +64,30 @@ class RouterViewModel(
         }
     }
 
-    private suspend fun navigator() = coroutineScope {
-        launch {
-            onBoardingRepository.hasFinishedOnBoarding.collect { isFinished ->
-                _state.update { currentState ->
-                    currentState.copy(hasFinishedOnBoarding = isFinished)
+    private fun navigator() {
+        viewModelScope.launch {
+            launch {
+                onBoardingRepository.hasFinishedOnBoarding.collectLatest { isFinished ->
+                    _state.update { currentState ->
+                        currentState.copy(hasFinishedOnBoarding = isFinished)
+                    }
+                    hasFinishedOnBoardingFetched = true
+                    decideNavigation()
                 }
-                Logger.i("OnBoarding", isFinished.toString())
-                decideNavigation()
+            }
+
+            launch {
+                val response = authRepository.checkLoginStatus()
+                if (response is DomainResponse.Success) {
+                    _state.update { currentState ->
+                        currentState.copy(
+                            isLoggedIn = response.data
+                        )
+                    }
+                    isLoggedInFetched = true
+                    decideNavigation()
+                }
             }
         }
-
-        launch {
-            val response = authRepository.checkLoginStatus()
-            if (response is DomainResponse.Success) {
-                _state.update { currentState ->
-                    currentState.copy(
-                        isLoggedIn = response.data
-                    )
-                }
-                decideNavigation()
-            }
-        }
-
     }
 }

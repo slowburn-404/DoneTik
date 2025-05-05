@@ -21,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
+import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_LONG
 
 @Composable
 fun PrimaryButton(
@@ -43,17 +43,17 @@ fun PrimaryButton(
         ) {
             androidx.compose.animation.AnimatedVisibility(
                 visible = !isLoading,
-                enter = fadeIn(animationSpec = tween(ANIMATION_DURATION_SHORT)),
-                exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_SHORT)),
+                enter = fadeIn(animationSpec = tween(ANIMATION_DURATION_LONG)),
+                exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_LONG)),
 
             ) {
                 AnimatedContent(
                     targetState = label,
                     transitionSpec = {
                         fadeIn(
-                            animationSpec = tween(ANIMATION_DURATION_SHORT)
+                            animationSpec = tween(ANIMATION_DURATION_LONG)
                         ) togetherWith fadeOut(
-                            animationSpec = tween(ANIMATION_DURATION_SHORT)
+                            animationSpec = tween(ANIMATION_DURATION_LONG)
                         )
                     }
                 ) { targetLabel ->
@@ -66,8 +66,8 @@ fun PrimaryButton(
 
             androidx.compose.animation.AnimatedVisibility(
                 visible = isLoading,
-                enter = fadeIn(animationSpec = tween(ANIMATION_DURATION_SHORT)),
-                exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_SHORT)),
+                enter = fadeIn(animationSpec = tween(ANIMATION_DURATION_LONG)),
+                exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_LONG)),
             ) {
                 ProgressIndicator(
                     color = colorScheme.onPrimary

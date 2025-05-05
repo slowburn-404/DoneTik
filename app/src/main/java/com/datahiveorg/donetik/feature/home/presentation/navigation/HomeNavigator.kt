@@ -1,49 +1,37 @@
 package com.datahiveorg.donetik.feature.home.presentation.navigation
 
-import androidx.navigation.NavHostController
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 
-internal class HomeNavigatorImpl(
-    private val navController: NavHostController
-) : DoneTikNavigator {
-    override fun navigate(screen: FeatureScreen) {
-        when (screen) {
-            is HomeScreen.Feed -> navigateToFeedScreen()
-            is HomeScreen.NewTaskScreen -> navigateToNewTaskScreen()
-            is HomeScreen.TaskScreen -> navigateToTaskViewScreen(
-                taskId = screen.taskId,
-                userId = screen.userId
-            )
-        }
+interface HomeNavigator {
+    fun navigateToFeedScreen()
+
+    fun navigateToNewTaskScreen()
+
+    fun navigateToTaskViewScreen(taskId: String, userId: String)
+}
+
+class HomeNavigatorImpl(
+    private val doneTikNavigator: DoneTikNavigator
+) : HomeNavigator {
+
+    override fun navigateToFeedScreen() {
+        doneTikNavigator.navigate(
+            destination = HomeScreen.Feed,
+            navOptions = HomeScreen.Feed.toNavOptions()
+        )
     }
 
-    private fun navigateToFeedScreen() {
-        navController.navigate(HomeScreen.Feed) {
-            launchSingleTop = true
-            popUpTo<HomeScreen.Feed> {
-                inclusive = true
-            }
-        }
+    override fun navigateToNewTaskScreen() {
+        doneTikNavigator.navigate(
+            destination = HomeScreen.NewTaskScreen,
+            navOptions = HomeScreen.NewTaskScreen.toNavOptions()
+        )
     }
 
-    private fun navigateToNewTaskScreen() {
-        navController.navigate(HomeScreen.NewTaskScreen) {
-            launchSingleTop = true
-            popUpTo<HomeScreen.Feed> {
-                inclusive = true
-            }
-        }
+    override fun navigateToTaskViewScreen(taskId: String, userId: String) {
+        doneTikNavigator.navigate(
+            destination = HomeScreen.TaskScreen(taskId = taskId, userId = userId),
+            navOptions = HomeScreen.TaskScreen(taskId = taskId, userId = userId).toNavOptions()
+        )
     }
-
-    private fun navigateToTaskViewScreen(taskId: String, userId: String) {
-        navController.navigate(HomeScreen.TaskScreen(taskId = taskId, userId = userId)) {
-            launchSingleTop = true
-            popUpTo<HomeScreen.Feed> {
-                inclusive = true
-            }
-        }
-
-    }
-
 }

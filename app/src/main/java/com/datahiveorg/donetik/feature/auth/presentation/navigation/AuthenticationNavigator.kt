@@ -1,36 +1,56 @@
 package com.datahiveorg.donetik.feature.auth.presentation.navigation
 
-import androidx.navigation.NavHostController
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.ui.navigation.HomeFeature
+import com.datahiveorg.donetik.ui.navigation.NavOptions
 
-internal class AuthenticationNavigatorImpl(
-    private val navController: NavHostController
-) : DoneTikNavigator {
+interface AuthenticationNavigator {
+    fun navigateToLogin()
 
-    override fun navigate(screen: FeatureScreen) {
-        when (screen) {
-            is AuthenticationScreen.LoginScreen -> navigateToLogin()
-            is AuthenticationScreen.SignUpScreen -> navigateToSignUp()
-        }
+    fun navigateToSignUp()
+
+    fun navigateToHomeFeature()
+}
+
+class AuthenticationNavigatorImpl(
+    private val doneTikNavigator: DoneTikNavigator
+) : AuthenticationNavigator {
+
+    override fun navigateToLogin() {
+        val loginScreenNavOptions = NavOptions(
+            inclusive = true,
+            launchSingleTop = true,
+            popUpToDestination = AuthenticationScreen.LoginScreen
+        )
+        doneTikNavigator.navigate(
+            destination = AuthenticationScreen.LoginScreen,
+            navOptions = loginScreenNavOptions
+        )
     }
 
-    private fun navigateToLogin() {
-        navController.navigate(AuthenticationScreen.LoginScreen) {
-            launchSingleTop = true
-            popUpTo<AuthenticationScreen.LoginScreen> {
-                inclusive = true
-            }
-        }
+    override fun navigateToSignUp() {
+        val signUpScreenNavOptions = NavOptions(
+            launchSingleTop = true,
+            inclusive = true,
+            popUpToDestination = AuthenticationScreen.SignUpScreen
+        )
+        doneTikNavigator.navigate(
+            destination = AuthenticationScreen.LoginScreen,
+            navOptions = signUpScreenNavOptions
+        )
     }
 
-    private fun navigateToSignUp() {
-        navController.navigate(AuthenticationScreen.SignUpScreen) {
-            launchSingleTop = true
-            popUpTo<AuthenticationScreen.SignUpScreen> {
-                inclusive = true
-            }
-        }
+    override fun navigateToHomeFeature() {
+        val homeScreenNavOptions = NavOptions(
+            launchSingleTop = true,
+            inclusive = true,
+            popUpToDestination = HomeFeature
+        )
+
+        doneTikNavigator.navigate(
+            destination = HomeFeature,
+            navOptions = homeScreenNavOptions
+        )
     }
 
 }
