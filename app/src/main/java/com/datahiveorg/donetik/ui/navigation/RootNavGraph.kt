@@ -10,12 +10,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationNavigator
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.authenticationNavGraph
+import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
 import com.datahiveorg.donetik.feature.home.presentation.navigation.homeNavigationGraph
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingEvents
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingScreen
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingViewModel
 import com.datahiveorg.donetik.feature.router.RouterScreen
+import com.datahiveorg.donetik.feature.router.RouterViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.getKoin
 import org.koin.core.parameter.parametersOf
@@ -25,11 +28,18 @@ fun RootNavGraph(
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues,
     snackBarHostState: SnackbarHostState,
+    navigator: DoneTikNavigator,
+    onBoardingViewModel: OnBoardingViewModel = koinViewModel(),
     navController: NavHostController,
-    onBoardingViewModel: OnBoardingViewModel = koinViewModel()
 ) {
-    val navigator =
-        getKoin().get<DoneTikNavigator> { parametersOf(navController) }
+    val authNavigator = getKoin().get<AuthenticationNavigator> { parametersOf(navigator) }
+    val homeNavigator = getKoin().get<HomeNavigator> { parametersOf(navigator) }
+    val navOptions = NavOptions(
+        launchSingleTop = true,
+        inclusive = true
+    )
+
+
     NavHost(
         modifier = modifier
             .padding(paddingValues)
@@ -37,25 +47,23 @@ fun RootNavGraph(
         navController = navController,
         startDestination = RouterScreen
     ) {
+
+
         authenticationNavGraph(
-            navigator = navigator,
+            authenticationNavigator = authNavigator,
             snackBarHostState = snackBarHostState,
         )
 
         homeNavigationGraph(
-            navigator = navigator,
+            homeNavigator= homeNavigator,
             snackBarHostState = snackBarHostState,
         )
 
         animatedComposable<RouterScreen> {
             RouterScreen(
+                viewModel = koinViewModel<RouterViewModel>(),
                 onNavigate = { screen ->
-                    navController.navigate(screen) {
-                        launchSingleTop = true
-                        popUpTo<RouterScreen> {
-                            inclusive = true
-                        }
-                    }
+                    navigator.navigate(screen, navOptions)
                 }
             )
         }
@@ -66,12 +74,7 @@ fun RootNavGraph(
 
             OnBoardingScreen(
                 onNavigate = { screen ->
-                    navController.navigate(screen) {
-                        launchSingleTop = true
-                        popUpTo(OnBoardingFeature) {
-                            inclusive = true
-                        }
-                    }
+                    navigator.navigate(screen, navOptions)
                 },
                 onEvent = onBoardingViewModel::emitEvent,
                 state = state

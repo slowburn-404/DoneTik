@@ -5,7 +5,7 @@ import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 import kotlinx.serialization.Serializable
 
 interface FeatureScreen {
-    val title: String
+    val title: String get() = ""
 
     //have default values and override only when necessary
     val hasTopAppBar: Boolean get() = false
@@ -28,49 +28,21 @@ data class TopBarAction(
 )
 
 @Serializable
-data object RouterScreen : FeatureScreen {
-    override val title: String
-        get() = ""
-}
+data object RouterScreen : FeatureScreen
 
 @Serializable
-data object AuthFeature : FeatureScreen {
-    override val title: String
-        get() = ""
-}
+data object AuthFeature : FeatureScreen
 
 @Serializable
-data object OnBoardingFeature : FeatureScreen {
-    override val title: String
-        get() = ""
-}
+data object OnBoardingFeature : FeatureScreen
 
-data object AuthFeature : FeatureScreen {
-    override val title: String
-        get() = ""
 
-    override val route: String
-        get() = "auth_feature"
-}
-
-data object OnBoardingFeature : FeatureScreen {
-    override val title: String
-        get() = ""
-
-    override val route: String
-        get() = "onboarding_feature"
-}
-
-data object HomeFeature : FeatureScreen {
-    override val route: String
-        get() = "home_feature"
-    override val title: String
-        get() = "Home"
-}
+@Serializable
+data object HomeFeature : FeatureScreen
 
 fun FeatureScreen.getFABDestination(): FeatureScreen {
     return when (this) {
         is HomeScreen.Feed -> HomeScreen.NewTaskScreen
-        else -> this//trash code TODO(Find better way when adding more screens)
+        else -> this//trash code TODO(Find a better way when adding more screens)
     }
 }

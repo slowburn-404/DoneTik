@@ -12,6 +12,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.datahiveorg.donetik.util.Animation
 
 /**
  * Animate navigation transitions
@@ -24,19 +25,36 @@ inline fun <reified R : Any> NavGraphBuilder.animatedComposable(
     enterTransition = {
         slideIntoContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Start,
-            animationSpec = tween(easing = EaseIn)
+            animationSpec = tween(
+                delayMillis = Animation.ANIMATION_DURATION_LONG,
+                durationMillis = Animation.ANIMATION_DURATION_LONG,
+                easing = EaseIn
+            )
         ) +
                 fadeIn(
-                    animationSpec = tween(easing = LinearEasing)
+                    animationSpec = tween(
+                        delayMillis = Animation.ANIMATION_DURATION_LONG,
+                        durationMillis = Animation.ANIMATION_DURATION_LONG,
+                        easing = LinearEasing
+                    )
                 )
 
     },
     exitTransition = {
         slideOutOfContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Start,
+            animationSpec = tween(
+                durationMillis = Animation.ANIMATION_DURATION_LONG,
+                delayMillis = Animation.ANIMATION_DURATION_LONG,
+                easing = LinearEasing
+            )
         ) +
                 fadeOut(
-                    animationSpec = tween(easing = LinearEasing),
+                    animationSpec = tween(
+                        delayMillis = Animation.ANIMATION_DURATION_LONG,
+                        durationMillis = Animation.ANIMATION_DURATION_LONG,
+                        easing = LinearEasing
+                    ),
                 )
 
 

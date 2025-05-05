@@ -20,7 +20,10 @@ class AuthenticationViewModel(
     private val _state = MutableStateFlow(AuthenticationUiState())
     val state: StateFlow<AuthenticationUiState> = _state.asStateFlow()
 
-    private val _uiEvents: MutableSharedFlow<AuthenticationUiEvent> = MutableSharedFlow()
+    private val _uiEvents: MutableSharedFlow<AuthenticationUiEvent> = MutableSharedFlow(
+        replay = 1,
+        extraBufferCapacity = 5
+    )
     val uiEvents: SharedFlow<AuthenticationUiEvent> = _uiEvents.asSharedFlow()
 
     private val _uiIntents: MutableSharedFlow<AuthenticationIntent> = MutableSharedFlow()
@@ -111,19 +114,20 @@ class AuthenticationViewModel(
             is DomainResponse.Failure -> {
                 _state.update { currentState ->
                     currentState.copy(
-                        isLoading = false
+                        isLoading = false,
+                        isAuthenticated = false
                     )
                 }
                 emitEvent(AuthenticationUiEvent.ShowSnackBar(response.message))
             }
 
-            is DomainResponse.Success<*> -> {
+            is DomainResponse.Success -> {
                 _state.update { currentState ->
                     currentState.copy(
                         isLoading = false,
+                        isAuthenticated = true
                     )
                 }
-                emitEvent(AuthenticationUiEvent.AuthenticationSuccessful)
             }
         }
         validateAndUpdateFormState()
@@ -137,18 +141,19 @@ class AuthenticationViewModel(
                 _state.update { currentState ->
                     currentState.copy(
                         isLoading = false,
+                        isAuthenticated = false
                     )
                 }
                 emitEvent(AuthenticationUiEvent.ShowSnackBar(response.message))
             }
 
-            is DomainResponse.Success<*> -> {
+            is DomainResponse.Success -> {
                 _state.update { currentState ->
                     currentState.copy(
                         isLoading = false,
+                        isAuthenticated = true
                     )
                 }
-                emitEvent(AuthenticationUiEvent.AuthenticationSuccessful)
             }
         }
         validateAndUpdateFormState()
@@ -179,16 +184,18 @@ class AuthenticationViewModel(
                 _state.update { currentState ->
                     currentState.copy(
                         user = response.data,
-                        isLoading = false
+                        isLoading = false,
+                        isFormValid = true,
+                        isAuthenticated = true,
                     )
                 }
-                emitEvent(AuthenticationUiEvent.AuthenticationSuccessful)
             }
 
             is DomainResponse.Failure -> {
                 _state.update { currentState ->
                     currentState.copy(
-                        isLoading = false
+                        isLoading = false,
+                        isAuthenticated = false
                     )
                 }
                 emitEvent(AuthenticationUiEvent.ShowSnackBar(response.message))
