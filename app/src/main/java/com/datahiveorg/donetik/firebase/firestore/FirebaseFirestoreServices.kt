@@ -117,8 +117,7 @@ internal class FirebaseFireStoreServiceImpl(
 
             if (!doc.exists()) throw NoSuchElementException("Task not found: \$taskId")
 
-            doc.toObject(TaskDTO::class.java)
-                ?: throw IllegalStateException("Failed to deserialize TaskDTO for id: \$taskId")
+            doc.toTaskDTO()
         }
 
     private fun getTaskDocumentReference(taskDTO: Map<String, Any>): DocumentReference {
