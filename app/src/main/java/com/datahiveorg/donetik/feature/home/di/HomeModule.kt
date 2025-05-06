@@ -12,6 +12,7 @@ import com.datahiveorg.donetik.feature.home.presentation.newtask.NewTaskViewMode
 import com.datahiveorg.donetik.feature.home.presentation.taskview.TaskViewModel
 import com.datahiveorg.donetik.firebase.firestore.FirebaseFireStoreService
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.util.DispatcherProvider
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -25,7 +26,8 @@ val homeModule = module {
     viewModel<FeedViewModel> {
         FeedViewModel(
             homeRepository = get<HomeRepository>(),
-            getUserInfoUseCase = get<GetUserInfoUseCase>()
+            getUserInfoUseCase = get<GetUserInfoUseCase>(),
+            dispatcher = get<DispatcherProvider>()
         )
 
     }

@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
+import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
 import com.datahiveorg.donetik.util.Logger
 import kotlinx.coroutines.flow.collectLatest
 
@@ -26,6 +27,7 @@ fun FeedScreen(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
     val uiEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = FeedEvent.None)
+    val filterState by viewModel.filteredTasks.collectAsStateWithLifecycle(initialValue = FilterState())
 
     LaunchedEffect(uiEvent) {
         viewModel.event.collectLatest { event ->
@@ -58,6 +60,7 @@ fun FeedScreen(
         state = uiState,
         onEvent = viewModel::emitEvent,
         onIntent = viewModel::emitIntent,
+        filterState = filterState
     )
 
 
@@ -68,6 +71,7 @@ fun FeedScreen(
 fun FeedContent(
     modifier: Modifier = Modifier,
     state: FeedState,
+    filterState: FilterState,
     onEvent: (FeedEvent) -> Unit,
     onIntent: (FeedIntent) -> Unit,
 ) {
@@ -85,8 +89,18 @@ fun FeedContent(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            item {
+                FeedSegmentedButtons(
+                    selectedIndex = filterState.filter,
+                    onOptionsSelected = { newStatus ->
+                        onIntent(FeedIntent.Filter(newStatus))
+                    },
+                    options = Status.entries
+                )
+            }
+
             items(
-                items = state.tasks,
+                items = filterState.filteredTasks,
                 key = { task -> task.id }
             ) { task ->
                 TaskCard(
