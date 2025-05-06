@@ -66,12 +66,14 @@ class TaskViewModel(
     }
 
     private suspend fun getTask(userId: String, taskId: String) {
+        showLoadingIndicator()
         when (val response =
             homeRepository.getSingleTask(taskId = taskId, userId = userId)) {
             is DomainResponse.Success -> {
                 _state.update { currentState ->
                     currentState.copy(
-                        task = response.data
+                        task = response.data,
+                        isLoading = false
                     )
                 }
             }
@@ -79,7 +81,8 @@ class TaskViewModel(
             is DomainResponse.Failure -> {
                 _state.update { currentState ->
                     currentState.copy(
-                        error = response.message
+                        error = response.message,
+                        isLoading = false
                     )
                 }
                 emitEvent(TaskViewEvent.ShowSnackBar(response.message))
@@ -90,26 +93,48 @@ class TaskViewModel(
     }
 
     private suspend fun updateTask(task: Task) {
+        showLoadingIndicator()
         when (val response = homeRepository.updateTask((task))) {
             is DomainResponse.Success -> {
+                hideLoadingIndicator()
                 emitEvent(TaskViewEvent.ShowSnackBar(response.data))
             }
 
             is DomainResponse.Failure -> {
+                hideLoadingIndicator()
                 emitEvent(TaskViewEvent.ShowSnackBar(response.message))
             }
         }
     }
 
     private suspend fun deleteTask(task: Task) {
+        showLoadingIndicator()
         when (val response = homeRepository.deleteTask((task))) {
             is DomainResponse.Success -> {
+                hideLoadingIndicator()
                 emitEvent(TaskViewEvent.ShowSnackBar(response.data))
             }
 
             is DomainResponse.Failure -> {
+                hideLoadingIndicator()
                 emitEvent(TaskViewEvent.ShowSnackBar(response.message))
             }
+        }
+    }
+
+    private fun showLoadingIndicator() {
+        _state.update { currentState ->
+            currentState.copy(
+                isLoading = true
+            )
+        }
+    }
+
+    private fun hideLoadingIndicator() {
+        _state.update { currentState ->
+            currentState.copy(
+                isLoading = false
+            )
         }
     }
 }

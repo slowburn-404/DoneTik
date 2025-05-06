@@ -32,7 +32,7 @@ val appModule = module {
         )
     }
 
-    single<DoneTikNavigator> { (navController: NavHostController) ->
+    factory<DoneTikNavigator> { (navController: NavHostController) ->
         DoneTikNavigatorImpl(
             navController = navController
         )

@@ -1,8 +1,8 @@
 package com.datahiveorg.donetik.ui.navigation
 
-import androidx.navigation.NavGraph
 import androidx.navigation.NavHostController
-import kotlin.reflect.KClass
+import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationScreen
+import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 
 interface DoneTikNavigator {
     fun navigate(destination: FeatureScreen, navOptions: NavOptions)
@@ -13,36 +13,53 @@ interface DoneTikNavigator {
 class DoneTikNavigatorImpl(private val navController: NavHostController) : DoneTikNavigator {
 
     override fun navigate(destination: FeatureScreen, navOptions: NavOptions) {
+        val isFromRouterScreen =
+            navController
+                .currentBackStackEntry
+                ?.destination
+                ?.route
+                ?.contains(RouterScreen.javaClass.simpleName) == true
+
         navController.navigate(destination) {
             this.launchSingleTop = navOptions.launchSingleTop
 
-            navOptions.popUpToDestination?.let { screen ->
-                val startDestinationId = when (screen) {
-                    is HomeFeature -> findGraphStartDestinationId(HomeFeature::class)
-                    is AuthFeature -> findGraphStartDestinationId(AuthFeature::class)
-                    is OnBoardingFeature -> findGraphStartDestinationId(OnBoardingFeature::class)
-                    is RouterScreen -> findGraphStartDestinationId(RouterScreen::class)
-                    else -> null
+            if (isFromRouterScreen && destination !is RouterScreen) {
+                popUpTo<RouterScreen> {
+                    inclusive = true
+                    saveState = false
                 }
-                startDestinationId?.let { id ->
-                    popUpTo(id) {
-                        this.saveState = navOptions.saveState
-                        this.inclusive = navOptions.inclusive
+                this.restoreState = false
+
+            } else if (navOptions.popUpToDestination != null) {
+                when (navOptions.popUpToDestination) {
+                    is HomeScreen -> {
+                        popUpTo<HomeScreen.Feed> {
+                            this.saveState = navOptions.saveState
+                            this.inclusive = navOptions.inclusive
+                        }
                     }
-                    this.restoreState = navOptions.restoreState
+
+                    is AuthenticationScreen -> {
+                        popUpTo<AuthenticationScreen.LoginScreen> {
+                            this.saveState = navOptions.saveState
+                            this.inclusive = navOptions.inclusive
+                        }
+                    }
+
+                    is RouterScreen -> {
+                        popUpTo<RouterScreen> {
+                            this.inclusive = navOptions.inclusive
+                        }
+                    }
                 }
             }
+            this.restoreState = navOptions.restoreState && !navOptions.inclusive
 
         }
     }
 
     override fun navigateUp() {
         navController.navigateUp()
-    }
-
-    private fun findGraphStartDestinationId(screenClass: KClass<out FeatureScreen>): Int? {
-        val graphNode = navController.graph.findNode(screenClass) as? NavGraph
-        return graphNode?.startDestinationId
     }
 }
 
