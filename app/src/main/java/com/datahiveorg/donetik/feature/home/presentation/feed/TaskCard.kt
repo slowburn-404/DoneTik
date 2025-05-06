@@ -46,7 +46,7 @@ fun TaskCard(
         //TODO(Use constraint layout instead)
         Column(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(vertical = 20.dp, horizontal = 10.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {

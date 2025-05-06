@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
+import android.icu.util.Calendar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
@@ -66,6 +67,10 @@ class FeedViewModel(
                 }
             }
         }
+    }
+
+    init {
+        generateGreetingText()
     }
 
 
@@ -152,6 +157,22 @@ class FeedViewModel(
 
             }
 
+        }
+    }
+
+    private fun generateGreetingText() {
+        val calendar = Calendar.getInstance()
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val username = _state.value.user.username
+        val greeting = when (currentHour) {
+            in 5..11 -> "Good morning $username"
+            in 12..16 -> "Good afternoon $username"
+            in 17..20 -> "Good evening $username"
+            else -> "Hello $username"
+        }
+
+        _state.update { currentState ->
+            currentState.copy(title = greeting)
         }
     }
 

@@ -20,6 +20,7 @@ data class FeedState(
         imageUrl = Uri.EMPTY,
         password = ""
     ),
+    val title: String = ""
 )
 
 data class FilterState(

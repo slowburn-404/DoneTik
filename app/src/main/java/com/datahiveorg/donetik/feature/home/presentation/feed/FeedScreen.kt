@@ -1,21 +1,29 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
 import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
+import com.datahiveorg.donetik.ui.components.ScreenTitle
 import com.datahiveorg.donetik.util.Logger
 import kotlinx.coroutines.flow.collectLatest
 
@@ -63,7 +71,6 @@ fun FeedScreen(
         filterState = filterState
     )
 
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,13 +97,34 @@ fun FeedContent(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                FeedSegmentedButtons(
-                    selectedIndex = filterState.filter,
-                    onOptionsSelected = { newStatus ->
-                        onIntent(FeedIntent.Filter(newStatus))
-                    },
-                    options = Status.entries
+                ScreenTitle(
+                    title = state.title
                 )
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Your tasks",
+                        style = typography.titleLarge,
+                        textAlign = TextAlign.Start
+                    )
+
+                    Spacer(
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    FeedSegmentedButtons(
+                        selectedIndex = filterState.filter,
+                        onOptionsSelected = { newStatus ->
+                            onIntent(FeedIntent.Filter(newStatus))
+                        },
+                        options = Status.entries
+                    )
+                }
             }
 
             items(
@@ -104,6 +132,7 @@ fun FeedContent(
                 key = { task -> task.id }
             ) { task ->
                 TaskCard(
+                    modifier = Modifier.animateItem(),
                     task = task,
                     onClick = {
                         Logger.i(
@@ -118,9 +147,7 @@ fun FeedContent(
                         )
                     }
                 )
-
             }
         }
     }
-
 }

@@ -1,14 +1,15 @@
 package com.datahiveorg.donetik.feature.home.presentation.navigation
 
 import com.datahiveorg.donetik.R
+import com.datahiveorg.donetik.ui.components.AsyncImageLoader
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.ui.navigation.TopBarAction
+import com.datahiveorg.donetik.ui.navigation.buildTopBarActions
 import kotlinx.serialization.Serializable
 
 sealed class HomeScreen : FeatureScreen {
     @Serializable
     data object Feed : HomeScreen() {
-        override val title: String
-            get() = "Home"
         override val hasBottomBar: Boolean
             get() = true
         override val hasFAB: Boolean
@@ -33,8 +34,6 @@ sealed class HomeScreen : FeatureScreen {
 
     @Serializable
     data class TaskScreen(val taskId: String, val userId: String) : HomeScreen() {
-        override val title: String
-            get() = ""
         override val hasTopAppBar: Boolean
             get() = true
         override val hasNavIcon: Boolean

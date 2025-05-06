@@ -24,17 +24,15 @@ import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_LONG
 @Composable
 fun AnimatedBottomNavBar(
     navigator: DoneTikNavigator,
-    currentDestination: NavDestination?
+    currentDestination: NavDestination?,
+    isVisible: Boolean
 ) {
     val bottomBarScreens = listOf(
         HomeScreen.Feed
     )
-    val isBottomBarVisible = currentDestination?.route?.let { route ->
-        HomeScreen.Feed::class.simpleName.orEmpty() in route
-    } ?: false
 
     AnimatedVisibility(
-        visible = isBottomBarVisible,
+        visible = isVisible,
         enter = slideInVertically(
             tween(
                 durationMillis = ANIMATION_DURATION_LONG,

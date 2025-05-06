@@ -1,6 +1,7 @@
 package com.datahiveorg.donetik.di
 
 import androidx.navigation.NavHostController
+import com.datahiveorg.donetik.MainActivityViewModel
 import com.datahiveorg.donetik.datastore.di.datastoreModule
 import com.datahiveorg.donetik.feature.auth.di.authModule
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
@@ -35,6 +36,12 @@ val appModule = module {
     factory<DoneTikNavigator> { (navController: NavHostController) ->
         DoneTikNavigatorImpl(
             navController = navController
+        )
+    }
+
+    viewModel<MainActivityViewModel> {
+        MainActivityViewModel(
+            authRepository = get<AuthRepository>()
         )
     }
 }

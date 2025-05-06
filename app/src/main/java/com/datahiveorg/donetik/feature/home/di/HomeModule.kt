@@ -31,6 +31,7 @@ val homeModule = module {
         )
 
     }
+
     viewModel<NewTaskViewModel> {
         NewTaskViewModel(
             homeRepository = get<HomeRepository>(),
