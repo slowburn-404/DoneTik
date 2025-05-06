@@ -11,13 +11,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,13 +33,20 @@ fun TaskCard(
 ) {
     Card(
         modifier = modifier
-            .clip(RoundedCornerShape(10.dp)),
-        onClick = onClick
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        onClick = onClick,
+        colors = CardColors(
+            containerColor = colorScheme.surfaceVariant,
+            contentColor = colorScheme.onSurfaceVariant,
+            disabledContainerColor = colorScheme.inverseSurface,
+            disabledContentColor = colorScheme.inverseOnSurface
+        )
     ) {
         //TODO(Use constraint layout instead)
         Column(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(vertical = 20.dp, horizontal = 10.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {

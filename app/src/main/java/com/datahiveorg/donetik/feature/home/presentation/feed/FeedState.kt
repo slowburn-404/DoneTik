@@ -19,5 +19,15 @@ data class FeedState(
         email = "",
         imageUrl = Uri.EMPTY,
         password = ""
-    )
+    ),
+    val title: String = ""
 )
+
+data class FilterState(
+    val filteredTasks: List<Task> = emptyList(),
+    val filter: Status = Status.ACTIVE
+)
+
+enum class Status {
+    ACTIVE, DONE
+}

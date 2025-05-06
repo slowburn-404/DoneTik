@@ -38,7 +38,7 @@ fun RouterScreen(
         viewModel.event.collect { event ->
             when (event) {
                 is RouterEvent.Navigate -> {
-                    //delay(1500L) //getting user info is asynchronous TODO(Find better solution)
+                    delay(1000L) //mbogi lazima waone animation
                     onNavigate(
                         event.screen
                     )

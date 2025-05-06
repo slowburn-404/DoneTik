@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
@@ -77,7 +78,8 @@ fun TaskViewContent(
 
         Text(
             text = "Last modified",
-            style = typography.labelSmall
+            style = typography.labelSmall,
+            color = Color.Gray
         )
 
         Text(
@@ -87,21 +89,23 @@ fun TaskViewContent(
 
         Text(
             text = "Description",
-            style = typography.labelSmall
+            style = typography.labelSmall,
+            color = Color.Gray
         )
 
         Text(
             text = state.task.description,
-            style = typography.bodyMedium
+            style = typography.bodyLarge
         )
 
         Text(
-            text = "Last modified",
-            style = typography.labelSmall
+            text = "Created",
+            style = typography.labelSmall,
+            color = Color.Gray
         )
 
         Text(
-            text = state.task.lastModified,
+            text = state.task.createdAt,
             style = typography.bodyMedium
         )
 
@@ -115,7 +119,7 @@ fun TaskViewContent(
             onClick = {
                 onIntent(TaskViewIntent.UpdateTask(state.task))
             },
-            isEnabled = true,
+            isEnabled = !state.isLoading,
             isLoading = state.isLoading
         )
 

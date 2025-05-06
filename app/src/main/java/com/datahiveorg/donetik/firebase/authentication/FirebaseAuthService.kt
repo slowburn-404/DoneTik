@@ -95,7 +95,9 @@ internal class FirebaseAuthServiceImpl(
     override suspend fun fetchUserInfo(): FirebaseResponse<FirebaseUser> {
         return try {
             val authResult = firebaseAuth.currentUser
-            FirebaseResponse.Success(authResult ?: throw FirebaseException("CredentialsDTO not found"))
+            FirebaseResponse.Success(
+                authResult ?: throw FirebaseException("CredentialsDTO not found")
+            )
         } catch (exception: FirebaseAuthException) {
             Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
             FirebaseResponse.Failure(exception)

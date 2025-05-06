@@ -1,7 +1,7 @@
 package com.datahiveorg.donetik.feature.auth.presentation.navigation
 
+import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.HomeFeature
 import com.datahiveorg.donetik.ui.navigation.NavOptions
 
 interface AuthenticationNavigator {
@@ -44,11 +44,11 @@ class AuthenticationNavigatorImpl(
         val homeScreenNavOptions = NavOptions(
             launchSingleTop = true,
             inclusive = true,
-            popUpToDestination = HomeFeature
+            popUpToDestination = HomeScreen.Feed
         )
 
         doneTikNavigator.navigate(
-            destination = HomeFeature,
+            destination = HomeScreen.Feed,
             navOptions = homeScreenNavOptions
         )
     }

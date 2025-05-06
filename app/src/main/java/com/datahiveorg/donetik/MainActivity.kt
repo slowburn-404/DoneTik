@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -33,9 +34,11 @@ import com.datahiveorg.donetik.ui.navigation.NavOptions
 import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
 import com.datahiveorg.donetik.ui.navigation.RootNavGraph
 import com.datahiveorg.donetik.ui.navigation.RouterScreen
+import com.datahiveorg.donetik.ui.navigation.buildTopBarActions
 import com.datahiveorg.donetik.ui.navigation.getFABDestination
 import com.datahiveorg.donetik.ui.theme.DoneTikTheme
 import com.datahiveorg.donetik.util.Logger
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.getKoin
 import org.koin.core.parameter.parametersOf
 
@@ -57,6 +60,8 @@ class MainActivity : ComponentActivity() {
             val currentScreen =
                 getCurrentScreen(destination = currentDestination)
             val snackBarHostState = SnackbarHostState()
+            val viewModel: MainActivityViewModel = koinViewModel()
+            val activityState by viewModel.state.collectAsStateWithLifecycle()
 
             DisposableEffect(navController) {
                 val listener =
@@ -91,7 +96,15 @@ class MainActivity : ComponentActivity() {
                                 onBackClick = {
                                     navigator.navigateUp()
                                 },
-                                actions = screen.topBarActions,
+                                actions = activityState.user?.imageUrl?.let {
+                                    buildTopBarActions(
+                                        screen,
+                                        it,
+                                        onClick = {
+                                            //TODO(Show modal for logging out and such)
+                                        }
+                                    )
+                                },
                                 title = screen.title
                             )
                         }
@@ -102,7 +115,8 @@ class MainActivity : ComponentActivity() {
                         }?.let {
                             AnimatedBottomNavBar(
                                 navigator = navigator,
-                                currentDestination = currentDestination
+                                currentDestination = currentDestination,
+                                isVisible = it.hasBottomBar
                             )
                         }
 
