@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
+import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.feature.home.domain.usecase.GetUserInfoUseCase
 import com.datahiveorg.donetik.util.DispatcherProvider
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -63,6 +64,18 @@ class FeedViewModel(
 
                     is FeedIntent.Filter -> {
                         filterByDone(uiIntent.filter)
+                    }
+
+                    is FeedIntent.SelectTask -> {
+                        getSelectedTask(uiIntent.task)
+                    }
+
+                    is FeedIntent.Delete -> {
+                        deleteTask(uiIntent.task)
+                    }
+
+                    is FeedIntent.ToggleDoneStatus -> {
+                        toggleDoneStatus(uiIntent.task)
                     }
                 }
             }
@@ -173,6 +186,75 @@ class FeedViewModel(
 
         _state.update { currentState ->
             currentState.copy(title = greeting)
+        }
+    }
+
+
+    fun toggleOptionsBottomSheet() {
+        _state.update { currentState ->
+            currentState.copy(
+                showBottomSheet = !currentState.showBottomSheet
+            )
+        }
+    }
+
+    private fun getSelectedTask(task: Task) {
+        val selectedTask = _state.value.tasks.find { it.id == task.id }
+        _state.update { currentState ->
+            currentState.copy(
+                selectedTask = selectedTask
+            )
+        }
+    }
+
+    private suspend fun deleteTask(task: Task) {
+        showLoading()
+        when (val response = homeRepository.deleteTask(task)) {
+            is DomainResponse.Success -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        isLoading = false
+                    )
+                }
+                emitEvent(FeedEvent.ShowSnackBar("Task deleted"))
+            }
+
+            is DomainResponse.Failure -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        error = response.message,
+                        isLoading = false
+                    )
+                }
+                emitEvent(FeedEvent.ShowSnackBar(response.message))
+            }
+        }
+    }
+
+    //TODO(create a use case)
+    private suspend fun toggleDoneStatus(task: Task) {
+        val newTask = task.copy(isDone = !task.isDone)
+        showLoading()
+        when (val response = homeRepository.markTaskAsDone(newTask)) {
+            is DomainResponse.Success -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        isLoading = false
+                    )
+                }
+                emitEvent(FeedEvent.ShowSnackBar("Done status changed"))
+            }
+
+            is DomainResponse.Failure -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        error = response.message,
+                        isLoading = false
+                    )
+                }
+                emitEvent(FeedEvent.ShowSnackBar(response.message))
+            }
+
         }
     }
 

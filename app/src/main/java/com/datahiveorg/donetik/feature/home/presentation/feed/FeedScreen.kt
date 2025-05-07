@@ -13,20 +13,26 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
+import com.datahiveorg.donetik.ui.components.BottomSheetOptions
 import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
+import com.datahiveorg.donetik.ui.components.OptionsBottomSheet
 import com.datahiveorg.donetik.ui.components.ScreenTitle
 import com.datahiveorg.donetik.util.Logger
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
     viewModel: FeedViewModel,
@@ -36,6 +42,18 @@ fun FeedScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
     val uiEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = FeedEvent.None)
     val filterState by viewModel.filteredTasks.collectAsStateWithLifecycle(initialValue = FilterState())
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val bottomSheetOptions = listOf(
+        BottomSheetOptions(
+            icon = R.drawable.ic_delete,
+            label = "Delete"
+        ),
+        BottomSheetOptions(
+            icon = R.drawable.ic_done,
+            label = "Change complete status"
+        )
+    )
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(uiEvent) {
         viewModel.event.collectLatest { event ->
@@ -60,6 +78,15 @@ fun FeedScreen(
                     snackBarHostState.showSnackbar(event.message)
                 }
 
+                is FeedEvent.ToggleOptionsBottomSheet -> {
+                    viewModel.toggleOptionsBottomSheet()
+                    if (uiState.showBottomSheet) {
+                        bottomSheetState.show()
+                    } else {
+                        bottomSheetState.hide()
+                    }
+                }
+
             }
         }
     }
@@ -70,6 +97,33 @@ fun FeedScreen(
         onIntent = viewModel::emitIntent,
         filterState = filterState
     )
+
+    if (uiState.showBottomSheet) {
+        OptionsBottomSheet(
+            sheetState = bottomSheetState,
+            onDismiss = {
+                viewModel.toggleOptionsBottomSheet()
+            },
+            options = bottomSheetOptions,
+            coroutineScope = coroutineScope,
+            onOptionsClicked = { bottomSheetOption ->
+                uiState.selectedTask?.let { task ->
+                    when (bottomSheetOption.label) {
+                        "Delete" -> {
+                            viewModel.emitIntent(FeedIntent.Delete(task))
+                            viewModel.emitEvent(FeedEvent.ToggleOptionsBottomSheet)
+                        }
+
+                        "Change complete status" -> {
+                            viewModel.emitIntent(FeedIntent.ToggleDoneStatus(task))
+                            viewModel.emitEvent(FeedEvent.ToggleOptionsBottomSheet)
+                        }
+                    }
+                }
+
+            }
+        )
+    }
 
 }
 
@@ -145,6 +199,10 @@ fun FeedContent(
                                 userId = task.author.uid
                             )
                         )
+                    },
+                    onLongClick = {
+                        onEvent(FeedEvent.ToggleOptionsBottomSheet)
+                        onIntent(FeedIntent.SelectTask(task))
                     }
                 )
             }

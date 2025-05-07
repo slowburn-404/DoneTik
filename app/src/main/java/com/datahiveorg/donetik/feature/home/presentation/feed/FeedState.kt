@@ -20,7 +20,8 @@ data class FeedState(
         imageUrl = Uri.EMPTY,
         password = ""
     ),
-    val title: String = ""
+    val title: String = "",
+    val showBottomSheet: Boolean = false,
 )
 
 data class FilterState(

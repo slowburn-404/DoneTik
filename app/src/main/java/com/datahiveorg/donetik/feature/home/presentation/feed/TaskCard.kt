@@ -1,6 +1,7 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
-import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,29 +14,31 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskCard(
     modifier: Modifier = Modifier,
     task: Task,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
         shape = RoundedCornerShape(14.dp),
-        onClick = onClick,
         colors = CardColors(
             containerColor = colorScheme.surfaceVariant,
             contentColor = colorScheme.onSurfaceVariant,
@@ -80,30 +83,5 @@ fun TaskCard(
 
         }
 
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TaskCardPreview() {
-    val task = Task(
-        id = "1",
-        title = "Task title",
-        description = "Task description",
-        isDone = true,
-        createdAt = "10th Jan 2025",
-        lastModified = "",
-        author = User(
-            "",
-            "",
-            "",
-            Uri.EMPTY,
-            "",
-        )
-    )
-    MaterialTheme {
-        TaskCard(
-            task = task,
-        ) { }
     }
 }
