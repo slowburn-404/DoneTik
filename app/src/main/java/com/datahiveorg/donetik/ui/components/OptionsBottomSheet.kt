@@ -18,27 +18,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsBottomSheet(
     modifier: Modifier = Modifier,
-    sheetState: SheetState,
     options: List<BottomSheetOptions>,
-    coroutineScope: CoroutineScope,
     onDismiss: () -> Unit,
-    onOptionsClicked: (BottomSheetOptions) -> Unit
+    onOptionsClicked: (BottomSheetOptions) -> Unit,
+    sheetState: SheetState,
 ) {
     ModalBottomSheet(
         modifier = modifier,
-        onDismissRequest = {
-            coroutineScope.launch {
-                sheetState.hide()
-                onDismiss()
-            }
-        }
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -66,6 +59,7 @@ fun BottomSheetItem(
 ) {
     Row(
         modifier = Modifier
+            .padding(8.dp)
             .fillMaxWidth()
             .clickable(
                 onClick = onClick,

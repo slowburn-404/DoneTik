@@ -17,13 +17,17 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.R
+import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
 import com.datahiveorg.donetik.ui.components.BottomSheetOptions
 import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
@@ -31,6 +35,7 @@ import com.datahiveorg.donetik.ui.components.OptionsBottomSheet
 import com.datahiveorg.donetik.ui.components.ScreenTitle
 import com.datahiveorg.donetik.util.Logger
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +47,10 @@ fun FeedScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
     val uiEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = FeedEvent.None)
     val filterState by viewModel.filteredTasks.collectAsStateWithLifecycle(initialValue = FilterState())
+
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet by remember { mutableStateOf(false) }
+
     val bottomSheetOptions = listOf(
         BottomSheetOptions(
             icon = R.drawable.ic_delete,
@@ -54,6 +62,7 @@ fun FeedScreen(
         )
     )
     val coroutineScope = rememberCoroutineScope()
+    var selectedTask by remember { mutableStateOf<Task?>(null) }
 
     LaunchedEffect(uiEvent) {
         viewModel.event.collectLatest { event ->
@@ -78,15 +87,6 @@ fun FeedScreen(
                     snackBarHostState.showSnackbar(event.message)
                 }
 
-                is FeedEvent.ToggleOptionsBottomSheet -> {
-                    viewModel.toggleOptionsBottomSheet()
-                    if (uiState.showBottomSheet) {
-                        bottomSheetState.show()
-                    } else {
-                        bottomSheetState.hide()
-                    }
-                }
-
             }
         }
     }
@@ -95,33 +95,42 @@ fun FeedScreen(
         state = uiState,
         onEvent = viewModel::emitEvent,
         onIntent = viewModel::emitIntent,
-        filterState = filterState
+        filterState = filterState,
+        onTaskLongPress = { task ->
+            selectedTask = task
+            showBottomSheet = true
+            coroutineScope.launch {
+                bottomSheetState.show()
+            }
+        }
     )
 
-    if (uiState.showBottomSheet) {
+    if (showBottomSheet) {
         OptionsBottomSheet(
-            sheetState = bottomSheetState,
             onDismiss = {
-                viewModel.toggleOptionsBottomSheet()
+                coroutineScope.launch {
+                    bottomSheetState.hide()
+                }
+                selectedTask = null
+                showBottomSheet = false
             },
             options = bottomSheetOptions,
-            coroutineScope = coroutineScope,
             onOptionsClicked = { bottomSheetOption ->
-                uiState.selectedTask?.let { task ->
+                selectedTask?.let { task ->
                     when (bottomSheetOption.label) {
                         "Delete" -> {
                             viewModel.emitIntent(FeedIntent.Delete(task))
-                            viewModel.emitEvent(FeedEvent.ToggleOptionsBottomSheet)
+                            showBottomSheet = false
                         }
-
                         "Change complete status" -> {
                             viewModel.emitIntent(FeedIntent.ToggleDoneStatus(task))
-                            viewModel.emitEvent(FeedEvent.ToggleOptionsBottomSheet)
+                            showBottomSheet = false
                         }
                     }
                 }
 
-            }
+            },
+            sheetState = bottomSheetState
         )
     }
 
@@ -135,6 +144,7 @@ fun FeedContent(
     filterState: FilterState,
     onEvent: (FeedEvent) -> Unit,
     onIntent: (FeedIntent) -> Unit,
+    onTaskLongPress: (Task) -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
 
@@ -201,8 +211,7 @@ fun FeedContent(
                         )
                     },
                     onLongClick = {
-                        onEvent(FeedEvent.ToggleOptionsBottomSheet)
-                        onIntent(FeedIntent.SelectTask(task))
+                        onTaskLongPress(task)
                     }
                 )
             }

@@ -66,10 +66,6 @@ class FeedViewModel(
                         filterByDone(uiIntent.filter)
                     }
 
-                    is FeedIntent.SelectTask -> {
-                        getSelectedTask(uiIntent.task)
-                    }
-
                     is FeedIntent.Delete -> {
                         deleteTask(uiIntent.task)
                     }
@@ -189,33 +185,18 @@ class FeedViewModel(
         }
     }
 
-
-    fun toggleOptionsBottomSheet() {
-        _state.update { currentState ->
-            currentState.copy(
-                showBottomSheet = !currentState.showBottomSheet
-            )
-        }
-    }
-
-    private fun getSelectedTask(task: Task) {
-        val selectedTask = _state.value.tasks.find { it.id == task.id }
-        _state.update { currentState ->
-            currentState.copy(
-                selectedTask = selectedTask
-            )
-        }
-    }
-
     private suspend fun deleteTask(task: Task) {
         showLoading()
         when (val response = homeRepository.deleteTask(task)) {
             is DomainResponse.Success -> {
                 _state.update { currentState ->
+                    val newTaskList = currentState.tasks.filter { it.id != task.id }
                     currentState.copy(
-                        isLoading = false
+                        isLoading = false,
+                        tasks = newTaskList
                     )
                 }
+                filterByDone(_filteredTasks.value.filter)
                 emitEvent(FeedEvent.ShowSnackBar("Task deleted"))
             }
 
@@ -238,10 +219,19 @@ class FeedViewModel(
         when (val response = homeRepository.markTaskAsDone(newTask)) {
             is DomainResponse.Success -> {
                 _state.update { currentState ->
+                    val newTaskList = currentState.tasks.map {
+                        if (it.id == newTask.id) {
+                            newTask
+                        } else {
+                            it
+                        }
+                    }
                     currentState.copy(
-                        isLoading = false
+                        isLoading = false,
+                        tasks = newTaskList
                     )
                 }
+                filterByDone(_filteredTasks.value.filter)
                 emitEvent(FeedEvent.ShowSnackBar("Done status changed"))
             }
 

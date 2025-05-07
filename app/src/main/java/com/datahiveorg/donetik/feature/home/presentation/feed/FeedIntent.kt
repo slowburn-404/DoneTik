@@ -6,7 +6,6 @@ interface FeedIntent {
     data class GetTasks(val userId: String) : FeedIntent
     data object GetUserInfo : FeedIntent
     data class Filter(val filter: Status) : FeedIntent
-    data class SelectTask(val task: Task) : FeedIntent
     data class ToggleDoneStatus(val task: Task) : FeedIntent
     data class Delete(val task: Task): FeedIntent
 }

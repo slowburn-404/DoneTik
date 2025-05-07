@@ -21,9 +21,10 @@ data class FeedState(
         password = ""
     ),
     val title: String = "",
-    val showBottomSheet: Boolean = false,
 )
 
+@Stable
+@Immutable
 data class FilterState(
     val filteredTasks: List<Task> = emptyList(),
     val filter: Status = Status.ACTIVE
