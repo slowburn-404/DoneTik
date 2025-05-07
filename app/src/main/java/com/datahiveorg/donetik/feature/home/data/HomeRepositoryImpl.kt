@@ -72,4 +72,18 @@ class HomeRepositoryImpl(
             }
         )
     }
+
+    override suspend fun markTaskAsDone(task: Task): DomainResponse<String> {
+        val response = fireStoreService.markTaskAsDone(
+            userId = task.author.uid,
+            taskId = task.id,
+            isDone = task.isDone
+        )
+        return response.fold(
+            onSuccess = { DomainResponse.Success("Done status changed") },
+            onFailure = { exception ->
+                DomainResponse.Failure(exception.toDomain())
+            }
+        )
+    }
 }

@@ -47,6 +47,10 @@ class TaskViewModel(
                     is TaskViewIntent.DeleteTask -> {
                         deleteTask(taskViewIntent.task)
                     }
+
+                    is TaskViewIntent.ToggleDoneStatus -> {
+                        toggleDoneStatus(taskViewIntent.task)
+                    }
                 }
             }
         }
@@ -112,6 +116,27 @@ class TaskViewModel(
         when (val response = homeRepository.deleteTask((task))) {
             is DomainResponse.Success -> {
                 hideLoadingIndicator()
+                emitEvent(TaskViewEvent.ShowSnackBar(response.data))
+            }
+
+            is DomainResponse.Failure -> {
+                hideLoadingIndicator()
+                emitEvent(TaskViewEvent.ShowSnackBar(response.message))
+            }
+        }
+    }
+
+    private suspend fun toggleDoneStatus(task: Task) {
+        val newTask = task.copy(isDone = !task.isDone)
+        showLoadingIndicator()
+        when (val response = homeRepository.markTaskAsDone((newTask))) {
+            is DomainResponse.Success -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        task = newTask,
+                        isLoading = false
+                    )
+                }
                 emitEvent(TaskViewEvent.ShowSnackBar(response.data))
             }
 

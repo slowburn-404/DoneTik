@@ -25,10 +25,10 @@ fun TopBar(
         modifier = modifier.fillMaxWidth(),
         navigationIcon = {
             if (showNavigationIcon) {
-                IconButton(
-                    onClick = onBackClick
-                ) {
-                    navigationIcon?.let { id ->
+                navigationIcon?.let { id ->
+                    IconButton(
+                        onClick = onBackClick
+                    ) {
                         Icon(
                             painter = painterResource(id),
                             contentDescription = "Back",

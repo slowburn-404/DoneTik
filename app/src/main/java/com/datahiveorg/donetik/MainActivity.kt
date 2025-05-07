@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
                                         screen,
                                         it,
                                         onClick = {
-                                            //TODO(Show modal for logging out and such)
+                                            //TODO(Show dialog for logging out and such)
                                         }
                                     )
                                 },

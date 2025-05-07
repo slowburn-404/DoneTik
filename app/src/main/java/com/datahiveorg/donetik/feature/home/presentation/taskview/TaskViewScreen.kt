@@ -117,7 +117,7 @@ fun TaskViewContent(
             modifier = Modifier.padding(20.dp),
             label = if (state.task.isDone) "Mark as undone" else "Mark as done",
             onClick = {
-                onIntent(TaskViewIntent.UpdateTask(state.task))
+                onIntent(TaskViewIntent.ToggleDoneStatus(state.task))
             },
             isEnabled = !state.isLoading,
             isLoading = state.isLoading
