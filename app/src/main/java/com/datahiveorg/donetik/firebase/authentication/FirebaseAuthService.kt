@@ -3,7 +3,6 @@ package com.datahiveorg.donetik.firebase.authentication
 import com.datahiveorg.donetik.firebase.model.FirebaseRequest
 import com.datahiveorg.donetik.firebase.model.FirebaseResponse
 import com.datahiveorg.donetik.util.Logger
-import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
@@ -26,7 +25,7 @@ interface FirebaseAuthService {
 
     suspend fun signUpWithGoogle(idToken: String): FirebaseResponse<AuthResult>
 
-    suspend fun fetchUserInfo(): FirebaseResponse<FirebaseUser>
+    suspend fun fetchUserInfo(): FirebaseResponse<FirebaseUser?>
 
     suspend fun logOut(): FirebaseResponse<String>
 }
@@ -92,12 +91,10 @@ internal class FirebaseAuthServiceImpl(
         }
     }
 
-    override suspend fun fetchUserInfo(): FirebaseResponse<FirebaseUser> {
+    override suspend fun fetchUserInfo(): FirebaseResponse<FirebaseUser?> {
         return try {
-            val authResult = firebaseAuth.currentUser
-            FirebaseResponse.Success(
-                authResult ?: throw FirebaseException("CredentialsDTO not found")
-            )
+            val currentUser = firebaseAuth.currentUser
+            FirebaseResponse.Success(currentUser)
         } catch (exception: FirebaseAuthException) {
             Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
             FirebaseResponse.Failure(exception)
