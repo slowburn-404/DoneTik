@@ -20,11 +20,13 @@ data class FeedState(
         imageUrl = Uri.EMPTY,
         password = ""
     ),
-    val title: String = ""
+    val title: String = "",
 )
 
+@Stable
+@Immutable
 data class FilterState(
-    val filteredTasks: List<Task> = emptyList(),
+    val filteredTasks: GroupedTasks = emptyMap(),
     val filter: Status = Status.ACTIVE
 )
 

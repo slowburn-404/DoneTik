@@ -8,4 +8,5 @@ interface FeedEvent {
         data object Feed : FeedEvent
         data object NewTask : FeedEvent
     }
+    data object ToggleOptionsBottomSheet: FeedEvent
 }

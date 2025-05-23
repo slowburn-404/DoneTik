@@ -15,47 +15,43 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavDestination
-import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.ui.navigation.NavOptions
-import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_LONG
+import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
 @Composable
 fun AnimatedBottomNavBar(
     navigator: DoneTikNavigator,
     currentDestination: NavDestination?,
-    isVisible: Boolean
+    isVisible: Boolean,
+    bottomBarScreens: List<FeatureScreen>
 ) {
-    val bottomBarScreens = listOf(
-        HomeScreen.Feed
-    )
 
     AnimatedVisibility(
         visible = isVisible,
         enter = slideInVertically(
             tween(
-                durationMillis = ANIMATION_DURATION_LONG,
-                delayMillis = ANIMATION_DURATION_LONG,
+                durationMillis = ANIMATION_DURATION_SHORT,
+                delayMillis = ANIMATION_DURATION_SHORT,
                 easing = EaseIn
             )
         ) { it } + fadeIn(
             tween(
-                durationMillis = ANIMATION_DURATION_LONG,
-                delayMillis = ANIMATION_DURATION_LONG,
+                durationMillis = ANIMATION_DURATION_SHORT,
+                delayMillis = ANIMATION_DURATION_SHORT,
                 easing = EaseIn
             )
         ),
         exit = slideOutVertically(
             tween(
-                durationMillis = ANIMATION_DURATION_LONG,
-                delayMillis = ANIMATION_DURATION_LONG,
+                durationMillis = ANIMATION_DURATION_SHORT,
+                delayMillis = ANIMATION_DURATION_SHORT,
                 easing = EaseOut
             )
         ) { it } + fadeOut(
             tween(
-                durationMillis = ANIMATION_DURATION_LONG,
-                delayMillis = ANIMATION_DURATION_LONG,
+                durationMillis = ANIMATION_DURATION_SHORT,
+                delayMillis = ANIMATION_DURATION_SHORT,
                 easing = EaseIn
             )
         )
@@ -64,30 +60,25 @@ fun AnimatedBottomNavBar(
             bottomBarScreens.forEach { screen: FeatureScreen ->
                 NavigationBarItem(
                     icon = {
-                        screen.bottomNavIconRes?.let { iconId ->
+                        screen.screenUIConfig.bottomNavIconRes?.let { iconId ->
                             painterResource(iconId)
                         }?.let { icon ->
                             Icon(
                                 icon,
-                                contentDescription = screen.title
+                                contentDescription = screen.screenUIConfig.title
                             )
                         }
                     },
                     label = {
                         Text(
-                            screen.title
+                            screen.screenUIConfig.title
                         )
                     },
                     selected = currentDestination?.route?.let { route ->
                         screen::class.simpleName.orEmpty() in route
                     } ?: false,
                     onClick = {
-                        val navOptions = NavOptions(
-                            popUpToDestination = HomeScreen.Feed,
-                            inclusive = true,
-                            launchSingleTop = true,
-                        )
-                        navigator.navigate(screen, navOptions = navOptions)
+                        navigator.navigate(screen)
                     },
                     alwaysShowLabel = false
                 )

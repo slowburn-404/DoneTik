@@ -3,10 +3,7 @@ package com.datahiveorg.donetik.feature.auth.data
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
-import com.datahiveorg.donetik.feature.auth.toDomain
-import com.datahiveorg.donetik.feature.auth.toUserCredential
 import com.datahiveorg.donetik.firebase.authentication.FirebaseAuthService
-import com.datahiveorg.donetik.firebase.model.FirebaseResponse
 import com.datahiveorg.donetik.util.DispatcherProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -17,17 +14,19 @@ class AuthRepositoryImpl(
 ) : AuthRepository {
     override suspend fun login(user: User): DomainResponse<User> {
         return withContext(dispatcher.io) {
-            when (val response = authService.login(user.toUserCredential())) {
-                is FirebaseResponse.Success -> {
-                    DomainResponse.Success(response.data.toDomain())
+            val response = authService.login(user.toUserCredential())
+            return@withContext response.fold(
+                onSuccess = { user ->
+                    if (user != null) {
+                        DomainResponse.Success(user.toAuthDomain())
+                    } else {
+                        DomainResponse.Failure("User not found")
+                    }
+                },
+                onFailure = { exception ->
+                    DomainResponse.Failure(exception.toAuthDomain())
                 }
-
-                is FirebaseResponse.Failure -> {
-                    DomainResponse.Failure(
-                        response.exception.toDomain()
-                    )
-                }
-            }
+            )
         }
     }
 
@@ -40,47 +39,57 @@ class AuthRepositoryImpl(
 
     override suspend fun signUp(user: User): DomainResponse<User> {
         return withContext(dispatcher.io) {
-            when (val response = authService.createAccount(user.toUserCredential())) {
-                is FirebaseResponse.Success -> {
-                    DomainResponse.Success(response.data.toDomain())
+            val response = authService.createAccount(user.toUserCredential())
+            return@withContext response.fold(
+                onSuccess = { user ->
+                    if (user != null) {
+                        DomainResponse.Success(user.toAuthDomain())
+                    } else {
+                        DomainResponse.Failure("User not found")
+                    }
+                },
+                onFailure = { exception ->
+                    DomainResponse.Failure(exception.toAuthDomain())
                 }
-
-                is FirebaseResponse.Failure -> {
-                    DomainResponse.Failure(
-                        response.exception.toDomain()
-                    )
-                }
-            }
+            )
         }
     }
 
     override suspend fun signUpWithGoogle(idToken: String): DomainResponse<User> {
         return withContext(dispatcher.io) {
-            when (val response = authService.signUpWithGoogle(idToken)) {
-                is FirebaseResponse.Success -> {
-                    DomainResponse.Success(response.data.toDomain())
+            val response = authService.signUpWithGoogle(idToken)
+            return@withContext response.fold(
+                onSuccess = { user ->
+                    user?.let {
+                        DomainResponse.Success(it.toAuthDomain())
+                    } ?: run {
+                        DomainResponse.Failure("User not found")
+                    } //😏
+                },
+                onFailure = { exception ->
+                    DomainResponse.Failure(exception.toAuthDomain())
                 }
+            )
 
-                is FirebaseResponse.Failure -> {
-                    DomainResponse.Failure(response.exception.toDomain())
-                }
-            }
         }
     }
 
-    override suspend fun getUser(): DomainResponse<User> {
+    override suspend fun getUser(): DomainResponse<User?> {
         return withContext(dispatcher.io) {
-            when (val response = authService.fetchUserInfo()) {
-                is FirebaseResponse.Success -> {
-                    DomainResponse.Success(response.data.toDomain())
-                }
+            val response = authService.fetchUserInfo()
+            return@withContext response.fold(
+                onSuccess = { user ->
+                    user?.let {
+                        DomainResponse.Success(it.toAuthDomain())
+                    } ?: run {
+                        DomainResponse.Failure("User not found")
+                    }
+                },
+                onFailure = { exception ->
+                    DomainResponse.Failure(exception.toAuthDomain())
 
-                is FirebaseResponse.Failure -> {
-                    DomainResponse.Failure(
-                        response.exception.toDomain()
-                    )
                 }
-            }
+            )
         }
     }
 

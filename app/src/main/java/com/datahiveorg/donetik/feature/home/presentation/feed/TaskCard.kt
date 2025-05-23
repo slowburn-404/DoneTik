@@ -1,6 +1,6 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
-import android.net.Uri
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,42 +11,41 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 
 @Composable
 fun TaskCard(
     modifier: Modifier = Modifier,
     task: Task,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        onClick = onClick,
-        colors = CardColors(
-            containerColor = colorScheme.surfaceVariant,
-            contentColor = colorScheme.onSurfaceVariant,
-            disabledContainerColor = colorScheme.inverseSurface,
-            disabledContentColor = colorScheme.inverseOnSurface
-        )
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
+        shape = RoundedCornerShape(24.dp),
+//        colors = CardDefaults.cardColors(
+//            containerColor = colorScheme.primaryContainer,
+//            contentColor = colorScheme.onPrimaryContainer
+//        )
     ) {
         //TODO(Use constraint layout instead)
         Column(
             modifier = Modifier
-                .padding(vertical = 20.dp, horizontal = 10.dp)
+                .padding(24.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -58,7 +57,7 @@ fun TaskCard(
                     text = task.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = typography.titleMedium
+                    style = typography.headlineSmall
                 )
                 if (task.isDone) {
                     Icon(
@@ -71,7 +70,7 @@ fun TaskCard(
                 text = task.description,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                style = typography.bodyMedium
+                style = typography.bodyLarge
             )
             Text(
                 text = task.createdAt,
@@ -80,30 +79,5 @@ fun TaskCard(
 
         }
 
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TaskCardPreview() {
-    val task = Task(
-        id = "1",
-        title = "Task title",
-        description = "Task description",
-        isDone = true,
-        createdAt = "10th Jan 2025",
-        lastModified = "",
-        author = User(
-            "",
-            "",
-            "",
-            Uri.EMPTY,
-            "",
-        )
-    )
-    MaterialTheme {
-        TaskCard(
-            task = task,
-        ) { }
     }
 }

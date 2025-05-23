@@ -56,6 +56,8 @@ interface FirebaseFireStoreService {
      * @return A [Result] containing the [TaskDTO] or an error.
      */
     suspend fun getSingleTask(userId: String, taskId: String): Result<TaskDTO>
+
+    suspend fun markTaskAsDone(userId: String, taskId: String, isDone: Boolean): Result<Unit>
 }
 
 
@@ -120,6 +122,19 @@ internal class FirebaseFireStoreServiceImpl(
             doc.toTaskDTO()
         }
 
+    override suspend fun markTaskAsDone(
+        userId: String,
+        taskId: String,
+        isDone: Boolean
+    ): Result<Unit> =
+        safeFireStoreCall(FireStoreOperation.MARK_AS_DONE) {
+            getTaskCollectionReference(userId)
+                .document(taskId)
+                .update("isDone", isDone)
+                .await()
+        }
+
+
     private fun getTaskDocumentReference(taskDTO: Map<String, Any>): DocumentReference {
         val authorMap = taskDTO["author"] as? Map<*, *>
             ?: throw IllegalArgumentException("Missing or invalid user object")
@@ -148,5 +163,6 @@ enum class FireStoreOperation {
     UPDATE_TASK,
     DELETE_TASK,
     GET_TASKS,
-    GET_SINGLE_TASK
+    GET_SINGLE_TASK,
+    MARK_AS_DONE
 }

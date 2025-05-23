@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
+import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.feature.home.domain.usecase.GetUserInfoUseCase
 import com.datahiveorg.donetik.util.DispatcherProvider
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,6 +16,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+typealias  GroupedTasks = Map<String, List<Task>>
 
 class FeedViewModel(
     private val homeRepository: HomeRepository,
@@ -63,6 +66,14 @@ class FeedViewModel(
 
                     is FeedIntent.Filter -> {
                         filterByDone(uiIntent.filter)
+                    }
+
+                    is FeedIntent.Delete -> {
+                        deleteTask(uiIntent.task)
+                    }
+
+                    is FeedIntent.ToggleDoneStatus -> {
+                        toggleDoneStatus(uiIntent.task)
                     }
                 }
             }
@@ -149,9 +160,11 @@ class FeedViewModel(
                 Status.ACTIVE -> allTasks.filter { !it.isDone }
                 Status.DONE -> allTasks.filter { it.isDone }
             }
+            val groupedTasks = sortedTasks.groupBy { it.createdAt.substringBefore(",") }
+
             _filteredTasks.update { currentState ->
                 currentState.copy(
-                    filteredTasks = sortedTasks,
+                    filteredTasks = groupedTasks,
                     filter = filter
                 )
 
@@ -173,6 +186,69 @@ class FeedViewModel(
 
         _state.update { currentState ->
             currentState.copy(title = greeting)
+        }
+    }
+
+    private suspend fun deleteTask(task: Task) {
+        showLoading()
+        when (val response = homeRepository.deleteTask(task)) {
+            is DomainResponse.Success -> {
+                _state.update { currentState ->
+                    val newTaskList = currentState.tasks.filter { it.id != task.id }
+                    currentState.copy(
+                        isLoading = false,
+                        tasks = newTaskList
+                    )
+                }
+                filterByDone(_filteredTasks.value.filter)
+                emitEvent(FeedEvent.ShowSnackBar("Task deleted"))
+            }
+
+            is DomainResponse.Failure -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        error = response.message,
+                        isLoading = false
+                    )
+                }
+                emitEvent(FeedEvent.ShowSnackBar(response.message))
+            }
+        }
+    }
+
+    //TODO(create a use case)
+    private suspend fun toggleDoneStatus(task: Task) {
+        val newTask = task.copy(isDone = !task.isDone)
+        showLoading()
+        when (val response = homeRepository.markTaskAsDone(newTask)) {
+            is DomainResponse.Success -> {
+                _state.update { currentState ->
+                    val newTaskList = currentState.tasks.map {
+                        if (it.id == newTask.id) {
+                            newTask
+                        } else {
+                            it
+                        }
+                    }
+                    currentState.copy(
+                        isLoading = false,
+                        tasks = newTaskList
+                    )
+                }
+                filterByDone(_filteredTasks.value.filter)
+                emitEvent(FeedEvent.ShowSnackBar("Done status changed"))
+            }
+
+            is DomainResponse.Failure -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        error = response.message,
+                        isLoading = false
+                    )
+                }
+                emitEvent(FeedEvent.ShowSnackBar(response.message))
+            }
+
         }
     }
 

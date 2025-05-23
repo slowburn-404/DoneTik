@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
@@ -34,5 +35,6 @@ class MainActivityViewModel(
 }
 
 data class MainActivityState(
-    val user: User? = null
+    val user: User? = null,
+    val snackBarHostState: SnackbarHostState = SnackbarHostState()
 )

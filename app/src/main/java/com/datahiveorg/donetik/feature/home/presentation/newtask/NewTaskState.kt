@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.datahiveorg.donetik.feature.auth.domain.model.User
-import com.datahiveorg.donetik.feature.home.data.toDomain
+import com.datahiveorg.donetik.feature.home.data.toHomeDomain
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import java.util.Date
 import java.util.UUID.randomUUID
@@ -24,8 +24,8 @@ data class NewTaskState(
         title = "",
         description = "",
         isDone = false,
-        createdAt = Date().toDomain(),
-        lastModified = Date().toDomain()
+        createdAt = Date().toHomeDomain(),
+        lastModified = Date().toHomeDomain()
     ),
     val error: String = "",
     val titleError: String = "",

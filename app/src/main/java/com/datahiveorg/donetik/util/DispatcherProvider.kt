@@ -20,5 +20,4 @@ class DispatcherProviderImpl: DispatcherProvider {
 
 val dispatcherModule = module {
     single<DispatcherProvider> { DispatcherProviderImpl() }
-
 }

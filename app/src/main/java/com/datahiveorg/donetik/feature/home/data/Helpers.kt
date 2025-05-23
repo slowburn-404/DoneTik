@@ -11,19 +11,19 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-fun TaskDTO.toDomain(): Task {
+fun TaskDTO.toHomeDomain(): Task {
     return Task(
         id = id,
-        author = author.toDomain(),
+        author = author.toHomeDomain(),
         title = title,
         description = description,
         isDone = isDone,
-        createdAt = createdAt.toDate().toDomain(),
-        lastModified = lastModified.toDate().toDomain()
+        createdAt = createdAt.toDate().toHomeDomain(),
+        lastModified = lastModified.toDate().toHomeDomain()
     )
 }
 
-fun Throwable.toDomain(): String {
+fun Throwable.toHomeDomain(): String {
     return this.message.toString()
 }
 
@@ -47,7 +47,7 @@ fun User.toUserDTO(): Map<String, Any> {
     )
 }
 
-fun UserDTO.toDomain(): User {
+fun UserDTO.toHomeDomain(): User {
     return User(
         uid = uid,
         username = username,
@@ -57,7 +57,9 @@ fun UserDTO.toDomain(): User {
     )
 }
 
-fun Date.toDomain(): String {
+
+//TODO: Move to a more common place
+fun Date.toHomeDomain(): String {
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
     sdf.timeZone = TimeZone.getDefault()
     return sdf.format(this)
@@ -66,7 +68,7 @@ fun Date.toDomain(): String {
 fun String.toDate(): Date {
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
     sdf.timeZone = TimeZone.getTimeZone("UTC")
-    return sdf.parse(this)!! // TODO(remember to handle null dates)
+    return sdf.parse(this)!! // TODO: remember to handle null dates
 }
 
 fun String.toFireStoreTimeStamp(): Timestamp {

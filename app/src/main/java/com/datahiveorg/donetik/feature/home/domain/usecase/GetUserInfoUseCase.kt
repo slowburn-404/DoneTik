@@ -15,7 +15,11 @@ internal class GetUserInfoUseCaseImpl(
     override suspend fun invoke(): DomainResponse<User> {
         return when (val response = authRepository.getUser()) {
             is DomainResponse.Success -> {
-                DomainResponse.Success(response.data)
+                if (response.data != null) {
+                    DomainResponse.Success(response.data)
+                } else {
+                    DomainResponse.Failure("No user is logged in")
+                }
             }
 
             is DomainResponse.Failure -> {

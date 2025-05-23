@@ -1,15 +1,9 @@
 package com.datahiveorg.donetik.firebase.authentication
 
 import com.datahiveorg.donetik.firebase.model.FirebaseRequest
-import com.datahiveorg.donetik.firebase.model.FirebaseResponse
 import com.datahiveorg.donetik.util.Logger
-import com.google.firebase.FirebaseException
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.channels.awaitClose
@@ -20,21 +14,37 @@ import kotlinx.coroutines.tasks.await
 interface FirebaseAuthService {
     val isLoggedIn: Flow<Boolean>
 
-    suspend fun createAccount(credentialsDTO: FirebaseRequest.CredentialsDTO): FirebaseResponse<AuthResult>
+    suspend fun createAccount(credentialsDTO: FirebaseRequest.CredentialsDTO): Result<FirebaseUser?>
 
-    suspend fun login(credentialsDTO: FirebaseRequest.CredentialsDTO): FirebaseResponse<AuthResult>
+    suspend fun login(credentialsDTO: FirebaseRequest.CredentialsDTO): Result<FirebaseUser?>
 
-    suspend fun signUpWithGoogle(idToken: String): FirebaseResponse<AuthResult>
+    suspend fun signUpWithGoogle(idToken: String): Result<FirebaseUser?>
 
-    suspend fun fetchUserInfo(): FirebaseResponse<FirebaseUser>
+    suspend fun fetchUserInfo(): Result<FirebaseUser?>
 
-    suspend fun logOut(): FirebaseResponse<String>
+    suspend fun logOut(): Result<String>
 }
 
 
 internal class FirebaseAuthServiceImpl(
     private val firebaseAuth: FirebaseAuth
 ) : FirebaseAuthService {
+
+    private suspend fun <T> safeFirebaseAuthCall(
+        operation: FirebaseAuthOperation,
+        call: suspend () -> T
+    ): Result<T> {
+        return try {
+            Result.success(call())
+        } catch (exception: FirebaseAuthException) {
+            Logger.e("FirebaseAuthService: ${operation.name}", exception.message ?: "Unknown error")
+            Result.failure(exception)
+        } catch (exception: Exception) {
+            Logger.e("FirebaseAuthService: ${operation.name}", exception.message ?: "Unknown error")
+            Result.failure(exception)
+        }
+    }
+
     override val isLoggedIn: Flow<Boolean>
         get() = callbackFlow {
             val authStateListener = FirebaseAuth.AuthStateListener { auth ->
@@ -46,72 +56,52 @@ internal class FirebaseAuthServiceImpl(
 
         }
 
-    override suspend fun createAccount(credentialsDTO: FirebaseRequest.CredentialsDTO): FirebaseResponse<AuthResult> {
-        return try {
-            val authResult = firebaseAuth
+    override suspend fun createAccount(credentialsDTO: FirebaseRequest.CredentialsDTO): Result<FirebaseUser?> {
+        return safeFirebaseAuthCall(FirebaseAuthOperation.CREATE_ACCOUNT) {
+            firebaseAuth
                 .createUserWithEmailAndPassword(credentialsDTO.email, credentialsDTO.password)
                 .await()
-
-            FirebaseResponse.Success(authResult)
-
-        } catch (exception: FirebaseAuthException) {
-            Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
-            FirebaseResponse.Failure(exception)
+                .user
         }
     }
 
-    override suspend fun login(credentialsDTO: FirebaseRequest.CredentialsDTO): FirebaseResponse<AuthResult> {
-        return try {
-            val authResult = firebaseAuth
+    override suspend fun login(credentialsDTO: FirebaseRequest.CredentialsDTO): Result<FirebaseUser?> {
+        return safeFirebaseAuthCall(FirebaseAuthOperation.LOGIN) {
+            firebaseAuth
                 .signInWithEmailAndPassword(credentialsDTO.email, credentialsDTO.password)
                 .await()
-
-            FirebaseResponse.Success(authResult)
-        } catch (exception: FirebaseAuthException) {
-            Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
-            FirebaseResponse.Failure(exception)
+                .user
         }
     }
 
-    override suspend fun signUpWithGoogle(idToken: String): FirebaseResponse<AuthResult> {
-        return try {
+    override suspend fun signUpWithGoogle(idToken: String): Result<FirebaseUser?> {
+        return safeFirebaseAuthCall(FirebaseAuthOperation.SIGN_IN_WITH_GOOGLE) {
             val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-            val authResult = firebaseAuth
+            firebaseAuth
                 .signInWithCredential(firebaseCredential)
-                .await()
-            FirebaseResponse.Success(authResult)
-        } catch (exception: FirebaseAuthInvalidUserException) {
-            Logger.e("FirebaseAuthService", exception.message ?: "Unexpected error")
-            FirebaseResponse.Failure(exception)
-        } catch (exception: FirebaseAuthInvalidCredentialsException) {
-            Logger.e("FirebaseAuthService", exception.message.toString())
-            FirebaseResponse.Failure(exception)
-        } catch (exception: FirebaseAuthUserCollisionException) {
-            Logger.e("FirebaseAuthService", exception.message.toString())
-            FirebaseResponse.Failure(exception)
+                .await().user
         }
     }
 
-    override suspend fun fetchUserInfo(): FirebaseResponse<FirebaseUser> {
-        return try {
-            val authResult = firebaseAuth.currentUser
-            FirebaseResponse.Success(
-                authResult ?: throw FirebaseException("CredentialsDTO not found")
-            )
-        } catch (exception: FirebaseAuthException) {
-            Logger.e("FirebaseAuthService", exception.message ?: "Unknown error")
-            FirebaseResponse.Failure(exception)
+    override suspend fun fetchUserInfo(): Result<FirebaseUser?> {
+        return safeFirebaseAuthCall(FirebaseAuthOperation.FETCH_USER_INFO) {
+            firebaseAuth.currentUser
         }
     }
 
-    override suspend fun logOut(): FirebaseResponse<String> {
-        return try {
-            val authResult = firebaseAuth.signOut()
-            FirebaseResponse.Success(authResult.toString())
-        } catch (exception: FirebaseAuthException) {
-            Logger.e("FirebaseAuthenticationService", exception.message ?: "Unknown error")
-            FirebaseResponse.Failure(exception)
+    override suspend fun logOut(): Result<String> {
+        return safeFirebaseAuthCall(FirebaseAuthOperation.LOGOUT) {
+            firebaseAuth.signOut()
+            "Successfully logged out"
         }
     }
 
+}
+
+enum class FirebaseAuthOperation{
+    LOGIN,
+    CREATE_ACCOUNT,
+    LOGOUT,
+    SIGN_IN_WITH_GOOGLE,
+    FETCH_USER_INFO
 }

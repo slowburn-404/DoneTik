@@ -66,7 +66,7 @@ fun NewTaskContent(
             .verticalScroll(scrollState)
     ) {
         UserInputField(
-            label = null,
+            label = "Title",
             enterValue = { title ->
                 onIntent(NewTaskIntent.EnterTitle(title))
             },
@@ -83,7 +83,7 @@ fun NewTaskContent(
         )
 
         UserInputField(
-            label = null,
+            label = "Description",
             enterValue = { description ->
                 onIntent(NewTaskIntent.EnterDescription(description))
             },

@@ -19,7 +19,7 @@ android {
     namespace = "com.datahiveorg.donetik"
     compileSdk = 35
 
-    buildFeatures{
+    buildFeatures {
         buildConfig = true
     }
 

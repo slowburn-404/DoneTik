@@ -13,11 +13,11 @@ class HomeRepositoryImpl(
 
         return response.fold(
             onSuccess = { taskDTOs ->
-                val tasks = taskDTOs.map { it.toDomain() }
+                val tasks = taskDTOs.map { it.toHomeDomain() }
                 DomainResponse.Success(tasks)
             },
             onFailure = { exception ->
-                DomainResponse.Failure(exception.toDomain())
+                DomainResponse.Failure(exception.toHomeDomain())
             }
         )
     }
@@ -30,7 +30,7 @@ class HomeRepositoryImpl(
                 DomainResponse.Success("Task saved. What’s next?")
             },
             onFailure = {
-                DomainResponse.Failure(it.toDomain())
+                DomainResponse.Failure(it.toHomeDomain())
             }
         )
     }
@@ -43,7 +43,7 @@ class HomeRepositoryImpl(
                 DomainResponse.Success("Task updated")
             },
             onFailure = {
-                DomainResponse.Failure(it.toDomain())
+                DomainResponse.Failure(it.toHomeDomain())
             }
         )
     }
@@ -56,7 +56,7 @@ class HomeRepositoryImpl(
                 DomainResponse.Success("Task deleted")
             },
             onFailure = {
-                DomainResponse.Failure(it.toDomain())
+                DomainResponse.Failure(it.toHomeDomain())
             }
         )
     }
@@ -65,10 +65,24 @@ class HomeRepositoryImpl(
         val response = fireStoreService.getSingleTask(userId, taskId)
         return response.fold(
             onSuccess = { taskDTO ->
-                DomainResponse.Success(taskDTO.toDomain())
+                DomainResponse.Success(taskDTO.toHomeDomain())
             },
             onFailure = { exception ->
-                DomainResponse.Failure(exception.toDomain())
+                DomainResponse.Failure(exception.toHomeDomain())
+            }
+        )
+    }
+
+    override suspend fun markTaskAsDone(task: Task): DomainResponse<String> {
+        val response = fireStoreService.markTaskAsDone(
+            userId = task.author.uid,
+            taskId = task.id,
+            isDone = task.isDone
+        )
+        return response.fold(
+            onSuccess = { DomainResponse.Success("Done status changed") },
+            onFailure = { exception ->
+                DomainResponse.Failure(exception.toHomeDomain())
             }
         )
     }
