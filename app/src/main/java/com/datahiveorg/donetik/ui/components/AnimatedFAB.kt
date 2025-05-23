@@ -15,7 +15,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_LONG
+import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
 @Composable
 fun AnimatedFAB(
@@ -27,12 +27,12 @@ fun AnimatedFAB(
         visible = isVisible,
         enter = scaleIn(
             tween(
-                durationMillis = ANIMATION_DURATION_LONG
+                durationMillis = ANIMATION_DURATION_SHORT
             )
         ) + fadeIn(),
         exit = scaleOut(
             tween(
-                durationMillis = ANIMATION_DURATION_LONG
+                durationMillis = ANIMATION_DURATION_SHORT
             )
         ) + fadeOut()
     ) {

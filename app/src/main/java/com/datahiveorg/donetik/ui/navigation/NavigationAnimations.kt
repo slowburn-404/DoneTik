@@ -26,15 +26,15 @@ inline fun <reified R : Any> NavGraphBuilder.animatedComposable(
         slideIntoContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Start,
             animationSpec = tween(
-                delayMillis = Animation.ANIMATION_DURATION_LONG,
-                durationMillis = Animation.ANIMATION_DURATION_LONG,
+                delayMillis = Animation.ANIMATION_DURATION_SHORT,
+                durationMillis = Animation.ANIMATION_DURATION_SHORT,
                 easing = EaseIn
             )
         ) +
                 fadeIn(
                     animationSpec = tween(
-                        delayMillis = Animation.ANIMATION_DURATION_LONG,
-                        durationMillis = Animation.ANIMATION_DURATION_LONG,
+                        delayMillis = Animation.ANIMATION_DURATION_SHORT,
+                        durationMillis = Animation.ANIMATION_DURATION_SHORT,
                         easing = LinearEasing
                     )
                 )
@@ -44,15 +44,15 @@ inline fun <reified R : Any> NavGraphBuilder.animatedComposable(
         slideOutOfContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Start,
             animationSpec = tween(
-                durationMillis = Animation.ANIMATION_DURATION_LONG,
-                delayMillis = Animation.ANIMATION_DURATION_LONG,
+                durationMillis = Animation.ANIMATION_DURATION_SHORT,
+                delayMillis = Animation.ANIMATION_DURATION_SHORT,
                 easing = LinearEasing
             )
         ) +
                 fadeOut(
                     animationSpec = tween(
-                        delayMillis = Animation.ANIMATION_DURATION_LONG,
-                        durationMillis = Animation.ANIMATION_DURATION_LONG,
+                        delayMillis = Animation.ANIMATION_DURATION_SHORT,
+                        durationMillis = Animation.ANIMATION_DURATION_SHORT,
                         easing = LinearEasing
                     ),
                 )

@@ -61,7 +61,7 @@ fun TaskCard(
                     text = task.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = typography.titleMedium
+                    style = typography.titleLarge
                 )
                 if (task.isDone) {
                     Icon(

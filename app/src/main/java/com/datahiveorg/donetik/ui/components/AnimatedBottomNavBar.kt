@@ -19,7 +19,7 @@ import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import com.datahiveorg.donetik.ui.navigation.NavOptions
-import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_LONG
+import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
 @Composable
 fun AnimatedBottomNavBar(
@@ -35,27 +35,27 @@ fun AnimatedBottomNavBar(
         visible = isVisible,
         enter = slideInVertically(
             tween(
-                durationMillis = ANIMATION_DURATION_LONG,
-                delayMillis = ANIMATION_DURATION_LONG,
+                durationMillis = ANIMATION_DURATION_SHORT,
+                delayMillis = ANIMATION_DURATION_SHORT,
                 easing = EaseIn
             )
         ) { it } + fadeIn(
             tween(
-                durationMillis = ANIMATION_DURATION_LONG,
-                delayMillis = ANIMATION_DURATION_LONG,
+                durationMillis = ANIMATION_DURATION_SHORT,
+                delayMillis = ANIMATION_DURATION_SHORT,
                 easing = EaseIn
             )
         ),
         exit = slideOutVertically(
             tween(
-                durationMillis = ANIMATION_DURATION_LONG,
-                delayMillis = ANIMATION_DURATION_LONG,
+                durationMillis = ANIMATION_DURATION_SHORT,
+                delayMillis = ANIMATION_DURATION_SHORT,
                 easing = EaseOut
             )
         ) { it } + fadeOut(
             tween(
-                durationMillis = ANIMATION_DURATION_LONG,
-                delayMillis = ANIMATION_DURATION_LONG,
+                durationMillis = ANIMATION_DURATION_SHORT,
+                delayMillis = ANIMATION_DURATION_SHORT,
                 easing = EaseIn
             )
         )
@@ -87,7 +87,7 @@ fun AnimatedBottomNavBar(
                             inclusive = true,
                             launchSingleTop = true,
                         )
-                        navigator.navigate(screen, navOptions = navOptions)
+                        navigator.navigate(screen)
                     },
                     alwaysShowLabel = false
                 )

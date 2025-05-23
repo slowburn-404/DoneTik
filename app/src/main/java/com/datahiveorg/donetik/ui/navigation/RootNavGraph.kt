@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.ui.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
@@ -34,11 +35,6 @@ fun RootNavGraph(
 ) {
     val authNavigator = getKoin().get<AuthenticationNavigator> { parametersOf(navigator) }
     val homeNavigator = getKoin().get<HomeNavigator> { parametersOf(navigator) }
-    val navOptions = NavOptions(
-        launchSingleTop = true,
-        inclusive = true
-    )
-
 
     NavHost(
         modifier = modifier
@@ -55,7 +51,7 @@ fun RootNavGraph(
         )
 
         homeNavigationGraph(
-            homeNavigator= homeNavigator,
+            homeNavigator = homeNavigator,
             snackBarHostState = snackBarHostState,
         )
 
@@ -63,18 +59,18 @@ fun RootNavGraph(
             RouterScreen(
                 viewModel = koinViewModel<RouterViewModel>(),
                 onNavigate = { screen ->
-                    navigator.navigate(screen, navOptions)
+                    navigator.navigate(screen)
                 }
             )
         }
-        
+
         animatedComposable<OnBoardingFeature> {
             val event by onBoardingViewModel.events.collectAsStateWithLifecycle(initialValue = OnBoardingEvents.None)
             val state by onBoardingViewModel.state.collectAsStateWithLifecycle()
 
             OnBoardingScreen(
                 onNavigate = { screen ->
-                    navigator.navigate(screen, navOptions)
+                    navigator.navigate(screen)
                 },
                 onEvent = onBoardingViewModel::emitEvent,
                 state = state

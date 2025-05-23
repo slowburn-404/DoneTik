@@ -30,7 +30,6 @@ import com.datahiveorg.donetik.ui.components.SnackBar
 import com.datahiveorg.donetik.ui.components.TopBar
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.ui.navigation.NavOptions
 import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
 import com.datahiveorg.donetik.ui.navigation.RootNavGraph
 import com.datahiveorg.donetik.ui.navigation.RouterScreen
@@ -65,9 +64,12 @@ class MainActivity : ComponentActivity() {
 
             DisposableEffect(navController) {
                 val listener =
-                    NavController.OnDestinationChangedListener { _, destination, arguments ->
+                    NavController.OnDestinationChangedListener { controller, destination, arguments ->
                         Logger.i("RootNavigation", "Destination changed to: ${destination.route}")
                         Logger.i("RootNavigation", "Arguments: $arguments")
+                        val backStack = controller.currentBackStackEntry
+                        Logger.i("Back stack entry", "$backStack")
+
 
                     }
                 navController.addOnDestinationChangedListener(listener)
@@ -126,13 +128,9 @@ class MainActivity : ComponentActivity() {
                             featureScreen.hasFAB
                         }?.let { screen ->
                             val destination = screen.getFABDestination()
-                            val navOptions = NavOptions(
-                                popUpToDestination = screen,
-                                inclusive = true,
-                            )
                             AnimatedFAB(
-                                isVisible = true,
-                                onClick = { navigator.navigate(destination, navOptions) }
+                                isVisible = screen.hasFAB,
+                                onClick = { navigator.navigate(destination) }
                             )
                         }
                     },

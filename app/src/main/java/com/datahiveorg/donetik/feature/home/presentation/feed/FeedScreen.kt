@@ -64,7 +64,7 @@ fun FeedScreen(
     val coroutineScope = rememberCoroutineScope()
     var selectedTask by remember { mutableStateOf<Task?>(null) }
 
-    LaunchedEffect(uiEvent) {
+    LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
                 is FeedEvent.Navigate.Feed -> {

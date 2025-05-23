@@ -17,39 +17,20 @@ class AuthenticationNavigatorImpl(
 ) : AuthenticationNavigator {
 
     override fun navigateToLogin() {
-        val loginScreenNavOptions = NavOptions(
-            inclusive = true,
-            launchSingleTop = true,
-            popUpToDestination = AuthenticationScreen.LoginScreen
-        )
         doneTikNavigator.navigate(
-            destination = AuthenticationScreen.LoginScreen,
-            navOptions = loginScreenNavOptions
+            destination = AuthenticationScreen.LoginScreen
         )
     }
 
     override fun navigateToSignUp() {
-        val signUpScreenNavOptions = NavOptions(
-            launchSingleTop = true,
-            inclusive = true,
-            popUpToDestination = AuthenticationScreen.SignUpScreen
-        )
         doneTikNavigator.navigate(
-            destination = AuthenticationScreen.LoginScreen,
-            navOptions = signUpScreenNavOptions
+            destination = AuthenticationScreen.LoginScreen
         )
     }
 
     override fun navigateToHomeFeature() {
-        val homeScreenNavOptions = NavOptions(
-            launchSingleTop = true,
-            inclusive = true,
-            popUpToDestination = HomeScreen.Feed
-        )
-
         doneTikNavigator.navigate(
-            destination = HomeScreen.Feed,
-            navOptions = homeScreenNavOptions
+            destination = HomeScreen.Feed
         )
     }
 

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -26,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import com.datahiveorg.donetik.feature.home.presentation.feed.Status
-import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_LONG
+import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
 @Composable
 fun PrimaryButton(
@@ -48,17 +47,17 @@ fun PrimaryButton(
         ) {
             androidx.compose.animation.AnimatedVisibility(
                 visible = !isLoading,
-                enter = fadeIn(animationSpec = tween(ANIMATION_DURATION_LONG)),
-                exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_LONG)),
+                enter = fadeIn(animationSpec = tween(ANIMATION_DURATION_SHORT)),
+                exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_SHORT)),
 
                 ) {
                 AnimatedContent(
                     targetState = label,
                     transitionSpec = {
                         fadeIn(
-                            animationSpec = tween(ANIMATION_DURATION_LONG)
+                            animationSpec = tween(ANIMATION_DURATION_SHORT)
                         ) togetherWith fadeOut(
-                            animationSpec = tween(ANIMATION_DURATION_LONG)
+                            animationSpec = tween(ANIMATION_DURATION_SHORT)
                         )
                     }
                 ) { targetLabel ->
@@ -71,8 +70,8 @@ fun PrimaryButton(
 
             androidx.compose.animation.AnimatedVisibility(
                 visible = isLoading,
-                enter = fadeIn(animationSpec = tween(ANIMATION_DURATION_LONG)),
-                exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_LONG)),
+                enter = fadeIn(animationSpec = tween(ANIMATION_DURATION_SHORT)),
+                exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_SHORT)),
             ) {
                 ProgressIndicator(
                     color = colorScheme.onPrimary

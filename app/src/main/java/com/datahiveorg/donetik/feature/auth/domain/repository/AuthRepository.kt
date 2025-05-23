@@ -12,7 +12,7 @@ interface AuthRepository {
 
     suspend fun signUpWithGoogle(idToken: String): DomainResponse<User>
 
-    suspend fun getUser(): DomainResponse<User>
+    suspend fun getUser(): DomainResponse<User?>
 
     suspend fun checkLoginStatus(): DomainResponse<Boolean>
 }

@@ -2,15 +2,18 @@ package com.datahiveorg.donetik.ui.navigation
 
 import android.net.Uri
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavOptionsBuilder
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
 import com.datahiveorg.donetik.ui.components.AsyncImageLoader
 import kotlinx.serialization.Serializable
 
 interface FeatureScreen {
+
+    fun buildNavOptions(builder: NavOptionsBuilder) {}
+
     val title: String get() = ""
 
     //have default values and override only when necessary
@@ -33,17 +36,37 @@ data class TopBarAction(
 )
 
 @Serializable
-data object RouterScreen : FeatureScreen
+data object RouterScreen : FeatureScreen {
+    override fun buildNavOptions(builder: NavOptionsBuilder) {}
+}
 
 @Serializable
-data object AuthFeature : FeatureScreen
+data object AuthFeature : FeatureScreen {
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<RouterScreen> {
+            inclusive = true
+        }
+    }
+}
 
 @Serializable
-data object OnBoardingFeature : FeatureScreen
+data object OnBoardingFeature : FeatureScreen {
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<RouterScreen> {
+            inclusive = true
+        }
+    }
+}
 
 
 @Serializable
-data object HomeFeature : FeatureScreen
+data object HomeFeature : FeatureScreen {
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<RouterScreen> {
+            inclusive = true
+        }
+    }
+}
 
 fun FeatureScreen.getFABDestination(): FeatureScreen {
     return when (this) {
