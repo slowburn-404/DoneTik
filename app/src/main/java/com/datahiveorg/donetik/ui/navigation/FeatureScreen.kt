@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavOptionsBuilder
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
@@ -13,21 +14,7 @@ import kotlinx.serialization.Serializable
 interface FeatureScreen {
 
     fun buildNavOptions(builder: NavOptionsBuilder) {}
-
-    val title: String get() = ""
-
-    //have default values and override only when necessary
-    val hasTopAppBar: Boolean get() = false
-    val hasBottomBar: Boolean get() = false
-    val hasNavIcon: Boolean get() = false
-    val topBarActions: List<TopBarAction> get() = emptyList()
-    val hasFAB: Boolean get() = false
-
-    @get:DrawableRes
-    val bottomNavIconRes: Int? get() = null
-
-    @get:DrawableRes
-    val navIconRes: Int? get() = null
+    val screenUIConfig: ScreenUIConfig get() = ScreenUIConfig()
 }
 
 data class TopBarAction(

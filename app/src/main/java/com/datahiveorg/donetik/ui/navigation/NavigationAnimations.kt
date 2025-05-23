@@ -1,63 +1,32 @@
 package com.datahiveorg.donetik.ui.navigation
 
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.datahiveorg.donetik.util.Animation
 
 /**
  * Animate navigation transitions
  */
-inline fun <reified R : Any> NavGraphBuilder.animatedComposable(
+inline fun <reified S : FeatureScreen> NavGraphBuilder.animatedComposable(
     deepLinks: List<NavDeepLink> = emptyList(),
     noinline content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
-) = composable<R>(
+) = composable<S>(
     deepLinks = deepLinks,
     enterTransition = {
-        slideIntoContainer(
-            towards = AnimatedContentTransitionScope.SlideDirection.Start,
-            animationSpec = tween(
-                delayMillis = Animation.ANIMATION_DURATION_SHORT,
-                durationMillis = Animation.ANIMATION_DURATION_SHORT,
-                easing = EaseIn
-            )
-        ) +
-                fadeIn(
-                    animationSpec = tween(
-                        delayMillis = Animation.ANIMATION_DURATION_SHORT,
-                        durationMillis = Animation.ANIMATION_DURATION_SHORT,
-                        easing = LinearEasing
-                    )
-                )
-
+        S::class.objectInstance?.screenUIConfig?.enterTransition ?: defaultEnterTransition()
     },
     exitTransition = {
-        slideOutOfContainer(
-            towards = AnimatedContentTransitionScope.SlideDirection.Start,
-            animationSpec = tween(
-                durationMillis = Animation.ANIMATION_DURATION_SHORT,
-                delayMillis = Animation.ANIMATION_DURATION_SHORT,
-                easing = LinearEasing
-            )
-        ) +
-                fadeOut(
-                    animationSpec = tween(
-                        delayMillis = Animation.ANIMATION_DURATION_SHORT,
-                        durationMillis = Animation.ANIMATION_DURATION_SHORT,
-                        easing = LinearEasing
-                    ),
-                )
+        S::class.objectInstance?.screenUIConfig?.exitTransition ?: defaultExitTransition()
+    },
+    popEnterTransition = {
+        S::class.objectInstance?.screenUIConfig?.enterTransition ?: defaultEnterTransition()
 
-
+    },
+    popExitTransition = {
+        S::class.objectInstance?.screenUIConfig?.exitTransition ?: defaultExitTransition()
     },
     content = content
 )

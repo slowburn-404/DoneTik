@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -23,7 +24,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskCard(
     modifier: Modifier = Modifier,
@@ -31,7 +31,7 @@ fun TaskCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
-    Card(
+    ElevatedCard (
         modifier = modifier
             .fillMaxWidth()
             .combinedClickable(
@@ -39,12 +39,12 @@ fun TaskCard(
                 onLongClick = onLongClick
             ),
         shape = RoundedCornerShape(14.dp),
-        colors = CardColors(
-            containerColor = colorScheme.surfaceVariant,
-            contentColor = colorScheme.onSurfaceVariant,
-            disabledContainerColor = colorScheme.inverseSurface,
-            disabledContentColor = colorScheme.inverseOnSurface
-        )
+//        colors = CardColors(
+//            containerColor = colorScheme.surfaceVariant,
+//            contentColor = colorScheme.onSurfaceVariant,
+//            disabledContainerColor = colorScheme.inverseSurface,
+//            disabledContentColor = colorScheme.inverseOnSurface
+//        )
     ) {
         //TODO(Use constraint layout instead)
         Column(

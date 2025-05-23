@@ -3,8 +3,8 @@ package com.datahiveorg.donetik.feature.home.presentation.navigation
 import androidx.navigation.NavOptionsBuilder
 import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.ui.navigation.HomeFeature
 import com.datahiveorg.donetik.ui.navigation.RouterScreen
+import com.datahiveorg.donetik.ui.navigation.ScreenUIConfig
 import kotlinx.serialization.Serializable
 
 sealed class HomeScreen : FeatureScreen {
@@ -18,14 +18,15 @@ sealed class HomeScreen : FeatureScreen {
             builder.restoreState = true
         }
 
-        override val hasBottomBar: Boolean
-            get() = true
-        override val hasFAB: Boolean
-            get() = true
-        override val bottomNavIconRes: Int
-            get() = R.drawable.ic_home
-        override val hasTopAppBar: Boolean
-            get() = true
+        override val screenUIConfig: ScreenUIConfig
+            get() = ScreenUIConfig(
+                hasTopAppBar = true,
+                hasBottomBar = true,
+                hasFAB = true,
+                bottomNavIconRes = R.drawable.ic_home,
+                enterTransition = homeEnterTransition(),
+                exitTransition = homeExitTransition()
+            )
     }
 
     @Serializable
@@ -37,14 +38,18 @@ sealed class HomeScreen : FeatureScreen {
             }
             builder.restoreState = true
         }
-        override val title: String
-            get() = "New Task"
-        override val hasNavIcon: Boolean
-            get() = true
-        override val hasTopAppBar: Boolean
-            get() = true
-        override val navIconRes: Int
-            get() = R.drawable.ic_arrow_back
+
+        override val screenUIConfig: ScreenUIConfig
+            get() = ScreenUIConfig(
+                title = "New Task",
+                hasTopAppBar = true,
+                hasBottomBar = false,
+                hasFAB = false,
+                hasNavIcon = true,
+                navIconRes = R.drawable.ic_arrow_back,
+                enterTransition = homeEnterTransition(),
+                exitTransition = homeExitTransition()
+            )
     }
 
     @Serializable
@@ -54,12 +59,16 @@ sealed class HomeScreen : FeatureScreen {
                 inclusive = false
             }
         }
-        override val hasTopAppBar: Boolean
-            get() = true
-        override val hasNavIcon: Boolean
-            get() = true
-        override val navIconRes: Int
-            get() = R.drawable.ic_arrow_back
 
+        override val screenUIConfig: ScreenUIConfig
+            get() = ScreenUIConfig(
+                hasTopAppBar = true,
+                hasBottomBar = false,
+                hasFAB = false,
+                hasNavIcon = true,
+                navIconRes = R.drawable.ic_arrow_back,
+                enterTransition = homeEnterTransition(),
+                exitTransition = homeExitTransition()
+            )
     }
 }

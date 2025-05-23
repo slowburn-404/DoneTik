@@ -3,6 +3,7 @@ package com.datahiveorg.donetik.feature.auth.presentation.navigation
 import androidx.navigation.NavOptionsBuilder
 import com.datahiveorg.donetik.ui.navigation.AuthFeature
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.ui.navigation.ScreenUIConfig
 import kotlinx.serialization.Serializable
 
 sealed class AuthenticationScreen : FeatureScreen {
@@ -14,8 +15,9 @@ sealed class AuthenticationScreen : FeatureScreen {
                 inclusive = true
             }
         }
-        override val title: String
-            get() = "Login"
+
+        override val screenUIConfig: ScreenUIConfig
+            get() = super.screenUIConfig
     }
 
     @Serializable
@@ -26,7 +28,8 @@ sealed class AuthenticationScreen : FeatureScreen {
                 inclusive = true
             }
         }
-        override val title: String
-            get() = "Sign Up"
+
+        override val screenUIConfig: ScreenUIConfig
+            get() = super.screenUIConfig
     }
 }
