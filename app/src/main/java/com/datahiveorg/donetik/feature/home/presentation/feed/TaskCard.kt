@@ -1,6 +1,5 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,8 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -31,25 +29,23 @@ fun TaskCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
-    ElevatedCard (
+    Card(
         modifier = modifier
             .fillMaxWidth()
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
             ),
-        shape = RoundedCornerShape(14.dp),
-//        colors = CardColors(
-//            containerColor = colorScheme.surfaceVariant,
-//            contentColor = colorScheme.onSurfaceVariant,
-//            disabledContainerColor = colorScheme.inverseSurface,
-//            disabledContentColor = colorScheme.inverseOnSurface
+        shape = RoundedCornerShape(24.dp),
+//        colors = CardDefaults.cardColors(
+//            containerColor = colorScheme.primaryContainer,
+//            contentColor = colorScheme.onPrimaryContainer
 //        )
     ) {
         //TODO(Use constraint layout instead)
         Column(
             modifier = Modifier
-                .padding(vertical = 20.dp, horizontal = 10.dp)
+                .padding(24.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -61,7 +57,7 @@ fun TaskCard(
                     text = task.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = typography.titleLarge
+                    style = typography.headlineSmall
                 )
                 if (task.isDone) {
                     Icon(
@@ -74,7 +70,7 @@ fun TaskCard(
                 text = task.description,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                style = typography.bodyMedium
+                style = typography.bodyLarge
             )
             Text(
                 text = task.createdAt,

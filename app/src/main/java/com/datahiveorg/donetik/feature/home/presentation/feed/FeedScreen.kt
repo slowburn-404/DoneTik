@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -122,6 +124,7 @@ fun FeedScreen(
                             viewModel.emitIntent(FeedIntent.Delete(task))
                             showBottomSheet = false
                         }
+
                         "Change complete status" -> {
                             viewModel.emitIntent(FeedIntent.ToggleDoneStatus(task))
                             showBottomSheet = false
@@ -157,6 +160,7 @@ fun FeedContent(
     ) {
         LazyColumn(
             modifier = modifier
+                .padding(vertical = 8.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -191,29 +195,41 @@ fun FeedContent(
                 }
             }
 
-            items(
-                items = filterState.filteredTasks,
-                key = { task -> task.id }
-            ) { task ->
-                TaskCard(
-                    modifier = Modifier.animateItem(),
-                    task = task,
-                    onClick = {
-                        Logger.i(
-                            "Feed item click",
-                            "Task clicked: ${task.id} \n ${task.author.uid}"
-                        )
-                        onEvent(
-                            FeedEvent.SelectTask(
-                                taskId = task.id,
-                                userId = task.author.uid
+            filterState.filteredTasks.forEach { (date, tasks) ->
+                stickyHeader {
+                    Text(
+                        text = date,
+                        style = typography.bodyMedium,
+                        modifier = Modifier
+                            .padding(8.dp),
+                    )
+                }
+
+                items(
+                    items = tasks,
+                    key = { task -> task.id }
+                ) { task ->
+                    TaskCard(
+                        modifier = Modifier.animateItem(),
+                        task = task,
+                        onClick = {
+                            Logger.i(
+                                "Feed item click",
+                                "Task clicked: ${task.id} \n ${task.author.uid}"
                             )
-                        )
-                    },
-                    onLongClick = {
-                        onTaskLongPress(task)
-                    }
-                )
+                            onEvent(
+                                FeedEvent.SelectTask(
+                                    taskId = task.id,
+                                    userId = task.author.uid
+                                )
+                            )
+                        },
+                        onLongClick = {
+                            onTaskLongPress(task)
+                        }
+                    )
+                }
+
             }
         }
     }

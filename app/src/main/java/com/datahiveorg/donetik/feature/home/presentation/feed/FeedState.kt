@@ -26,7 +26,7 @@ data class FeedState(
 @Stable
 @Immutable
 data class FilterState(
-    val filteredTasks: List<Task> = emptyList(),
+    val filteredTasks: GroupedTasks = emptyMap(),
     val filter: Status = Status.ACTIVE
 )
 

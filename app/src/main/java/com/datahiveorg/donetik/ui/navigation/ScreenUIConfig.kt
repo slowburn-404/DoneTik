@@ -48,7 +48,7 @@ fun defaultExitTransition(): ExitTransition =
         animationSpec = tween(
             durationMillis = Animation.ANIMATION_DURATION_SHORT,
             delayMillis = Animation.ANIMATION_DURATION_SHORT,
-            easing = LinearEasing
+            easing = EaseIn
         )
     ) { -it } + fadeOut(
         animationSpec = tween(

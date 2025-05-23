@@ -37,25 +37,25 @@ fun AppScaffold(
             }
         },
         topBar = {
-            currentScreen?.takeIf { featureScreen ->
-                featureScreen.screenUIConfig.hasTopAppBar
-            }?.let { screen ->
-                TopBar(
-                    showNavigationIcon = screen.screenUIConfig.hasNavIcon,
-                    onBackClick = {
-                        navigator.navigateUp()
-                    },
-                    actions = activityState.user?.imageUrl?.let {
-                        buildTopBarActions(
-                            screen,
-                            it,
-                            onClick = {
-                                //TODO(Show dialog for logging out and such)
-                            }
-                        )
-                    },
-                    title = screen.screenUIConfig.title
-                )
+            currentScreen?.let { screen ->
+                if (screen.screenUIConfig.hasTopAppBar) {
+                    TopBar(
+                        showNavigationIcon = screen.screenUIConfig.hasNavIcon,
+                        onBackClick = {
+                            navigator.navigateUp()
+                        },
+                        actions = activityState.user?.imageUrl?.let {
+                            buildTopBarActions(
+                                screen,
+                                it,
+                                onClick = {
+                                    //TODO(Show dialog for logging out and such)
+                                }
+                            )
+                        },
+                        title = screen.screenUIConfig.title
+                    )
+                }
             }
         },
         bottomBar = {

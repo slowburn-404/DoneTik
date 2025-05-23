@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+typealias  GroupedTasks = Map<String, List<Task>>
+
 class FeedViewModel(
     private val homeRepository: HomeRepository,
     private val getUserInfoUseCase: GetUserInfoUseCase,
@@ -158,9 +160,11 @@ class FeedViewModel(
                 Status.ACTIVE -> allTasks.filter { !it.isDone }
                 Status.DONE -> allTasks.filter { it.isDone }
             }
+            val groupedTasks = sortedTasks.groupBy { it.createdAt.substringBefore(",") }
+
             _filteredTasks.update { currentState ->
                 currentState.copy(
-                    filteredTasks = sortedTasks,
+                    filteredTasks = groupedTasks,
                     filter = filter
                 )
 
