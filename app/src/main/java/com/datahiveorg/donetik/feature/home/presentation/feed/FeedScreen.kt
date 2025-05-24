@@ -1,10 +1,14 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +21,7 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -35,11 +40,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
+import com.datahiveorg.donetik.ui.components.AnimatedText
 import com.datahiveorg.donetik.ui.components.BottomSheetOptions
 import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
 import com.datahiveorg.donetik.ui.components.OptionsBottomSheet
 import com.datahiveorg.donetik.ui.components.ScreenTitle
-import com.datahiveorg.donetik.util.Logger
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -51,8 +56,9 @@ fun FeedScreen(
     snackBarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
-    val uiEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = FeedEvent.None)
     val filterState by viewModel.filteredTasks.collectAsStateWithLifecycle(initialValue = FilterState())
+
+    val pullToRefreshState = rememberPullToRefreshState()
 
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -73,25 +79,15 @@ fun FeedScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
-                is FeedEvent.Navigate.Feed -> {
-                    navigator.navigateToFeedScreen()
-                }
+                is FeedEvent.Navigate.Feed -> navigator.navigateToFeedScreen()
+                is FeedEvent.Navigate.NewTask -> navigator.navigateToNewTaskScreen()
+                is FeedEvent.SelectTask -> navigator.navigateToTaskViewScreen(
+                    taskId = event.taskId,
+                    userId = event.userId
+                )
 
-                is FeedEvent.Navigate.NewTask -> {
-                    navigator.navigateToNewTaskScreen()
-                }
+                is FeedEvent.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
 
-                is FeedEvent.SelectTask -> {
-                    Logger.i(
-                        "FeedEvent.SelectTask",
-                        "Task clicked: ${event.taskId} \n ${event.userId}"
-                    )
-                    navigator.navigateToTaskViewScreen(taskId = event.taskId, userId = event.userId)
-                }
-
-                is FeedEvent.ShowSnackBar -> {
-                    snackBarHostState.showSnackbar(event.message)
-                }
 
             }
         }
@@ -108,7 +104,8 @@ fun FeedScreen(
             coroutineScope.launch {
                 bottomSheetState.show()
             }
-        }
+        },
+        pullToRefreshState = pullToRefreshState
     )
 
     if (showBottomSheet) {
@@ -151,9 +148,9 @@ fun FeedContent(
     filterState: FilterState,
     onEvent: (FeedEvent) -> Unit,
     onIntent: (FeedIntent) -> Unit,
-    onTaskLongPress: (Task) -> Unit
+    onTaskLongPress: (Task) -> Unit,
+    pullToRefreshState: PullToRefreshState,
 ) {
-    val pullToRefreshState = rememberPullToRefreshState()
 
     PullToRefreshBox(
         onRefresh = {
@@ -177,16 +174,13 @@ fun FeedContent(
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Your tasks",
+                        text = "Tasks",
                         style = typography.titleLarge,
                         textAlign = TextAlign.Start
-                    )
-
-                    Spacer(
-                        modifier = Modifier.weight(1f)
                     )
 
                     FeedSegmentedButtons(
@@ -194,7 +188,7 @@ fun FeedContent(
                         onOptionsSelected = { newStatus ->
                             onIntent(FeedIntent.Filter(newStatus))
                         },
-                        options = Status.entries
+                        options = FilterOption.entries,
                     )
                 }
             }
@@ -207,12 +201,15 @@ fun FeedContent(
                             .clip(RoundedCornerShape(10.dp))
                             .background(colorScheme.primaryContainer)
                     ) {
-                        Text(
+
+                        AnimatedText(
                             text = date,
                             style = typography.bodyMedium,
-                            modifier = Modifier
-                                .padding(8.dp),
-                            color = colorScheme.onPrimaryContainer
+                            color = colorScheme.onPrimaryContainer,
+                            transitionSpec = {
+                                slideInVertically { it } + fadeIn() togetherWith
+                                        slideOutVertically { -it } + fadeOut()
+                            }
                         )
                     }
                 }
@@ -225,10 +222,6 @@ fun FeedContent(
                         modifier = Modifier.animateItem(),
                         task = task,
                         onClick = {
-                            Logger.i(
-                                "Feed item click",
-                                "Task clicked: ${task.id} \n ${task.author.uid}"
-                            )
                             onEvent(
                                 FeedEvent.SelectTask(
                                     taskId = task.id,
@@ -241,7 +234,6 @@ fun FeedContent(
                         }
                     )
                 }
-
             }
         }
     }
