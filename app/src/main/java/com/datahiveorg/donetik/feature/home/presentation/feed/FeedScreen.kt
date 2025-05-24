@@ -20,6 +20,8 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.carousel.CarouselState
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -76,6 +78,34 @@ fun FeedScreen(
     val coroutineScope = rememberCoroutineScope()
     var selectedTask by remember { mutableStateOf<Task?>(null) }
 
+    val carouselItems by remember {
+        mutableStateOf(
+            listOf(
+                CarouselItem(
+                    title = "Streak",
+                    description = "5",
+                    imageId = R.drawable.ic_streak,
+                    contentDescription = "Streak"
+
+                ),
+                CarouselItem(
+                    title = "Tasks",
+                    description = "${uiState.tasks.size}",
+                    imageId = R.drawable.ic_tasks,
+                    contentDescription = "Tasks"
+
+                ),
+                CarouselItem(
+                    title = "Points",
+                    description = "10",
+                    imageId = R.drawable.ic_points,
+                    contentDescription = "Points"
+                )
+            )
+        )
+    }
+    val carouselState = rememberCarouselState { carouselItems.count() }
+
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
@@ -105,7 +135,9 @@ fun FeedScreen(
                 bottomSheetState.show()
             }
         },
-        pullToRefreshState = pullToRefreshState
+        pullToRefreshState = pullToRefreshState,
+        carouselItems = carouselItems,
+        carouselState = carouselState
     )
 
     if (showBottomSheet) {
@@ -150,6 +182,8 @@ fun FeedContent(
     onIntent: (FeedIntent) -> Unit,
     onTaskLongPress: (Task) -> Unit,
     pullToRefreshState: PullToRefreshState,
+    carouselItems: List<CarouselItem>,
+    carouselState: CarouselState
 ) {
 
     PullToRefreshBox(
@@ -168,6 +202,13 @@ fun FeedContent(
             item {
                 ScreenTitle(
                     title = state.title
+                )
+            }
+
+            item {
+                StatsCarousel(
+                    carouselItems = carouselItems,
+                    carouselState = carouselState
                 )
             }
 
