@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.datahiveorg.donetik.feature.home.domain.model.Task
@@ -38,10 +39,6 @@ fun TaskCard(
                 onLongClick = onLongClick
             ),
         shape = shapes.extraLarge,
-//        colors = CardDefaults.cardColors(
-//            containerColor = colorScheme.primaryContainer,
-//            contentColor = colorScheme.onPrimaryContainer
-//        )
     ) {
         //TODO(Use constraint layout instead)
         Column(

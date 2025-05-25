@@ -19,18 +19,15 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.material3.carousel.CarouselState
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
-import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,10 +47,14 @@ fun StatsCarousel(
             .wrapContentHeight(),
         state = carouselState,
         itemSpacing = 8.dp,
-        preferredItemWidth = 186.dp,
+        preferredItemWidth = 250.dp,
+        contentPadding = PaddingValues(vertical = 8.dp)
     ) { i ->
         val item = carouselItems[i]
-        StatsCarouselItem(carouselItem = item)
+        StatsCarouselItem(
+            modifier = Modifier.maskClip(shapes.extraLarge),
+            carouselItem = item
+        )
     }
 
 
@@ -64,19 +65,15 @@ fun StatsCarouselItem(
     modifier: Modifier = Modifier,
     carouselItem: CarouselItem
 ) {
-    val cardShape = shapes.extraLarge
+    
     Card(
         modifier = modifier
-            .height(205.dp)
-            .graphicsLayer {
-                shape = cardShape
-                clip = true
-            },
+            .height(205.dp),
         colors = CardDefaults.cardColors(
             containerColor = colorScheme.primaryContainer,
             contentColor = colorScheme.onPrimaryContainer
         ),
-        shape = cardShape
+        shape = shapes.extraLarge,
     ) {
         Box(
             modifier = Modifier
