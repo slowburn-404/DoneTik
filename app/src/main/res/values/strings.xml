@@ -8,4 +8,8 @@
     <string name="screen3_body">Build your own leaderboard, name it something absurd (we dare you), and invite your friends, family or work crew. Compete to complete and find out who’s the real productivity MVP—no more hiding behind “I’ll do it later.”</string>
     <string name="screen4_title">Ready, Set, Done!</string>
     <string name="screen4_body">You’ve got the lists. You’ve got the leaderboards. Now it’s time to check off tasks like a legend. Let the productivity games begin!</string>
+    <plurals name="number_of_tasks">
+        <item quantity="one">%d Task</item>
+        <item quantity="other">%d Tasks</item>
+    </plurals>
 </resources>

@@ -11,14 +11,15 @@ data class TaskViewState(
         title = "",
         createdAt = "",
         description = "",
-        lastModified = "",
+        dueDate = "",
         author = User(
             uid = "",
             username = "",
             email = "",
             imageUrl = Uri.EMPTY,
             password = ""
-        )
+        ),
+        category = "Uncategorized"
     ),
     val isLoading: Boolean = false,
     val error: String = ""

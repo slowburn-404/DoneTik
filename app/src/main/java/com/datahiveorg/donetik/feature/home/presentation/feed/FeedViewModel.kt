@@ -80,11 +80,6 @@ class FeedViewModel(
         }
     }
 
-//    init {
-//        generateGreetingText()
-//    }
-
-
     fun emitIntent(intent: FeedIntent) {
         viewModelScope.launch {
             _intent.emit(intent)
@@ -133,6 +128,7 @@ class FeedViewModel(
                 }
                 generateGreetingText()
                 getTasks(_state.value.user.uid)
+                getCarouselItems()
 
             }
 
@@ -187,10 +183,10 @@ class FeedViewModel(
         val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
         val username = _state.value.user.username
         val greeting = when (currentHour) {
-            in 5..11 -> "Good morning $username"
-            in 12..16 -> "Good afternoon $username"
-            in 17..20 -> "Good evening $username"
-            else -> "Hello $username"
+            in 5..11 -> "Good morning, $username"
+            in 12..16 -> "Good afternoon, $username"
+            in 17..20 -> "Good evening, $username"
+            else -> "Hello, $username"
         }
 
         _state.update { currentState ->
@@ -205,11 +201,12 @@ class FeedViewModel(
                 _state.update { currentState ->
                     val newTaskList = currentState.tasks.filter { it.id != task.id }
                     currentState.copy(
-                        isLoading = false,
-                        tasks = newTaskList
+                        tasks = newTaskList,
+                        isLoading = false
                     )
                 }
                 filterByDone(_filteredTasks.value.filter)
+                getCarouselItems()
                 emitEvent(FeedEvent.ShowSnackBar("Task deleted"))
             }
 
@@ -258,6 +255,28 @@ class FeedViewModel(
                 emitEvent(FeedEvent.ShowSnackBar(response.message))
             }
 
+        }
+    }
+
+    private fun getCarouselItems() {
+        viewModelScope.launch(dispatcher.default) {
+            val allTasks = _state.value.tasks
+            val carouselItems =
+                allTasks.sortedByDescending { it.createdAt }
+                    .groupBy { it.category }
+                    .map { (category, tasksInCategory) ->
+                        CarouselItem(
+                            category = category,
+                            count = tasksInCategory.count(),
+                            contentDescription = category
+                        )
+                    }
+
+            _state.update { currentState ->
+                currentState.copy(
+                    carouselItems = carouselItems
+                )
+            }
         }
     }
 

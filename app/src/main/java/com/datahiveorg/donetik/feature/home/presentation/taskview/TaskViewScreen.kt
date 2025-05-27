@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,8 +21,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
 import com.datahiveorg.donetik.ui.components.PrimaryButton
 import com.datahiveorg.donetik.ui.components.ScreenTitle
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TaskViewScreen(
@@ -83,7 +82,7 @@ fun TaskViewContent(
         )
 
         Text(
-            text = state.task.lastModified,
+            text = state.task.dueDate,
             style = typography.bodyMedium
         )
 
@@ -114,7 +113,9 @@ fun TaskViewContent(
         )
 
         PrimaryButton(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
             label = if (state.task.isDone) "Mark as undone" else "Mark as done",
             onClick = {
                 onIntent(TaskViewIntent.ToggleDoneStatus(state.task))

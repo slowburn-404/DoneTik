@@ -25,11 +25,13 @@ data class NewTaskState(
         description = "",
         isDone = false,
         createdAt = Date().toHomeDomain(),
-        lastModified = Date().toHomeDomain()
+        dueDate = Date().toHomeDomain(),
+        category = "Uncategorized"
     ),
     val error: String = "",
     val titleError: String = "",
     val descriptionError: String = "",
     val isLoading: Boolean = false,
-    val isFormValid: Boolean = false
+    val isFormValid: Boolean = false,
+    val showCategoryDialog: Boolean = false
 )

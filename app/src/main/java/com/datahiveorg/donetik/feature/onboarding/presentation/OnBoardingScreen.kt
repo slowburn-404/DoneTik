@@ -84,7 +84,9 @@ fun OnBoardingScreen(
         }
 
         PrimaryButton(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
             label = if (pagerState.currentPage < 3) "Next" else "Get Started",
             onClick = {
                 if (pagerState.currentPage < 3) {

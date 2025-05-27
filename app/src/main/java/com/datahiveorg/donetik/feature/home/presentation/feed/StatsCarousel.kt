@@ -1,12 +1,10 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,10 +26,10 @@ import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.ui.components.AnimatedText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +63,7 @@ fun StatsCarouselItem(
     modifier: Modifier = Modifier,
     carouselItem: CarouselItem
 ) {
-    
+
     Card(
         modifier = modifier
             .height(205.dp),
@@ -88,18 +86,17 @@ fun StatsCarouselItem(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                Image(
-                    painter = painterResource(id = carouselItem.imageId),
-                    contentDescription = carouselItem.contentDescription
-                )
-
                 Text(
-                    text = carouselItem.title,
+                    text = carouselItem.category,
                     style = typography.headlineMedium,
                     fontWeight = FontWeight.SemiBold
                 )
                 AnimatedText(
-                    text = carouselItem.description,
+                    text = pluralStringResource(
+                        id = R.plurals.number_of_tasks,
+                        count = carouselItem.count,
+                        carouselItem.count
+                    ),
                     style = typography.titleMedium,
                     color = colorScheme.onPrimaryContainer,
                     transitionSpec = {
@@ -115,8 +112,7 @@ fun StatsCarouselItem(
 
 
 data class CarouselItem(
-    val title: String,
-    val description: String,
-    @DrawableRes val imageId: Int,
+    val category: String,
+    val count: Int,
     val contentDescription: String
 )

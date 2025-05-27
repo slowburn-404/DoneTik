@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedButton
@@ -35,8 +36,7 @@ fun PrimaryButton(
     isLoading: Boolean
 ) {
     Button(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(14.dp),
         enabled = isEnabled,
@@ -86,8 +86,7 @@ fun SecondaryButton(
     isLoading: Boolean
 ) {
     OutlinedButton(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(14.dp),
     ) {
@@ -121,7 +120,7 @@ fun FeedSegmentedButtons(
     selectedIndex: FilterOption,
 ) {
     SingleChoiceSegmentedButtonRow(
-        modifier = modifier
+        modifier = modifier.fillMaxWidth()
     ) {
         options.forEachIndexed { index, filterOption ->
             SegmentedButton(

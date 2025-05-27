@@ -136,6 +136,7 @@ fun LoginScreen(
         }
 
         PrimaryButton(
+            modifier = Modifier.fillMaxWidth(),
             label = "Login",
             onClick = {
                 onIntent(AuthenticationIntent.Login)
@@ -145,6 +146,7 @@ fun LoginScreen(
         )
 
         SecondaryButton(
+            modifier = Modifier.fillMaxWidth(),
             label = "Continue with Google",
             onClick = {
                 coroutineContext.launch {

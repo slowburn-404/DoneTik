@@ -20,7 +20,8 @@ sealed interface FirebaseRequest {
         val description: String,
         @field: JvmField val isDone: Boolean,
         @ServerTimestamp val createdAt: Timestamp,
-        @ServerTimestamp val lastModified: Timestamp
+        @ServerTimestamp val dueDate: Timestamp,
+        val category: String
     ) : FirebaseRequest
 
     data class UserDTO(

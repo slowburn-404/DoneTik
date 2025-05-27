@@ -22,8 +22,10 @@ internal fun DocumentSnapshot.toTaskDTO(): FirebaseRequest.TaskDTO {
         title = getString("title") ?: "",
         description = getString("description") ?: "",
         createdAt = getTimestamp("createdAt") ?: Timestamp.now(),
-        lastModified = getTimestamp("lastModified") ?: Timestamp.now(),
+        //TODO: remove dueDate in favor of dueDate when moving to PROD
+        dueDate = getTimestamp("dueDate") ?: getTimestamp("lastModified") ?: Timestamp.now(),
         author = author,
-        isDone = getBoolean("isDone") ?: false
+        isDone = getBoolean("isDone") ?: false,
+        category = getString("category") ?: "Uncategorized"
     )
 }

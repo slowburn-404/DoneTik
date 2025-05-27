@@ -21,6 +21,7 @@ data class FeedState(
         password = ""
     ),
     val title: String = "",
+    val carouselItems: List<CarouselItem> = emptyList()
 )
 
 @Stable

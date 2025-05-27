@@ -8,9 +8,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,6 +44,7 @@ import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigato
 import com.datahiveorg.donetik.ui.components.AnimatedText
 import com.datahiveorg.donetik.ui.components.BottomSheetOptions
 import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
+import com.datahiveorg.donetik.ui.components.LoadingAnimation
 import com.datahiveorg.donetik.ui.components.OptionsBottomSheet
 import com.datahiveorg.donetik.ui.components.ScreenTitle
 import kotlinx.coroutines.flow.collectLatest
@@ -78,33 +78,7 @@ fun FeedScreen(
     val coroutineScope = rememberCoroutineScope()
     var selectedTask by remember { mutableStateOf<Task?>(null) }
 
-    val carouselItems by remember {
-        mutableStateOf(
-            listOf(
-                CarouselItem(
-                    title = "Streak",
-                    description = "5",
-                    imageId = R.drawable.ic_streak,
-                    contentDescription = "Streak"
-
-                ),
-                CarouselItem(
-                    title = "Tasks",
-                    description = "${uiState.tasks.size}",
-                    imageId = R.drawable.ic_tasks,
-                    contentDescription = "Tasks"
-
-                ),
-                CarouselItem(
-                    title = "Points",
-                    description = "10",
-                    imageId = R.drawable.ic_points,
-                    contentDescription = "Points"
-                )
-            )
-        )
-    }
-    val carouselState = rememberCarouselState { carouselItems.count() }
+    val carouselState = rememberCarouselState { uiState.carouselItems.count() }
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
@@ -136,7 +110,6 @@ fun FeedScreen(
             }
         },
         pullToRefreshState = pullToRefreshState,
-        carouselItems = carouselItems,
         carouselState = carouselState
     )
 
@@ -182,7 +155,6 @@ fun FeedContent(
     onIntent: (FeedIntent) -> Unit,
     onTaskLongPress: (Task) -> Unit,
     pullToRefreshState: PullToRefreshState,
-    carouselItems: List<CarouselItem>,
     carouselState: CarouselState
 ) {
 
@@ -195,35 +167,54 @@ fun FeedContent(
     ) {
         LazyColumn(
             modifier = modifier
-                .padding(vertical = 8.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item {
-                ScreenTitle(
-                    title = state.title
-                )
-            }
-
-            item {
-                StatsCarousel(
-                    carouselItems = carouselItems,
-                    carouselState = carouselState
-                )
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Tasks",
-                        style = typography.titleLarge,
-                        textAlign = TextAlign.Start
+            if (state.tasks.isEmpty() && state.isLoading) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Text(
+                            text = "Such empty",
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                }
+            } else {
+                item {
+                    ScreenTitle(
+                        title = state.title
                     )
+                }
 
+                item {
+                    Text(
+                        text = "Categories",
+                        style = typography.titleLarge,
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                item {
+                    StatsCarousel(
+                        carouselItems = state.carouselItems,
+                        carouselState = carouselState
+                    )
+                }
+
+                item {
+                    Text(
+                        text = "Your Tasks",
+                        style = typography.titleLarge,
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                item {
                     FeedSegmentedButtons(
                         selectedIndex = filterState.filter,
                         onOptionsSelected = { newStatus ->
@@ -231,49 +222,50 @@ fun FeedContent(
                         },
                         options = FilterOption.entries,
                     )
+
                 }
-            }
 
-            filterState.filteredTasks.forEach { (date, tasks) ->
-                stickyHeader {
-                    Box(
-                        modifier = Modifier
-                            .padding(vertical = 8.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(colorScheme.primaryContainer)
-                    ) {
+                filterState.filteredTasks.forEach { (date, tasks) ->
+                    stickyHeader {
+                        Box(
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(colorScheme.primaryContainer)
+                        ) {
 
-                        AnimatedText(
-                            text = date,
-                            style = typography.bodyMedium,
-                            color = colorScheme.onPrimaryContainer,
-                            transitionSpec = {
-                                slideInVertically { it } + fadeIn() togetherWith
-                                        slideOutVertically { -it } + fadeOut()
+                            AnimatedText(
+                                text = date,
+                                style = typography.bodyMedium,
+                                color = colorScheme.onPrimaryContainer,
+                                transitionSpec = {
+                                    slideInVertically { it } + fadeIn() togetherWith
+                                            slideOutVertically { -it } + fadeOut()
+                                }
+                            )
+                        }
+                    }
+
+                    items(
+                        items = tasks,
+                        key = { task -> task.id }
+                    ) { task ->
+                        TaskCard(
+                            modifier = Modifier.animateItem(),
+                            task = task,
+                            onClick = {
+                                onEvent(
+                                    FeedEvent.SelectTask(
+                                        taskId = task.id,
+                                        userId = task.author.uid
+                                    )
+                                )
+                            },
+                            onLongClick = {
+                                onTaskLongPress(task)
                             }
                         )
                     }
-                }
-
-                items(
-                    items = tasks,
-                    key = { task -> task.id }
-                ) { task ->
-                    TaskCard(
-                        modifier = Modifier.animateItem(),
-                        task = task,
-                        onClick = {
-                            onEvent(
-                                FeedEvent.SelectTask(
-                                    taskId = task.id,
-                                    userId = task.author.uid
-                                )
-                            )
-                        },
-                        onLongClick = {
-                            onTaskLongPress(task)
-                        }
-                    )
                 }
             }
         }
