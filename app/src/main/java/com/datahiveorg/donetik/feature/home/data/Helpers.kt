@@ -19,7 +19,8 @@ fun TaskDTO.toHomeDomain(): Task {
         description = description,
         isDone = isDone,
         createdAt = createdAt.toDate().toHomeDomain(),
-        lastModified = lastModified.toDate().toHomeDomain()
+        dueDate = dueDate.toDate().toHomeDomain(),
+        category = category
     )
 }
 
@@ -34,8 +35,8 @@ fun Task.toFireBase(): Map<String, Any> = mapOf(
     "description" to description,
     "isDone" to isDone,
     "createdAt" to createdAt.toFireStoreTimeStamp(),
-    "lastModified" to lastModified.toFireStoreTimeStamp()
-
+    "dueDate" to dueDate.toFireStoreTimeStamp(),
+    "category" to category
 )
 
 fun User.toUserDTO(): Map<String, Any> {

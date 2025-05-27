@@ -11,7 +11,7 @@ sealed class HomeScreen : FeatureScreen {
     @Serializable
     data object Feed : HomeScreen() {
         override fun buildNavOptions(builder: NavOptionsBuilder) {
-            builder.popUpTo<RouterScreen> {
+            builder.popUpTo(RouterScreen) {
                 inclusive = false
                 saveState = true
             }
@@ -32,7 +32,7 @@ sealed class HomeScreen : FeatureScreen {
     @Serializable
     data object NewTaskScreen : HomeScreen() {
         override fun buildNavOptions(builder: NavOptionsBuilder) {
-            builder.popUpTo<Feed> {
+            builder.popUpTo(Feed) {
                 inclusive = false
                 saveState = true
             }
@@ -55,8 +55,8 @@ sealed class HomeScreen : FeatureScreen {
     @Serializable
     data class TaskScreen(val taskId: String, val userId: String) : HomeScreen() {
         override fun buildNavOptions(builder: NavOptionsBuilder) {
-            builder.popUpTo<Feed> {
-                inclusive = false
+            builder.popUpTo<TaskScreen> {
+                inclusive = true
             }
         }
 

@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun UserInputField(
+    modifier: Modifier = Modifier,
     label: String?,
     enterValue: (input: String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
@@ -36,6 +38,7 @@ fun UserInputField(
 
 ) {
     Column(
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         label?.let {
@@ -85,13 +88,6 @@ fun UserInputField(
             } else {
                 null
             },
-////            colors = TextFieldDefaults.colors(
-//                focusedIndicatorColor = colorScheme.primary,
-//                unfocusedIndicatorColor = Color.Gray,
-//                unfocusedContainerColor = Color.Transparent,
-//                focusedContainerColor = Color.Transparent,
-//                cursorColor = colorScheme.primary
-//            ),
             shape = RoundedCornerShape(14.dp),
             isError = error.isNotEmpty(),
             supportingText = {

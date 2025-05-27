@@ -57,6 +57,14 @@ class NewTaskViewModel(
                         enterDescription(newTaskIntent.description)
                     }
 
+                    is NewTaskIntent.EnterCategory -> {
+                        enterCategory(newTaskIntent.category)
+                    }
+
+                    is NewTaskIntent.ToggleDialog -> {
+                        toggleCategoryDialog()
+                    }
+
                 }
             }
         }
@@ -68,7 +76,7 @@ class NewTaskViewModel(
         }
     }
 
-    fun emitEvent(newTaskEvent: NewTaskEvent) {
+    private fun emitEvent(newTaskEvent: NewTaskEvent) {
         viewModelScope.launch {
             _event.send(newTaskEvent)
         }
@@ -160,6 +168,22 @@ class NewTaskViewModel(
         _state.update { currentState ->
             currentState.copy(
                 isLoading = false
+            )
+        }
+    }
+
+    private fun toggleCategoryDialog() {
+        _state.update { currentState ->
+            currentState.copy(
+                showCategoryDialog = !currentState.showCategoryDialog
+            )
+        }
+    }
+
+    private fun enterCategory(category: String) {
+        _state.update { currentState ->
+            currentState.copy(
+                task = currentState.task.copy(category = category)
             )
         }
     }

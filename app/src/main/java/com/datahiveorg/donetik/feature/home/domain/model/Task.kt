@@ -9,5 +9,6 @@ data class Task(
     val description: String,
     val isDone: Boolean,
     val createdAt: String,
-    val lastModified: String
+    val dueDate: String,
+    val category: String
 )

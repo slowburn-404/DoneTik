@@ -3,11 +3,18 @@ package com.datahiveorg.donetik.feature.home.presentation.newtask
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,6 +24,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
+import com.datahiveorg.donetik.ui.components.InputFieldDialog
 import com.datahiveorg.donetik.ui.components.PrimaryButton
 import com.datahiveorg.donetik.ui.components.UserInputField
 
@@ -31,7 +39,6 @@ fun NewTaskScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                is NewTaskEvent.None -> {}
                 is NewTaskEvent.ShowSnackBar -> {
                     snackBarHostState.showSnackbar(event.message)
                 }
@@ -45,8 +52,22 @@ fun NewTaskScreen(
 
     NewTaskContent(
         state = state,
-        onEvent = viewModel::emitEvent,
         onIntent = viewModel::emitIntent
+    )
+
+    InputFieldDialog(
+        onDismiss = {
+            viewModel.emitIntent(NewTaskIntent.ToggleDialog)
+
+        },
+        onSaveClick = {
+            viewModel.emitIntent(NewTaskIntent.EnterCategory(it))
+        },
+        confirmButtonText = "Save",
+        dismissButtonText = "Dismiss",
+        title = "Save category",
+        label = null,
+        showDialog = state.showCategoryDialog,
     )
 
 }
@@ -55,7 +76,6 @@ fun NewTaskScreen(
 fun NewTaskContent(
     modifier: Modifier = Modifier,
     state: NewTaskState,
-    onEvent: (NewTaskEvent) -> Unit,
     onIntent: (NewTaskIntent) -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -65,6 +85,24 @@ fun NewTaskContent(
             .fillMaxSize()
             .verticalScroll(scrollState)
     ) {
+        AssistChip(
+            onClick = {
+                onIntent(NewTaskIntent.ToggleDialog)
+            },
+            shape = shapes.extraLarge,
+            label = {
+                Text(
+                    text = state.task.category,
+                    style = typography.labelLarge,
+                    color = colorScheme.onPrimaryContainer
+                )
+            },
+            colors = AssistChipDefaults.assistChipColors(
+                containerColor = colorScheme.primaryContainer,
+                labelColor = colorScheme.onPrimaryContainer
+            )
+        )
+
         UserInputField(
             label = "Title",
             enterValue = { title ->
@@ -104,7 +142,9 @@ fun NewTaskContent(
         )
 
         PrimaryButton(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
             label = "Save",
             onClick = {
                 onIntent(NewTaskIntent.CreateTask)

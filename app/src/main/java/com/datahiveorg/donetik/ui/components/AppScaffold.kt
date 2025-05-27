@@ -44,16 +44,8 @@ fun AppScaffold(
                         onBackClick = {
                             navigator.navigateUp()
                         },
-                        actions = activityState.user?.imageUrl?.let {
-                            buildTopBarActions(
-                                screen,
-                                it,
-                                onClick = {
-                                    //TODO(Show dialog for logging out and such)
-                                }
-                            )
-                        },
-                        title = screen.screenUIConfig.title
+                        title = screen.screenUIConfig.title,
+                        actions = null
                     )
                 }
             }

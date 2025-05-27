@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -118,6 +119,7 @@ fun SignUpScreen(
         )
 
         PrimaryButton(
+            modifier = Modifier.fillMaxWidth(),
             label = "Create account",
             onClick = {
                 onIntent(AuthenticationIntent.SignUp)
@@ -127,6 +129,7 @@ fun SignUpScreen(
         )
 
         SecondaryButton(
+            modifier = Modifier.fillMaxWidth(),
             label = "Sign up with Google",
             onClick = {
                 coroutineContext.launch {

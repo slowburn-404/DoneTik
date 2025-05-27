@@ -1,12 +1,14 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,7 +18,10 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.carousel.CarouselState
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -29,17 +34,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
+import com.datahiveorg.donetik.ui.components.AnimatedText
 import com.datahiveorg.donetik.ui.components.BottomSheetOptions
 import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
+import com.datahiveorg.donetik.ui.components.LoadingAnimation
 import com.datahiveorg.donetik.ui.components.OptionsBottomSheet
 import com.datahiveorg.donetik.ui.components.ScreenTitle
-import com.datahiveorg.donetik.util.Logger
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -51,8 +58,9 @@ fun FeedScreen(
     snackBarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
-    val uiEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = FeedEvent.None)
     val filterState by viewModel.filteredTasks.collectAsStateWithLifecycle(initialValue = FilterState())
+
+    val pullToRefreshState = rememberPullToRefreshState()
 
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -70,28 +78,20 @@ fun FeedScreen(
     val coroutineScope = rememberCoroutineScope()
     var selectedTask by remember { mutableStateOf<Task?>(null) }
 
+    val carouselState = rememberCarouselState { uiState.carouselItems.count() }
+
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
-                is FeedEvent.Navigate.Feed -> {
-                    navigator.navigateToFeedScreen()
-                }
+                is FeedEvent.Navigate.Feed -> navigator.navigateToFeedScreen()
+                is FeedEvent.Navigate.NewTask -> navigator.navigateToNewTaskScreen()
+                is FeedEvent.SelectTask -> navigator.navigateToTaskViewScreen(
+                    taskId = event.taskId,
+                    userId = event.userId
+                )
 
-                is FeedEvent.Navigate.NewTask -> {
-                    navigator.navigateToNewTaskScreen()
-                }
+                is FeedEvent.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
 
-                is FeedEvent.SelectTask -> {
-                    Logger.i(
-                        "FeedEvent.SelectTask",
-                        "Task clicked: ${event.taskId} \n ${event.userId}"
-                    )
-                    navigator.navigateToTaskViewScreen(taskId = event.taskId, userId = event.userId)
-                }
-
-                is FeedEvent.ShowSnackBar -> {
-                    snackBarHostState.showSnackbar(event.message)
-                }
 
             }
         }
@@ -108,7 +108,9 @@ fun FeedScreen(
             coroutineScope.launch {
                 bottomSheetState.show()
             }
-        }
+        },
+        pullToRefreshState = pullToRefreshState,
+        carouselState = carouselState
     )
 
     if (showBottomSheet) {
@@ -151,9 +153,10 @@ fun FeedContent(
     filterState: FilterState,
     onEvent: (FeedEvent) -> Unit,
     onIntent: (FeedIntent) -> Unit,
-    onTaskLongPress: (Task) -> Unit
+    onTaskLongPress: (Task) -> Unit,
+    pullToRefreshState: PullToRefreshState,
+    carouselState: CarouselState
 ) {
-    val pullToRefreshState = rememberPullToRefreshState()
 
     PullToRefreshBox(
         onRefresh = {
@@ -164,84 +167,106 @@ fun FeedContent(
     ) {
         LazyColumn(
             modifier = modifier
-                .padding(vertical = 8.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item {
-                ScreenTitle(
-                    title = state.title
-                )
-            }
+            if (state.tasks.isEmpty() && state.isLoading) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Text(
+                            text = "Such empty",
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                }
+            } else {
+                item {
+                    ScreenTitle(
+                        title = state.title
+                    )
+                }
 
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                item {
                     Text(
-                        text = "Your tasks",
+                        text = "Categories",
                         style = typography.titleLarge,
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.SemiBold
                     )
+                }
 
-                    Spacer(
-                        modifier = Modifier.weight(1f)
+                item {
+                    StatsCarousel(
+                        carouselItems = state.carouselItems,
+                        carouselState = carouselState
                     )
+                }
 
+                item {
+                    Text(
+                        text = "Your Tasks",
+                        style = typography.titleLarge,
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                item {
                     FeedSegmentedButtons(
                         selectedIndex = filterState.filter,
                         onOptionsSelected = { newStatus ->
                             onIntent(FeedIntent.Filter(newStatus))
                         },
-                        options = Status.entries
+                        options = FilterOption.entries,
                     )
-                }
-            }
 
-            filterState.filteredTasks.forEach { (date, tasks) ->
-                stickyHeader {
-                    Box(
-                        modifier = Modifier
-                            .padding(vertical = 8.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(colorScheme.primaryContainer)
-                    ) {
-                        Text(
-                            text = date,
-                            style = typography.bodyMedium,
+                }
+
+                filterState.filteredTasks.forEach { (date, tasks) ->
+                    stickyHeader {
+                        Box(
                             modifier = Modifier
-                                .padding(8.dp),
-                            color = colorScheme.onPrimaryContainer
+                                .padding(vertical = 8.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(colorScheme.primaryContainer)
+                        ) {
+
+                            AnimatedText(
+                                text = date,
+                                style = typography.bodyMedium,
+                                color = colorScheme.onPrimaryContainer,
+                                transitionSpec = {
+                                    slideInVertically { it } + fadeIn() togetherWith
+                                            slideOutVertically { -it } + fadeOut()
+                                }
+                            )
+                        }
+                    }
+
+                    items(
+                        items = tasks,
+                        key = { task -> task.id }
+                    ) { task ->
+                        TaskCard(
+                            modifier = Modifier.animateItem(),
+                            task = task,
+                            onClick = {
+                                onEvent(
+                                    FeedEvent.SelectTask(
+                                        taskId = task.id,
+                                        userId = task.author.uid
+                                    )
+                                )
+                            },
+                            onLongClick = {
+                                onTaskLongPress(task)
+                            }
                         )
                     }
                 }
-
-                items(
-                    items = tasks,
-                    key = { task -> task.id }
-                ) { task ->
-                    TaskCard(
-                        modifier = Modifier.animateItem(),
-                        task = task,
-                        onClick = {
-                            Logger.i(
-                                "Feed item click",
-                                "Task clicked: ${task.id} \n ${task.author.uid}"
-                            )
-                            onEvent(
-                                FeedEvent.SelectTask(
-                                    taskId = task.id,
-                                    userId = task.author.uid
-                                )
-                            )
-                        },
-                        onLongClick = {
-                            onTaskLongPress(task)
-                        }
-                    )
-                }
-
             }
         }
     }

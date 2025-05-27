@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-typealias  GroupedTasks = Map<String, List<Task>>
+typealias GroupedTasks = Map<String, List<Task>>
 
 class FeedViewModel(
     private val homeRepository: HomeRepository,
@@ -40,7 +40,7 @@ class FeedViewModel(
         initialValue = FilterState(),
         started = WhileSubscribed(5000)
     ).onStart {
-        emitIntent(FeedIntent.Filter(Status.ACTIVE))
+        emitIntent(FeedIntent.Filter(FilterOption.ALL))
     }
 
     private val _intent = MutableSharedFlow<FeedIntent>(replay = 1, extraBufferCapacity = 5)
@@ -79,11 +79,6 @@ class FeedViewModel(
             }
         }
     }
-
-    init {
-        generateGreetingText()
-    }
-
 
     fun emitIntent(intent: FeedIntent) {
         viewModelScope.launch {
@@ -131,7 +126,10 @@ class FeedViewModel(
                         isLoading = false
                     )
                 }
+                generateGreetingText()
                 getTasks(_state.value.user.uid)
+                getCarouselItems()
+
             }
 
             is DomainResponse.Failure -> {
@@ -153,14 +151,17 @@ class FeedViewModel(
         }
     }
 
-    private fun filterByDone(filter: Status) {
+    private fun filterByDone(filter: FilterOption) {
         viewModelScope.launch(dispatcher.default) {
             val allTasks = _state.value.tasks
+
             val sortedTasks = when (filter) {
-                Status.ACTIVE -> allTasks.filter { !it.isDone }
-                Status.DONE -> allTasks.filter { it.isDone }
+                FilterOption.ACTIVE -> allTasks.filter { !it.isDone }
+                FilterOption.DONE -> allTasks.filter { it.isDone }
+                FilterOption.ALL -> allTasks
             }
-            val groupedTasks = sortedTasks.groupBy { it.createdAt.substringBefore(",") }
+
+            val groupedTasks = groupByDate(sortedTasks)
 
             _filteredTasks.update { currentState ->
                 currentState.copy(
@@ -173,15 +174,19 @@ class FeedViewModel(
         }
     }
 
+    private fun groupByDate(tasks: List<Task>): Map<String, List<Task>> =
+        tasks.groupBy { it.createdAt.substringBefore(",") }
+
+
     private fun generateGreetingText() {
         val calendar = Calendar.getInstance()
         val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
         val username = _state.value.user.username
         val greeting = when (currentHour) {
-            in 5..11 -> "Good morning $username"
-            in 12..16 -> "Good afternoon $username"
-            in 17..20 -> "Good evening $username"
-            else -> "Hello $username"
+            in 5..11 -> "Good morning, $username"
+            in 12..16 -> "Good afternoon, $username"
+            in 17..20 -> "Good evening, $username"
+            else -> "Hello, $username"
         }
 
         _state.update { currentState ->
@@ -196,11 +201,12 @@ class FeedViewModel(
                 _state.update { currentState ->
                     val newTaskList = currentState.tasks.filter { it.id != task.id }
                     currentState.copy(
-                        isLoading = false,
-                        tasks = newTaskList
+                        tasks = newTaskList,
+                        isLoading = false
                     )
                 }
                 filterByDone(_filteredTasks.value.filter)
+                getCarouselItems()
                 emitEvent(FeedEvent.ShowSnackBar("Task deleted"))
             }
 
@@ -249,6 +255,28 @@ class FeedViewModel(
                 emitEvent(FeedEvent.ShowSnackBar(response.message))
             }
 
+        }
+    }
+
+    private fun getCarouselItems() {
+        viewModelScope.launch(dispatcher.default) {
+            val allTasks = _state.value.tasks
+            val carouselItems =
+                allTasks.sortedByDescending { it.createdAt }
+                    .groupBy { it.category }
+                    .map { (category, tasksInCategory) ->
+                        CarouselItem(
+                            category = category,
+                            count = tasksInCategory.count(),
+                            contentDescription = category
+                        )
+                    }
+
+            _state.update { currentState ->
+                currentState.copy(
+                    carouselItems = carouselItems
+                )
+            }
         }
     }
 

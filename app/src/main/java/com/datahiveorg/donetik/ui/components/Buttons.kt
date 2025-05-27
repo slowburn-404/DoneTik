@@ -1,6 +1,5 @@
 package com.datahiveorg.donetik.ui.components
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -13,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedButton
@@ -24,7 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import com.datahiveorg.donetik.feature.home.presentation.feed.Status
+import com.datahiveorg.donetik.feature.home.presentation.feed.FilterOption
 import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
 @Composable
@@ -36,8 +36,7 @@ fun PrimaryButton(
     isLoading: Boolean
 ) {
     Button(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(14.dp),
         enabled = isEnabled,
@@ -51,21 +50,18 @@ fun PrimaryButton(
                 exit = fadeOut(animationSpec = tween(ANIMATION_DURATION_SHORT)),
 
                 ) {
-                AnimatedContent(
-                    targetState = label,
+                AnimatedText(
+                    text = label,
+                    style = typography.bodyLarge,
                     transitionSpec = {
-                        fadeIn(
-                            animationSpec = tween(ANIMATION_DURATION_SHORT)
-                        ) togetherWith fadeOut(
-                            animationSpec = tween(ANIMATION_DURATION_SHORT)
+                        fadeIn(tween(ANIMATION_DURATION_SHORT)) togetherWith fadeOut(
+                            tween(
+                                ANIMATION_DURATION_SHORT
+                            )
                         )
-                    }
-                ) { targetLabel ->
-                    Text(
-                        text = targetLabel,
-                        style = typography.bodyLarge,
-                    )
-                }
+                    },
+                )
+
             }
 
             androidx.compose.animation.AnimatedVisibility(
@@ -90,8 +86,7 @@ fun SecondaryButton(
     isLoading: Boolean
 ) {
     OutlinedButton(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(14.dp),
     ) {
@@ -120,21 +115,22 @@ fun SecondaryButton(
 @Composable
 fun FeedSegmentedButtons(
     modifier: Modifier = Modifier,
-    onOptionsSelected: (Status) -> Unit,
-    options: List<Status>,
-    selectedIndex: Status
+    onOptionsSelected: (FilterOption) -> Unit,
+    options: List<FilterOption>,
+    selectedIndex: FilterOption,
 ) {
     SingleChoiceSegmentedButtonRow(
-        modifier = modifier
+        modifier = modifier.fillMaxWidth()
     ) {
-        options.forEachIndexed { index, status ->
+        options.forEachIndexed { index, filterOption ->
             SegmentedButton(
-                onClick = { onOptionsSelected(status) },
-                selected = status == selectedIndex,
+                onClick = { onOptionsSelected(filterOption) },
+                selected = filterOption == selectedIndex,
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
             ) {
                 Text(
-                    text = status.name.lowercase().replaceFirstChar { it.uppercase() },
+                    //TODO: hoist this up the ui tree as state with `rememberSaveAble`since it is a calculation
+                    text = filterOption.name.lowercase().replaceFirstChar { it.uppercase() },
                     style = typography.bodyLarge
                 )
             }
