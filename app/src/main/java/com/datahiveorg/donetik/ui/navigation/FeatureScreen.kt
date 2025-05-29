@@ -23,12 +23,20 @@ data class TopBarAction(
 
 @Serializable
 data object RouterScreen : FeatureScreen {
-    override fun buildNavOptions(builder: NavOptionsBuilder) {}
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<RouterScreen> {
+            inclusive = true
+        }
+    }
 }
 
 @Serializable
 data object AuthFeature : FeatureScreen {
-    override fun buildNavOptions(builder: NavOptionsBuilder) {}
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<OnBoardingFeature> {
+            inclusive = true
+        }
+    }
 }
 
 @Serializable
@@ -43,7 +51,11 @@ data object OnBoardingFeature : FeatureScreen {
 
 @Serializable
 data object HomeFeature : FeatureScreen {
-    override fun buildNavOptions(builder: NavOptionsBuilder) {}
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<RouterScreen> {
+            inclusive = true
+        }
+    }
 }
 
 fun FeatureScreen.getFABDestination(): FeatureScreen {

@@ -46,7 +46,7 @@ class FeedViewModel(
         emitIntent(FeedIntent.Filter(FilterOption.ALL))
     }
 
-    private val _intent = MutableSharedFlow<FeedIntent>(replay = 1, extraBufferCapacity = 5)
+    private val _intent = MutableSharedFlow<FeedIntent>(replay = 0, extraBufferCapacity = 5)
     private val intent = _intent.asSharedFlow()
 
     private val _event = Channel<FeedEvent>(Channel.BUFFERED)

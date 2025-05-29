@@ -1,14 +1,14 @@
 package com.datahiveorg.donetik.feature.auth.presentation.navigation
 
-import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.ui.navigation.HomeFeature
 
 interface AuthenticationNavigator {
     fun navigateToLogin()
 
     fun navigateToSignUp()
 
-    fun navigateToFeed()
+    fun navigateToHomeFeature()
 }
 
 class AuthenticationNavigatorImpl(
@@ -23,13 +23,13 @@ class AuthenticationNavigatorImpl(
 
     override fun navigateToSignUp() {
         doneTikNavigator.navigate(
-            destination = LoginScreen
+            destination = SignUpScreen
         )
     }
 
-    override fun navigateToFeed() {
+    override fun navigateToHomeFeature() {
         doneTikNavigator.navigate(
-            destination = Feed
+            destination = HomeFeature
         )
     }
 

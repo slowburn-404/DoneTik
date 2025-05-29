@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object Feed : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo(RouterScreen) {
+        builder.popUpTo<Feed> {
             inclusive = true
             saveState = true
         }
@@ -31,7 +31,7 @@ data object Feed : FeatureScreen {
 @Serializable
 data object NewTaskScreen : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo(Feed) {
+        builder.popUpTo<Feed> {
             inclusive = false
             saveState = true
         }
@@ -54,8 +54,8 @@ data object NewTaskScreen : FeatureScreen {
 @Serializable
 data class TaskScreen(val taskId: String, val userId: String) : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo<TaskScreen> {
-            inclusive = true
+        builder.popUpTo<Feed> {
+            inclusive = false
         }
     }
 

@@ -2,14 +2,13 @@ package com.datahiveorg.donetik.feature.auth.presentation.navigation
 
 import androidx.navigation.NavOptionsBuilder
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.ui.navigation.RouterScreen
 import com.datahiveorg.donetik.ui.navigation.ScreenUIConfig
 import kotlinx.serialization.Serializable
 
 @Serializable
 data object LoginScreen : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo<RouterScreen> {
+        builder.popUpTo<LoginScreen> {
             inclusive = true
         }
     }
@@ -21,7 +20,7 @@ data object LoginScreen : FeatureScreen {
 @Serializable
 data object SignUpScreen : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo<RouterScreen> {
+        builder.popUpTo<LoginScreen> {
             inclusive = true
         }
     }

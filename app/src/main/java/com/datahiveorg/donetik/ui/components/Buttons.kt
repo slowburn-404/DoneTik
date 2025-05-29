@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -40,6 +41,10 @@ fun PrimaryButton(
         onClick = onClick,
         shape = RoundedCornerShape(14.dp),
         enabled = isEnabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorScheme.primary,
+            contentColor = colorScheme.onPrimary
+        )
     ) {
         Box(
             contentAlignment = Alignment.Center
