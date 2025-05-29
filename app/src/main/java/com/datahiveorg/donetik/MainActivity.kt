@@ -16,8 +16,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationScreen
-import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
+import com.datahiveorg.donetik.feature.auth.presentation.navigation.LoginScreen
+import com.datahiveorg.donetik.feature.auth.presentation.navigation.SignUpScreen
+import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
+import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
+import com.datahiveorg.donetik.feature.home.presentation.navigation.TaskScreen
 import com.datahiveorg.donetik.ui.components.AppScaffold
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
@@ -50,7 +53,7 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainActivityViewModel = koinViewModel()
             val activityState by viewModel.state.collectAsStateWithLifecycle()
             val bottomBarScreens = listOf(
-                HomeScreen.Feed
+                Feed
             )
 
             DisposableEffect(navController) {
@@ -101,13 +104,13 @@ private fun getCurrentScreen(
     val route = destination.route ?: return null
 
     return when {
-        AuthenticationScreen.LoginScreen::class.simpleName.orEmpty() in route -> AuthenticationScreen.LoginScreen
-        AuthenticationScreen.SignUpScreen::class.simpleName.orEmpty() in route -> AuthenticationScreen.SignUpScreen
+        LoginScreen::class.simpleName.orEmpty() in route -> LoginScreen
+        SignUpScreen::class.simpleName.orEmpty() in route -> SignUpScreen
         OnBoardingFeature::class.simpleName.orEmpty() in route -> OnBoardingFeature
         RouterScreen::class.simpleName.orEmpty() in route -> RouterScreen
-        HomeScreen.Feed::class.simpleName.orEmpty() in route -> HomeScreen.Feed
-        HomeScreen.TaskScreen::class.simpleName.orEmpty() in route -> HomeScreen.TaskScreen("", "")
-        HomeScreen.NewTaskScreen::class.simpleName.orEmpty() in route -> HomeScreen.NewTaskScreen
+        Feed::class.simpleName.orEmpty() in route -> Feed
+        TaskScreen::class.simpleName.orEmpty() in route -> TaskScreen("", "")
+        NewTaskScreen::class.simpleName.orEmpty() in route -> NewTaskScreen
         else -> null
     }
 }

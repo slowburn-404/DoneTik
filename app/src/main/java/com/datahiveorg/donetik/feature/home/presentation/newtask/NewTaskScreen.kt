@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.feature.home.presentation.newtask
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +37,8 @@ fun NewTaskScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle(initialValue = NewTaskState())
 
+    val scrollState = rememberScrollState()
+
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
@@ -44,7 +47,7 @@ fun NewTaskScreen(
                 }
 
                 is NewTaskEvent.SaveSuccessful -> {
-                    navigator.navigateToFeedScreen()
+                    navigator.navigateUp()
                 }
             }
         }
@@ -52,7 +55,8 @@ fun NewTaskScreen(
 
     NewTaskContent(
         state = state,
-        onIntent = viewModel::emitIntent
+        onIntent = viewModel::emitIntent,
+        scrollState = scrollState
     )
 
     InputFieldDialog(
@@ -76,10 +80,9 @@ fun NewTaskScreen(
 fun NewTaskContent(
     modifier: Modifier = Modifier,
     state: NewTaskState,
-    onIntent: (NewTaskIntent) -> Unit
+    onIntent: (NewTaskIntent) -> Unit,
+    scrollState: ScrollState
 ) {
-    val scrollState = rememberScrollState()
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -94,19 +97,14 @@ fun NewTaskContent(
                 Text(
                     text = state.task.category,
                     style = typography.labelLarge,
-                    color = colorScheme.onPrimaryContainer
                 )
             },
-            colors = AssistChipDefaults.assistChipColors(
-                containerColor = colorScheme.primaryContainer,
-                labelColor = colorScheme.onPrimaryContainer
-            )
         )
 
         UserInputField(
             label = "Title",
-            enterValue = { title ->
-                onIntent(NewTaskIntent.EnterTitle(title))
+            enterValue = { titleInput ->
+                onIntent(NewTaskIntent.EnterTitle(titleInput))
             },
             onTogglePasswordVisibility = {},
             error = state.titleError,

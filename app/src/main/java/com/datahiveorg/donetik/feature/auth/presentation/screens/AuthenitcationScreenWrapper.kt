@@ -55,7 +55,7 @@ fun AuthenticationScreenWrapper(
 
     LaunchedEffect(state) {
         if (state.isAuthenticated) {
-            navigator.navigateToHomeFeature()
+            navigator.navigateToFeed()
         }
     }
 

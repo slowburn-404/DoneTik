@@ -1,13 +1,12 @@
 package com.datahiveorg.donetik.ui.navigation
 
 import android.net.Uri
-import androidx.annotation.DrawableRes
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavOptionsBuilder
-import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeScreen
+import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
+import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
 import com.datahiveorg.donetik.ui.components.AsyncImageLoader
 import kotlinx.serialization.Serializable
 
@@ -29,11 +28,7 @@ data object RouterScreen : FeatureScreen {
 
 @Serializable
 data object AuthFeature : FeatureScreen {
-    override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo<RouterScreen> {
-            inclusive = true
-        }
-    }
+    override fun buildNavOptions(builder: NavOptionsBuilder) {}
 }
 
 @Serializable
@@ -48,16 +43,12 @@ data object OnBoardingFeature : FeatureScreen {
 
 @Serializable
 data object HomeFeature : FeatureScreen {
-    override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo<RouterScreen> {
-            inclusive = true
-        }
-    }
+    override fun buildNavOptions(builder: NavOptionsBuilder) {}
 }
 
 fun FeatureScreen.getFABDestination(): FeatureScreen {
     return when (this) {
-        is HomeScreen.Feed -> HomeScreen.NewTaskScreen
+        is Feed -> NewTaskScreen
         else -> this//trash code TODO(Find a better way when adding more screens)
     }
 }
@@ -68,7 +59,7 @@ fun buildTopBarActions(
     onClick: () -> Unit
 ): List<TopBarAction> {
     return when (featureScreen) {
-        is HomeScreen.Feed -> {
+        is Feed -> {
             listOf(
                 TopBarAction(
                     icon = {

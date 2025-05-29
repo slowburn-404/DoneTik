@@ -17,9 +17,9 @@ fun NavGraphBuilder.authenticationNavGraph(
 ) {
 
     navigation<AuthFeature>(
-        startDestination = AuthenticationScreen.LoginScreen,
+        startDestination = LoginScreen,
     ) {
-        animatedComposable<AuthenticationScreen.LoginScreen> {
+        animatedComposable<LoginScreen> {
             AuthenticationScreenWrapper(
                 navigator = authenticationNavigator,
                 snackBarHostState = snackBarHostState,
@@ -32,7 +32,7 @@ fun NavGraphBuilder.authenticationNavGraph(
                 )
             }
         }
-        animatedComposable<AuthenticationScreen.SignUpScreen> {
+        animatedComposable<SignUpScreen> {
             AuthenticationScreenWrapper(
                 navigator = authenticationNavigator,
                 snackBarHostState = snackBarHostState,

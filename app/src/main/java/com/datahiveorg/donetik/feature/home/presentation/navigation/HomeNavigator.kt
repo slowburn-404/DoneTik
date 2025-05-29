@@ -8,6 +8,8 @@ interface HomeNavigator {
     fun navigateToNewTaskScreen()
 
     fun navigateToTaskViewScreen(taskId: String, userId: String)
+
+    fun navigateUp()
 }
 
 class HomeNavigatorImpl(
@@ -16,19 +18,23 @@ class HomeNavigatorImpl(
 
     override fun navigateToFeedScreen() {
         doneTikNavigator.navigate(
-            destination = HomeScreen.Feed
+            destination = Feed
         )
     }
 
     override fun navigateToNewTaskScreen() {
         doneTikNavigator.navigate(
-            destination = HomeScreen.NewTaskScreen
+            destination = NewTaskScreen
         )
     }
 
     override fun navigateToTaskViewScreen(taskId: String, userId: String) {
         doneTikNavigator.navigate(
-            destination = HomeScreen.TaskScreen(taskId = taskId, userId = userId)
+            destination = TaskScreen(taskId = taskId, userId = userId)
         )
+    }
+
+    override fun navigateUp() {
+        doneTikNavigator.navigateUp()
     }
 }

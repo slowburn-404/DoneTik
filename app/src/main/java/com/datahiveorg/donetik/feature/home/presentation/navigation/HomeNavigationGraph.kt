@@ -21,16 +21,16 @@ fun NavGraphBuilder.homeNavigationGraph(
 ) {
 
     navigation<HomeFeature>(
-        startDestination = HomeScreen.Feed,
+        startDestination = Feed,
     ) {
-        composable<HomeScreen.Feed> {
+        composable<Feed> {
             FeedScreen(
                 viewModel = koinViewModel<FeedViewModel>(),
                 navigator = homeNavigator,
                 snackBarHostState = snackBarHostState
             )
         }
-        animatedComposable<HomeScreen.NewTaskScreen> {
+        animatedComposable<NewTaskScreen> {
             NewTaskScreen(
                 viewModel = koinViewModel<NewTaskViewModel>(),
                 navigator = homeNavigator,
@@ -38,8 +38,8 @@ fun NavGraphBuilder.homeNavigationGraph(
             )
         }
 
-        animatedComposable<HomeScreen.TaskScreen> { backStackEntry ->
-            val route = backStackEntry.toRoute<HomeScreen.TaskScreen>()
+        animatedComposable<TaskScreen> { backStackEntry ->
+            val route = backStackEntry.toRoute<TaskScreen>()
 
             TaskViewScreen(
                 viewModel = koinViewModel<TaskViewModel>(),
