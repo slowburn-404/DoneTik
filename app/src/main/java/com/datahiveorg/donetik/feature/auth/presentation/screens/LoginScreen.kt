@@ -82,6 +82,7 @@ fun LoginScreen(
         )
 
         UserInputField(
+            modifier = Modifier.fillMaxWidth(),
             label = "Email",
             enterValue = {
                 onIntent(AuthenticationIntent.EnterEmail(it))
@@ -100,6 +101,7 @@ fun LoginScreen(
         )
 
         UserInputField(
+            modifier = Modifier.fillMaxWidth(),
             label = "Password",
             enterValue = {
                 onIntent(AuthenticationIntent.EnterPassword(it))

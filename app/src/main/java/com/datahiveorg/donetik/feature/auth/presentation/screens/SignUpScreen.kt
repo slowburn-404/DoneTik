@@ -77,6 +77,7 @@ fun SignUpScreen(
         )
 
         UserInputField(
+            modifier = Modifier.fillMaxWidth(),
             label = "Email",
             value = state.user.email,
             error = state.emailError,
@@ -95,6 +96,7 @@ fun SignUpScreen(
         )
 
         UserInputField(
+            modifier = Modifier.fillMaxWidth(),
             label = "Password",
             value = state.user.password,
             error = state.passwordError,
