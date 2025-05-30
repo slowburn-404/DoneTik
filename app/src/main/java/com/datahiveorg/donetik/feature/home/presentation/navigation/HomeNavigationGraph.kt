@@ -15,6 +15,14 @@ import com.datahiveorg.donetik.ui.navigation.HomeFeature
 import com.datahiveorg.donetik.ui.navigation.animatedComposable
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Defines the navigation graph for the home feature.
+ *
+ * This function sets up the routes and destinations within the home feature.
+ *
+ * @param homeNavigator The navigator for handling navigation events within the home feature.
+ * @param snackBarHostState The [SnackbarHostState] for displaying snack bars.
+ */
 fun NavGraphBuilder.homeNavigationGraph(
     homeNavigator: HomeNavigator,
     snackBarHostState: SnackbarHostState,

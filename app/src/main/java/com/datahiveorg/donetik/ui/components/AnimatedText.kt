@@ -13,6 +13,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable function that displays text with an animation when the text content changes.
+ *
+ * @param modifier The modifier to be applied to the layout.
+ * @param text The text to be displayed.
+ * @param transitionSpec A lambda that defines the transition animation for the text content change.
+ *                       It receives an [AnimatedContentTransitionScope] and should return a [ContentTransform].
+ * @param style The text style to be applied to the text. Defaults to [typography.bodyLarge].
+ * @param color The color of the text. Defaults to [colorScheme.onPrimary].
+ */
 @Composable
 fun AnimatedText(
     modifier: Modifier = Modifier,

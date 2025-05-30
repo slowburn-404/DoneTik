@@ -19,6 +19,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 
+/**
+ * Composable function for displaying a bottom sheet with options.
+ *
+ * @param modifier The modifier to be applied to the bottom sheet.
+ * @param options The list of options to be displayed in the bottom sheet.
+ * @param onDismiss The callback to be invoked when the bottom sheet is dismissed.
+ * @param onOptionsClicked The callback to be invoked when an option is clicked.
+ * @param sheetState The state of the bottom sheet.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsBottomSheet(
@@ -51,6 +60,13 @@ fun OptionsBottomSheet(
     }
 }
 
+/**
+ * A composable function that displays a single item in a bottom sheet.
+ *
+ * @param iconId The resource ID of the icon to display.
+ * @param label The text to display for the item.
+ * @param onClick A callback function that is invoked when the item is clicked.
+ */
 @Composable
 fun BottomSheetItem(
     iconId: Int,

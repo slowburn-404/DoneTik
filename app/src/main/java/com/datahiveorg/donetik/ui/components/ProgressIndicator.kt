@@ -10,6 +10,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable function that displays a circular progress indicator.
+ *
+ * @param modifier Modifier to be applied to the progress indicator.
+ * @param color Color of the progress indicator.
+ */
 @Composable
 fun ProgressIndicator(
     modifier: Modifier = Modifier,

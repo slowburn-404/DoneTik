@@ -19,6 +19,53 @@ import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
+/**
+ * A composable function that displays an animated bottom navigation bar.
+ *
+ * The bottom navigation bar appears and disappears with a slide and fade animation.
+ * It displays a list of [FeatureScreen] items, allowing navigation between them.
+ *
+ * Example usage:
+ * ```kotlin
+ * @Composable
+ * fun MyApp() {
+ *     val navController = rememberNavController()
+ *     val doneTikNavigator = remember(navController) { DoneTikNavigator(navController) }
+ *     val navBackStackEntry by navController.currentBackStackEntryAsState()
+ *     val currentDestination = navBackStackEntry?.destination
+ *     var isBottomBarVisible by rememberSaveable { mutableStateOf(true) }
+ *
+ *     // Logic to determine when to show/hide the bottom bar based on the current route
+ *     // For example, hide it on detail screens
+ *     isBottomBarVisible = when (currentDestination?.route) {
+ *         FeatureScreen.DetailScreen.route -> false // Example: Hide on DetailScreen
+ *         else -> true
+ *     }
+ *
+ *     val bottomBarScreens = listOf(
+ *         FeatureScreen.HomeScreen,
+ *         FeatureScreen.ProfileScreen,
+ *         FeatureScreen.SettingsScreen
+ *     )
+ *
+ *     Scaffold(
+ *         bottomBar = {
+ *             AnimatedBottomNavBar(
+ *                 navigator = doneTikNavigator,
+ *                 currentDestination = currentDestination,
+ *                 isVisible = isBottomBarVisible,
+ *                 bottomBarScreens = bottomBarScreens
+ *             )
+ *         }
+ *     ) { paddingValues ->
+ *         // Your app content using NavHost
+ *         NavHost(
+ *             navController = navController,
+ *             startDestination = FeatureScreen.HomeScreen.route,
+ *             modifier = Modifier.padding(paddingValues)
+ *         ) {
+ *             // Define your composable destinations
+ */
 @Composable
 fun AnimatedBottomNavBar(
     navigator: DoneTikNavigator,

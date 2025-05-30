@@ -11,8 +11,27 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import com.datahiveorg.donetik.util.Animation
 
+/**
+ * Data class that holds the UI configuration for a screen.
+ * This class is used to define the appearance and behavior of a screen,
+ * such as the title, whether it has a top app bar, bottom bar, FAB, etc.
+ *
+ * @param title The title of the screen.
+ * @param hasTopAppBar Whether the screen has a top app bar.
+ * @param hasBottomBar Whether the screen has a bottom bar.
+ * @param hasFAB Whether the screen has a FAB.
+ * @param hasNavIcon Whether the screen has a navigation icon.
+ * @param topBarActions The list of actions to display in the top app bar.
+ * @param bottomNavIconRes The resource ID of the bottom navigation icon.
+ * @param navIconRes The resource ID of the navigation icon.
+ * @param fabIconRes The resource ID of the FAB icon.
+ * @param enterTransition The enter transition for the screen.
+ * @param exitTransition The exit transition for the screen.
+ */
+@Stable
 @Immutable
 data class ScreenUIConfig(
     val title: String = "",

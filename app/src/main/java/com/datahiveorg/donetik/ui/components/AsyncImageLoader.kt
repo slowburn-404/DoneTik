@@ -14,6 +14,13 @@ import coil3.request.crossfade
 import com.datahiveorg.donetik.R
 
 
+/**
+ * A composable function that loads an image asynchronously from a URL and displays it in a circular shape.
+ *
+ * @param modifier The modifier to be applied to the image.
+ * @param imageUrl The URL of the image to load.
+ * @param context The [Context] to use for loading the image.
+ */
 @Composable
 fun AsyncImageLoader(
     modifier: Modifier = Modifier,

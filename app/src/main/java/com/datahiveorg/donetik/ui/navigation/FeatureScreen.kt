@@ -10,9 +10,26 @@ import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScree
 import com.datahiveorg.donetik.ui.components.AsyncImageLoader
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents a screen within a feature module.
+ *
+ * This interface provides a common structure for screens, allowing them to define
+ * custom navigation options and UI configurations.
+ */
 interface FeatureScreen {
 
+    /**
+     * Builds navigation options for the screen.
+     * This function allows customization of navigation behavior when navigating to this screen.
+     * For example, it can be used to clear the back stack or launch the screen in a single top mode.
+     *
+     * @param builder The [NavOptionsBuilder] to configure navigation options.
+     */
     fun buildNavOptions(builder: NavOptionsBuilder) {}
+    /**
+     * Configuration for the screen's UI, such as whether to show the top bar or bottom bar.
+     * Defaults to a new [ScreenUIConfig] instance with default values (all UI elements shown).
+     */
     val screenUIConfig: ScreenUIConfig get() = ScreenUIConfig()
 }
 

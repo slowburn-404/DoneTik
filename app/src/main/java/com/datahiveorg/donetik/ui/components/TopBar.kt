@@ -11,6 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.datahiveorg.donetik.ui.navigation.TopBarAction
 
+/**
+ * A composable function that displays a top app bar.
+ *
+ * @param modifier The modifier to be applied to the top app bar.
+ * @param showNavigationIcon Whether to show the navigation icon.
+ * @param navigationIcon The drawable resource ID for the navigation icon.
+ * @param onBackClick The callback to be invoked when the navigation icon is clicked.
+ * @param actions The list of actions to be displayed in the top app bar.
+ * @param title The title to be displayed in the top app bar.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(

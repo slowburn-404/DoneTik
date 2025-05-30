@@ -16,6 +16,12 @@ import com.datahiveorg.donetik.util.dispatcherModule
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
+/**
+ * The main Koin module for the application.
+ *
+ * This module includes all other modules in the application, as well as providing
+ * dependencies for the [RouterViewModel], [DoneTikNavigator], and [MainActivityViewModel].
+ */
 val appModule = module {
     includes(
         firebaseModule,

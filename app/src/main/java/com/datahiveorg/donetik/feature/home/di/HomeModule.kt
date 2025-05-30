@@ -10,16 +10,22 @@ import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigato
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigatorImpl
 import com.datahiveorg.donetik.feature.home.presentation.newtask.NewTaskViewModel
 import com.datahiveorg.donetik.feature.home.presentation.taskview.TaskViewModel
-import com.datahiveorg.donetik.firebase.firestore.FirebaseFireStoreService
+import com.datahiveorg.donetik.firebase.firestore.FireStoreDataSource
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.util.DispatcherProvider
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
+/**
+ * Koin module for providing dependencies related to the home feature.
+ *
+ * This module defines how to create instances of repositories, view models,
+ * use cases, and navigators specific to the home functionality of the application.
+ */
 val homeModule = module {
-    single<HomeRepository> {
+    factory<HomeRepository> {
         HomeRepositoryImpl(
-            fireStoreService = get<FirebaseFireStoreService>()
+            fireStoreDataSource = get<FireStoreDataSource>()
         )
     }
 
@@ -51,7 +57,7 @@ val homeModule = module {
         )
     }
 
-    single<GetUserInfoUseCase> {
+    factory<GetUserInfoUseCase> {
         GetUserInfoUseCaseImpl(
             authRepository = get<AuthRepository>()
         )

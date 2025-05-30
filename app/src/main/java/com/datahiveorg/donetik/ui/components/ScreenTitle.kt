@@ -10,6 +10,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable function that displays a screen title.
+ *
+ * @param modifier The modifier to be applied to the text.
+ * @param title The text to be displayed as the title.
+ */
 @Composable
 fun ScreenTitle(
     modifier: Modifier = Modifier,

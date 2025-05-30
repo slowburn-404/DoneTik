@@ -7,26 +7,36 @@ import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 
+
 /**
- * Animate navigation transitions
+ * Add a destination to the [NavGraphBuilder] that will be animated when navigating to and from it.
+ *
+ * This is a convenience function that wraps the [composable] function and provides default
+ * animations for entering and exiting the destination.
+ *
+ * The animations can be customized by providing a [ScreenUIConfig] for the destination.
+ *
+ * @param D The type of the destination. Must be a subclass of [FeatureScreen].
+ * @param deepLinks A list of deep links that will navigate to this destination.
+ * @param content The content of the destination.
  */
-inline fun <reified S : FeatureScreen> NavGraphBuilder.animatedComposable(
+inline fun <reified D : FeatureScreen> NavGraphBuilder.animatedComposable(
     deepLinks: List<NavDeepLink> = emptyList(),
     noinline content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
-) = composable<S>(
+) = composable<D>(
     deepLinks = deepLinks,
     enterTransition = {
-        S::class.objectInstance?.screenUIConfig?.enterTransition ?: defaultEnterTransition()
+        D::class.objectInstance?.screenUIConfig?.enterTransition ?: defaultEnterTransition()
     },
     exitTransition = {
-        S::class.objectInstance?.screenUIConfig?.exitTransition ?: defaultExitTransition()
+        D::class.objectInstance?.screenUIConfig?.exitTransition ?: defaultExitTransition()
     },
     popEnterTransition = {
-        S::class.objectInstance?.screenUIConfig?.enterTransition ?: defaultEnterTransition()
+        D::class.objectInstance?.screenUIConfig?.enterTransition ?: defaultEnterTransition()
 
     },
     popExitTransition = {
-        S::class.objectInstance?.screenUIConfig?.exitTransition ?: defaultExitTransition()
+        D::class.objectInstance?.screenUIConfig?.exitTransition ?: defaultExitTransition()
     },
     content = content
 )

@@ -32,6 +32,17 @@ import androidx.compose.ui.unit.dp
 import com.datahiveorg.donetik.feature.home.presentation.feed.FilterOption
 import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
+/**
+ * A composable function that displays a primary button with a label, an onClick action,
+ * and states for enabled and loading.
+ *
+ * @param modifier The modifier to be applied to the button.
+ * @param label The text to be displayed on the button.
+ * @param onClick The lambda function to be executed when the button is clicked.
+ * @param isEnabled A boolean value indicating whether the button is enabled or disabled.
+ * @param isLoading A boolean value indicating whether the button is in a loading state.
+ *                  When true, a progress indicator is shown instead of the label.
+ */
 @Composable
 fun PrimaryButton(
     modifier: Modifier = Modifier,
@@ -86,6 +97,15 @@ fun PrimaryButton(
     }
 }
 
+/**
+ * A composable function that displays a secondary button with an optional leading icon.
+ *
+ * @param modifier The modifier to be applied to the button.
+ * @param label The text to be displayed on the button.
+ * @param onClick The callback to be invoked when the button is clicked.
+ * @param leadingIcon The painter for the icon to be displayed before the label. Can be null if no icon is needed.
+ * @param isLoading A boolean indicating whether the button is in a loading state. If true, a progress indicator is shown instead of the label and icon.
+ */
 @Composable
 fun SecondaryButton(
     modifier: Modifier = Modifier,
@@ -121,6 +141,14 @@ fun SecondaryButton(
     }
 }
 
+/**
+ * A composable function that displays a row of segmented buttons for filtering options.
+ *
+ * @param modifier The modifier to be applied to the component.
+ * @param onOptionsSelected A callback function that is invoked when an option is selected.
+ * @param options A list of [FilterOption] objects representing the available filter options.
+ * @param selectedIndex The currently selected [FilterOption].
+ */
 @Composable
 fun FeedSegmentedButtons(
     modifier: Modifier = Modifier,
@@ -149,6 +177,14 @@ fun FeedSegmentedButtons(
 
 }
 
+/**
+ * A composable function that displays a text button with customizable text, click action, and color.
+ *
+ * @param modifier The modifier to be applied to the button.
+ * @param text The text to be displayed on the button.
+ * @param onClick The lambda function to be executed when the button is clicked.
+ * @param color The color of the text on the button. Defaults to the primary color from the MaterialTheme.
+ */
 @Composable
 fun DoneTikTextButton(
     modifier: Modifier = Modifier,

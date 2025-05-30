@@ -13,6 +13,16 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.datahiveorg.donetik.R
 
+/**
+ * A composable function that displays a Lottie animation as a loading indicator.
+ *
+ * This function uses the Lottie library to render an animation from a raw resource file.
+ * The animation is set to iterate forever, creating a continuous loading effect.
+ * The animation is centered within a Box that fills the maximum available size.
+ *
+ * @param modifier Optional [Modifier] to be applied to the loading animation container.
+ *                 Defaults to [Modifier].
+ */
 @Composable
 fun LoadingAnimation(
     modifier: Modifier = Modifier,

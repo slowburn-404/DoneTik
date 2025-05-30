@@ -3,13 +3,13 @@ package com.datahiveorg.donetik.feature.home.data
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.model.Task
-import com.datahiveorg.donetik.firebase.firestore.FirebaseFireStoreService
+import com.datahiveorg.donetik.firebase.firestore.FireStoreDataSource
 
 class HomeRepositoryImpl(
-    private val fireStoreService: FirebaseFireStoreService
+    private val fireStoreDataSource: FireStoreDataSource
 ) : HomeRepository {
     override suspend fun getTasks(userId: String): DomainResponse<List<Task>> {
-        val response = fireStoreService.getTasks(userId)
+        val response = fireStoreDataSource.getTasks(userId)
 
         return response.fold(
             onSuccess = { taskDTOs ->
@@ -23,7 +23,7 @@ class HomeRepositoryImpl(
     }
 
     override suspend fun createTask(task: Task): DomainResponse<String> {
-        val response = fireStoreService.createTask(task.toFireBase())
+        val response = fireStoreDataSource.createTask(task.toFireBase())
 
         return response.fold(
             onSuccess = {
@@ -36,7 +36,7 @@ class HomeRepositoryImpl(
     }
 
     override suspend fun updateTask(task: Task): DomainResponse<String> {
-        val response = fireStoreService.updateTask(task.toFireBase())
+        val response = fireStoreDataSource.updateTask(task.toFireBase())
 
         return response.fold(
             onSuccess = {
@@ -49,7 +49,7 @@ class HomeRepositoryImpl(
     }
 
     override suspend fun deleteTask(task: Task): DomainResponse<String> {
-        val response = fireStoreService.deleteTask(task.toFireBase())
+        val response = fireStoreDataSource.deleteTask(task.toFireBase())
 
         return response.fold(
             onSuccess = {
@@ -62,7 +62,7 @@ class HomeRepositoryImpl(
     }
 
     override suspend fun getSingleTask(taskId: String, userId: String): DomainResponse<Task> {
-        val response = fireStoreService.getSingleTask(userId, taskId)
+        val response = fireStoreDataSource.getSingleTask(userId, taskId)
         return response.fold(
             onSuccess = { taskDTO ->
                 DomainResponse.Success(taskDTO.toHomeDomain())
@@ -74,7 +74,7 @@ class HomeRepositoryImpl(
     }
 
     override suspend fun markTaskAsDone(task: Task): DomainResponse<String> {
-        val response = fireStoreService.markTaskAsDone(
+        val response = fireStoreDataSource.markTaskAsDone(
             userId = task.author.uid,
             taskId = task.id,
             isDone = task.isDone

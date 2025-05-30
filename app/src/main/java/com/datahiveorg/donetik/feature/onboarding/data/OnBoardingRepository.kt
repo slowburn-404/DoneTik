@@ -11,9 +11,23 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
+/**
+ * Repository interface for managing the on-boarding state of the application.
+ * This interface defines the contract for accessing and modifying the on-boarding status.
+ */
 interface OnBoardingRepository {
+    /**
+     * A flow that emits a boolean value indicating whether the user has finished the onboarding process.
+     * The value is retrieved from the DataStore. If the value is not found, it defaults to false.
+     * If an exception occurs while retrieving the value, it defaults to false.
+     */
     val hasFinishedOnBoarding: Flow<Boolean>
 
+    /**
+     * Sets the on-boarding finished status.
+     *
+     * @param hasFinishedOnBoarding True if the on-boarding process has been finished, false otherwise.
+     */
     suspend fun setOnBoardingFinished(hasFinishedOnBoarding: Boolean)
 }
 
