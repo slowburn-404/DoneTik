@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.feature.home.presentation.taskview
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +33,8 @@ fun TaskViewScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val scrollState = rememberScrollState()
+
     LaunchedEffect(taskId, userId) {
         viewModel.emitIntent(TaskViewIntent.GetTask(taskId, userId))
     }
@@ -50,8 +53,8 @@ fun TaskViewScreen(
 
     TaskViewContent(
         state = state,
-        onEvent = viewModel::emitEvent,
-        onIntent = viewModel::emitIntent
+        onIntent = viewModel::emitIntent,
+        scrollState = scrollState
     )
 
 }
@@ -60,10 +63,9 @@ fun TaskViewScreen(
 fun TaskViewContent(
     modifier: Modifier = Modifier,
     state: TaskViewState,
-    onEvent: (TaskViewEvent) -> Unit,
-    onIntent: (TaskViewIntent) -> Unit
+    onIntent: (TaskViewIntent) -> Unit,
+    scrollState: ScrollState
 ) {
-    val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier
@@ -71,6 +73,7 @@ fun TaskViewContent(
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+
         ScreenTitle(
             title = state.task.title
         )

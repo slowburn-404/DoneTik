@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -20,11 +22,8 @@ class AuthenticationViewModel(
     private val _state = MutableStateFlow(AuthenticationUiState())
     val state: StateFlow<AuthenticationUiState> = _state.asStateFlow()
 
-    private val _uiEvents: MutableSharedFlow<AuthenticationUiEvent> = MutableSharedFlow(
-        replay = 1,
-        extraBufferCapacity = 5
-    )
-    val uiEvents: SharedFlow<AuthenticationUiEvent> = _uiEvents.asSharedFlow()
+    private val _uiEvents = Channel<AuthenticationUiEvent>(Channel.BUFFERED)
+    val uiEvents = _uiEvents.receiveAsFlow()
 
     private val _uiIntents: MutableSharedFlow<AuthenticationIntent> = MutableSharedFlow()
     private val uiIntents: SharedFlow<AuthenticationIntent> = _uiIntents.asSharedFlow()
@@ -46,7 +45,7 @@ class AuthenticationViewModel(
 
     fun emitEvent(event: AuthenticationUiEvent) {
         viewModelScope.launch {
-            _uiEvents.emit(event)
+            _uiEvents.send(event)
         }
     }
 

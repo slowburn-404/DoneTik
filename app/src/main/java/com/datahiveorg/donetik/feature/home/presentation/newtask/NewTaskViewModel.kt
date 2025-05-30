@@ -16,6 +16,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class NewTaskViewModel(
     private val homeRepository: HomeRepository,
@@ -41,29 +44,28 @@ class NewTaskViewModel(
         viewModelScope.launch {
             intent.collect { newTaskIntent ->
                 when (newTaskIntent) {
-                    is NewTaskIntent.GetUserInfo -> {
-                        getUserInfo()
-                    }
+                    is NewTaskIntent.GetUserInfo -> getUserInfo()
 
-                    is NewTaskIntent.CreateTask -> {
-                        createNewTask()
-                    }
+                    is NewTaskIntent.CreateTask -> createNewTask()
 
-                    is NewTaskIntent.EnterTitle -> {
-                        enterTitle(newTaskIntent.title)
-                    }
+                    is NewTaskIntent.EnterTitle -> enterTitle(newTaskIntent.title)
 
-                    is NewTaskIntent.EnterDescription -> {
-                        enterDescription(newTaskIntent.description)
-                    }
+                    is NewTaskIntent.EnterDescription -> enterDescription(newTaskIntent.description)
 
-                    is NewTaskIntent.EnterCategory -> {
-                        enterCategory(newTaskIntent.category)
-                    }
+                    is NewTaskIntent.EnterCategory -> enterCategory(newTaskIntent.category)
 
-                    is NewTaskIntent.ToggleDialog -> {
-                        toggleCategoryDialog()
-                    }
+                    is NewTaskIntent.ToggleDialog -> toggleCategoryDialog()
+
+                    is NewTaskIntent.EnterDate -> enterDate(newTaskIntent.date)
+
+                    is NewTaskIntent.EnterTime -> enterTime(
+                        hour = newTaskIntent.hour,
+                        minute = newTaskIntent.minute
+                    )
+
+                    is NewTaskIntent.ToggleTimePicker -> toggleTimePicker()
+
+                    is NewTaskIntent.ToggleDatePicker -> toggleDatePicker()
 
                 }
             }
@@ -115,7 +117,6 @@ class NewTaskViewModel(
                     )
                 }
                 hideLoading()
-                emitEvent(NewTaskEvent.ShowSnackBar(response.data))
                 emitEvent(NewTaskEvent.SaveSuccessful)
             }
 
@@ -149,9 +150,12 @@ class NewTaskViewModel(
         _state.update { currentState ->
             currentState.copy(
                 isFormValid = state.task.title.isNotEmpty() &&
-                        state.task.description.isNotEmpty(),
+                        state.task.description.isNotEmpty() &&
+                        state.selectedDate != null,
                 titleError = if (state.task.title.isEmpty()) "Title cannot be empty" else "",
-                descriptionError = if (state.task.description.isEmpty()) "Description cannot be empty" else ""
+                descriptionError = if (state.task.description.isEmpty()) "Description cannot be empty" else "",
+                selectedDateError = if (state.selectedDate == null) "Date cannot be empty" else "",
+                selectedTimeError = if (state.selectedHour == null || state.selectedMinute == null) "Time cannot be empty" else ""
             )
         }
     }
@@ -184,6 +188,83 @@ class NewTaskViewModel(
         _state.update { currentState ->
             currentState.copy(
                 task = currentState.task.copy(category = category)
+            )
+        }
+    }
+
+    private fun enterDate(date: Long) {
+        _state.update { currentState ->
+            currentState.copy(
+                selectedDate = date
+            )
+        }
+        combineDateTime()
+    }
+
+    private fun enterTime(hour: Int, minute: Int) {
+        _state.update { currentState ->
+            currentState.copy(
+                selectedHour = hour,
+                selectedMinute = minute
+            )
+        }
+        combineDateTime()
+    }
+
+    private fun combineDateTime() {
+        val state = _state.value
+        val selectedDate = state.selectedDate
+        val selectedHour = state.selectedHour
+        val selectedMinute = state.selectedMinute
+        val outPutDateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+
+        if (selectedDate != null && selectedMinute != null && selectedHour != null) {
+            try {
+                val dateCalendar = Calendar.getInstance()
+                dateCalendar.timeInMillis = selectedDate
+                dateCalendar.set(Calendar.HOUR_OF_DAY, selectedHour)
+                dateCalendar.set(Calendar.MINUTE, selectedMinute)
+                dateCalendar.set(Calendar.SECOND, 0)
+                dateCalendar.set(Calendar.MILLISECOND, 0)
+                val combinedDateTime = outPutDateFormat.format(dateCalendar.time)
+
+                _state.update { currentState ->
+                    currentState.copy(
+                        task = currentState.task.copy(dueDate = combinedDateTime),
+                    )
+                }
+
+            } catch (e: Exception) {
+                _state.update { currentState ->
+                    currentState.copy(
+                        task = currentState.task.copy(dueDate = ""),
+                    )
+
+                }
+                emitEvent(NewTaskEvent.ShowSnackBar("Could not process due date, kindly try again"))
+            }
+        } else {
+            _state.update { currentState ->
+                currentState.copy(
+                    task = currentState.task.copy(dueDate = ""),
+                )
+            }
+        }
+        validateForm()
+    }
+
+    private fun toggleDatePicker() {
+        _state.update { currentState ->
+            currentState.copy(
+                showDatePicker = !currentState.showDatePicker
+            )
+        }
+    }
+
+    private fun toggleTimePicker() {
+        _state.update { currentState ->
+            currentState.copy(
+                showTimePicker = !currentState.showTimePicker
             )
         }
     }

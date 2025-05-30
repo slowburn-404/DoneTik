@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,11 +35,13 @@ fun UserInputField(
     trailingIcon: Painter?,
     placeholder: String,
     value: String,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    isReadOnly: Boolean = false,
+    onClick: () -> Unit = {}
 
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.clickable(onClick = onClick),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         label?.let {
@@ -49,8 +52,7 @@ fun UserInputField(
         }
 
         OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             value = value,
             onValueChange = { inputValue ->
                 enterValue(inputValue)
@@ -99,7 +101,8 @@ fun UserInputField(
                     )
                 }
             },
-            visualTransformation = visualTransformation
+            visualTransformation = visualTransformation,
+            readOnly = isReadOnly
 
         )
     }

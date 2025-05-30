@@ -6,6 +6,8 @@ import androidx.compose.runtime.Stable
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.data.toHomeDomain
 import com.datahiveorg.donetik.feature.home.domain.model.Task
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.Date
 import java.util.UUID.randomUUID
 
@@ -33,5 +35,12 @@ data class NewTaskState(
     val descriptionError: String = "",
     val isLoading: Boolean = false,
     val isFormValid: Boolean = false,
-    val showCategoryDialog: Boolean = false
+    val showCategoryDialog: Boolean = false,
+    val selectedDate: Long? = null,
+    val selectedHour: Int? = null,
+    val selectedMinute: Int? = null,
+    val selectedTimeError: String = "",
+    val selectedDateError: String = "",
+    val showDatePicker: Boolean = false,
+    val showTimePicker: Boolean = false,
 )

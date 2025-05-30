@@ -6,10 +6,12 @@ import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -19,18 +21,15 @@ class TaskViewModel(
 
     private val _state = MutableStateFlow(TaskViewState())
     val state = _state.asStateFlow()
+
     private val _intent = MutableSharedFlow<TaskViewIntent>(
         replay = 0,
         extraBufferCapacity = 1
     )
     private val intent = _intent.asSharedFlow()
 
-    private val _event = MutableSharedFlow<TaskViewEvent>(
-        replay = 0,
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    val event = _event.asSharedFlow()
+    private val _event = Channel<TaskViewEvent>(Channel.BUFFERED)
+    val event = _event.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -63,9 +62,9 @@ class TaskViewModel(
         }
     }
 
-    fun emitEvent(taskViewEvent: TaskViewEvent) {
+    private fun emitEvent(taskViewEvent: TaskViewEvent) {
         viewModelScope.launch {
-            _event.emit(taskViewEvent)
+            _event.send(taskViewEvent)
         }
     }
 

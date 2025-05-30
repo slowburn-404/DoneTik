@@ -8,6 +8,7 @@ import com.datahiveorg.donetik.feature.onboarding.data.OnBoardingRepository
 import com.datahiveorg.donetik.ui.navigation.AuthFeature
 import com.datahiveorg.donetik.ui.navigation.HomeFeature
 import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -30,8 +32,8 @@ class RouterViewModel(
     private val _state: MutableStateFlow<RouterState> = MutableStateFlow(RouterState())
     val state: StateFlow<RouterState> = _state.asStateFlow()
 
-    private val _event: MutableSharedFlow<RouterEvent> = MutableSharedFlow(replay = 1)
-    val event: SharedFlow<RouterEvent> = _event.asSharedFlow()
+    private val _event = Channel<RouterEvent>()
+    val event = _event.receiveAsFlow()
 
     //guard rails to ensure both async tasks complete
     private var isLoggedInFetched = false
@@ -39,7 +41,7 @@ class RouterViewModel(
 
     private fun emitEvent(event: RouterEvent) {
         viewModelScope.launch {
-            _event.emit(event)
+            _event.send(event)
         }
     }
 

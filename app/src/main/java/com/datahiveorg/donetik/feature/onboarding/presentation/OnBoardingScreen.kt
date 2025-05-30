@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.feature.onboarding.presentation
 
+import android.content.Context
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,34 +9,68 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.ui.components.PrimaryButton
-import com.datahiveorg.donetik.ui.navigation.AuthFeature
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 import com.datahiveorg.donetik.util.Logger
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun OnBoardingScreen(
     modifier: Modifier = Modifier,
-    state: OnBoardingState,
-    onNavigate: (FeatureScreen) -> Unit,
-    onEvent: (OnBoardingEvents) -> Unit
+    doneTikNavigator: DoneTikNavigator,
+    viewModel: OnBoardingViewModel,
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
-    val pagerItems = PagerItems.entries
-    val pagerState = rememberPagerState(pageCount = { pagerItems.size })
+    val pagerState = rememberPagerState(pageCount = { state.pagerItems.size })
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is OnBoardingEvents.Navigate -> {
+                    doneTikNavigator.navigate(event.screen)
+                }
+            }
+        }
+    }
+
+    OnBoardingContent(
+        modifier = modifier,
+        pagerState = pagerState,
+        coroutineScope = coroutineScope,
+        context = context,
+        onIntent = viewModel::emitIntent,
+        state = state
+    )
+}
+
+@Composable
+fun OnBoardingContent(
+    modifier: Modifier,
+    state: OnBoardingState,
+    pagerState: PagerState,
+    coroutineScope: CoroutineScope,
+    context: Context,
+    onIntent: (OnBoardingIntents) -> Unit
+){
 
     Column(
         modifier = modifier
@@ -76,7 +111,7 @@ fun OnBoardingScreen(
                 .weight(1f),
             beyondViewportPageCount = pagerState.pageCount
         ) { page ->
-            val pagerItem = pagerItems[page]
+            val pagerItem = state.pagerItems[page]
             OnBoardingItem(
                 pagerItem = pagerItem,
                 context = context
@@ -96,9 +131,8 @@ fun OnBoardingScreen(
                         )
                     }
                 } else {
-                    onEvent(OnBoardingEvents.SetOnBoardingFinished(true))
+                    onIntent(OnBoardingIntents.SetOnBoardingFinished)
                     Logger.i("hasFinishedOnBoarding", state.hasFinishedOnBoarding.toString())
-                    onNavigate(AuthFeature)
                 }
             },
             isLoading = false,

@@ -71,6 +71,7 @@ fun InputFieldDialog(
                     }
 
                     UserInputField(
+                        modifier = Modifier.fillMaxWidth(),
                         label = null,
                         enterValue = {
                             inputValue = it

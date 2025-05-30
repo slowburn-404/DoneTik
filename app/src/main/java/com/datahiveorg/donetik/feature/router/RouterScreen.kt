@@ -8,6 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.ui.components.LoadingAnimation
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -21,7 +22,7 @@ fun RouterScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.event.collect { event ->
+        viewModel.event.collectLatest { event ->
             when (event) {
                 is RouterEvent.Navigate -> {
                     onNavigate(
