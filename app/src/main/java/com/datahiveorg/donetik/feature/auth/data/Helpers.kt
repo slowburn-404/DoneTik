@@ -12,6 +12,11 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 
+/**
+ * Converts a [User] object to a [FirebaseRequest.CredentialsDTO] object.
+ *
+ * @return A [FirebaseRequest.CredentialsDTO] object containing the user's email and password.
+ */
 fun User.toUserCredential(): FirebaseRequest.CredentialsDTO {
     return FirebaseRequest.CredentialsDTO(
         email = email,
@@ -19,6 +24,11 @@ fun User.toUserCredential(): FirebaseRequest.CredentialsDTO {
     )
 }
 
+/**
+ * Converts a FirebaseUser object to a User object.
+ *
+ * @return The User object.
+ */
 fun FirebaseUser.toAuthDomain(): User {
     return User(
         uid = uid,
@@ -29,6 +39,14 @@ fun FirebaseUser.toAuthDomain(): User {
     )
 }
 
+/**
+ * Converts a [Throwable] to a user-friendly error message string.
+ *
+ * This function handles specific Firebase Authentication exceptions and provides
+ * corresponding messages. For other exceptions, it returns a generic error message.
+ *
+ * @return A [String] representing the error message.
+ */
 fun Throwable.toAuthDomain(): String {
     return when (this) {
         is FirebaseAuthWeakPasswordException -> "Please pick a stronger password."

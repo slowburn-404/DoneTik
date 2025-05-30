@@ -2,6 +2,13 @@ package com.datahiveorg.donetik.ui.navigation
 
 import androidx.navigation.NavHostController
 
+/**
+ * Interface for navigation within the DoneTik application.
+ *
+ * This interface defines the contract for navigating between different screens (Features)
+ * within the application. It abstracts the underlying navigation mechanism, allowing for
+ * easier testing and potential future changes to the navigation library.
+ */
 interface DoneTikNavigator {
     fun navigate(destination: FeatureScreen)
 

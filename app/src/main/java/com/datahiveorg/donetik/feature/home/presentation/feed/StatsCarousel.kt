@@ -48,7 +48,7 @@ fun StatsCarousel(
         preferredItemWidth = 250.dp,
         contentPadding = PaddingValues(vertical = 8.dp)
     ) { i ->
-        if (carouselItems.isEmpty() && ) return@HorizontalMultiBrowseCarousel
+        if (carouselItems.isEmpty() ) return@HorizontalMultiBrowseCarousel
         val item = carouselItems[i]
         StatsCarouselItem(
             modifier = Modifier.maskClip(shapes.extraLarge),

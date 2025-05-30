@@ -9,6 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable function that displays a Snackbar with a custom message.
+ *
+ * @param message The message to be displayed in the Snackbar.
+ */
 @Composable
 fun SnackBar(
     message: String

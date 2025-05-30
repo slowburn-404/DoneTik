@@ -23,6 +23,25 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable function that creates a user input field with a label, placeholder, leading and trailing icons,
+ * error handling, and password visibility toggle.
+ *
+ * @param modifier The modifier to be applied to the input field.
+ * @param label The label to be displayed above the input field.
+ * @param enterValue A callback function that is invoked when the user enters text into the input field.
+ * @param onTogglePasswordVisibility A callback function that is invoked when the user clicks the trailing icon
+ * to toggle password visibility.
+ * @param error The error message to be displayed below the input field if there is an error.
+ * @param keyboardOptions The keyboard options to be used for the input field.
+ * @param leadingIcon The painter for the leading icon to be displayed in the input field.
+ * @param trailingIcon The painter for the trailing icon to be displayed in the input field.
+ * @param placeholder The placeholder text to be displayed in the input field when it is empty.
+ * @param value The current value of the input field.
+ * @param visualTransformation The visual transformation to be applied to the input field, such as password masking.
+ * @param isReadOnly A boolean value indicating whether the input field is read-only.
+ * @param onClick A callback function that is invoked when the user clicks the input field.
+ */
 @Composable
 fun UserInputField(
     modifier: Modifier = Modifier,

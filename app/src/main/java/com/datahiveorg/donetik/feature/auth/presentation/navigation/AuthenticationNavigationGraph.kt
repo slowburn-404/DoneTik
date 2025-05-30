@@ -11,6 +11,19 @@ import com.datahiveorg.donetik.ui.navigation.AuthFeature
 import com.datahiveorg.donetik.ui.navigation.animatedComposable
 
 
+/**
+ * Defines the navigation graph for the authentication feature.
+ *
+ * This function sets up the navigation flow for the login and sign-up screens
+ * within the authentication module. It utilizes a nested navigation graph
+ * specific to the `AuthFeature`.
+ *
+ * Each screen (`LoginScreen`, `SignUpScreen`) is wrapped with `AuthenticationScreenWrapper`
+ * which likely provides common UI elements or logic for authentication screens.
+ *
+ * @param authenticationNavigator An instance of [AuthenticationNavigator] responsible for handling navigation actions within the authentication flow.
+ * @param snackBarHostState The [SnackbarHostState] used to display snack bars (e.g., for error messages or notifications) within the authentication screens.
+ */
 fun NavGraphBuilder.authenticationNavGraph(
     authenticationNavigator: AuthenticationNavigator,
     snackBarHostState: SnackbarHostState,

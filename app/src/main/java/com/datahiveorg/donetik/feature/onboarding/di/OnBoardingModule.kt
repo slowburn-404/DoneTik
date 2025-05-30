@@ -12,6 +12,14 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
+/**
+ * Koin module for providing dependencies related to the onboarding feature.
+ *
+ * This module includes:
+ * - `datastoreModule`: For accessing DataStore preferences.
+ * - `OnBoardingViewModel`: The ViewModel for the onboarding screen.
+ * - `OnBoardingRepository`: The repository for handling onboarding data.
+ */
 val onBoardingModule = module {
     includes(datastoreModule)
 

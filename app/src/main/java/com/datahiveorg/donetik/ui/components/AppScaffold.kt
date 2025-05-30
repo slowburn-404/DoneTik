@@ -15,6 +15,18 @@ import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import com.datahiveorg.donetik.ui.navigation.buildTopBarActions
 import com.datahiveorg.donetik.ui.navigation.getFABDestination
 
+/**
+ * Composable function that provides a scaffold for the app, including top bar, bottom bar,
+ * floating action button, and snack bar.
+ *
+ * @param modifier The modifier to be applied to the scaffold.
+ * @param content The content to be displayed in the scaffold.
+ * @param snackBarHostState The state of the snack bar.
+ * @param navigator The navigator used for navigating between screens.
+ * @param currentScreen The current screen being displayed.
+ * @param currentDestination The current destination in the navigation graph.
+ * @param bottomBarScreens The list of screens to be displayed in the bottom bar.
+ */
 @Composable
 fun AppScaffold(
     modifier: Modifier = Modifier,
@@ -23,7 +35,6 @@ fun AppScaffold(
     navigator: DoneTikNavigator,
     currentScreen: FeatureScreen?,
     currentDestination: NavDestination?,
-    activityState: MainActivityState,
     bottomBarScreens: List<FeatureScreen>
 ) {
     Scaffold(

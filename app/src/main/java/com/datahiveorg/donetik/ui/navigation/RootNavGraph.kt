@@ -23,6 +23,19 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.getKoin
 import org.koin.core.parameter.parametersOf
 
+/**
+ * Composable function that defines the root navigation graph of the application.
+ *
+ * This function sets up the main navigation structure using Jetpack Navigation Compose.
+ * It includes navigation graphs for the application features.
+ *
+ * @param modifier Optional [Modifier] to be applied to the NavHost.
+ * @param paddingValues [PaddingValues] to be applied as padding around the NavHost,
+ * typically from a Scaffold.
+ * @param snackBarHostState The [SnackbarHostState] used to show snackbars across different screens.
+ * @param navigator The [DoneTikNavigator] instance responsible for handling app-wide navigation actions.
+ * @param navController The [NavHostController] that manages the navigation within this graph.
+ */
 @Composable
 fun RootNavGraph(
     modifier: Modifier = Modifier,
