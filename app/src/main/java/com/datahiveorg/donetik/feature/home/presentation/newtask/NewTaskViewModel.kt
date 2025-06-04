@@ -34,7 +34,7 @@ class NewTaskViewModel(
         emitIntent(NewTaskIntent.GetUserInfo)
     }
 
-    private val _intent = MutableSharedFlow<NewTaskIntent>()
+    private val _intent = MutableSharedFlow<NewTaskIntent>(extraBufferCapacity = 64)
     private val intent = _intent.asSharedFlow()
 
     private val _event = Channel<NewTaskEvent>(Channel.BUFFERED)

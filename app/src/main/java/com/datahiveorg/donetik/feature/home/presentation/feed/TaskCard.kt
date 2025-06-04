@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.datahiveorg.donetik.feature.home.domain.model.Task
@@ -49,8 +50,17 @@ fun TaskCard(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = task.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+
                 if (task.isDone) {
                     Icon(
                         imageVector = Icons.Rounded.CheckCircle,
@@ -58,13 +68,6 @@ fun TaskCard(
                     )
                 }
             }
-
-            Text(
-                text = task.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = typography.headlineSmall
-            )
 
             Text(
                 text = task.description,
