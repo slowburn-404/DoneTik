@@ -80,7 +80,6 @@ fun NewTaskScreen(
             viewModel.emitIntent(NewTaskIntent.EnterCategory(it))
         },
         confirmButtonText = "Save",
-        dismissButtonText = "Dismiss",
         title = "Save category",
         label = null,
         showDialog = state.showCategoryDialog,

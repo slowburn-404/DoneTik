@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +19,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.carousel.CarouselState
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -44,7 +46,6 @@ import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigato
 import com.datahiveorg.donetik.ui.components.AnimatedText
 import com.datahiveorg.donetik.ui.components.BottomSheetOptions
 import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
-import com.datahiveorg.donetik.ui.components.LoadingAnimation
 import com.datahiveorg.donetik.ui.components.OptionsBottomSheet
 import com.datahiveorg.donetik.ui.components.ScreenTitle
 import kotlinx.coroutines.flow.collectLatest
@@ -174,11 +175,11 @@ fun FeedContent(
                 item {
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.CenterStart
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "Such empty",
-                            textAlign = TextAlign.Start
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
@@ -198,11 +199,30 @@ fun FeedContent(
                     )
                 }
 
+
                 item {
                     StatsCarousel(
                         carouselItems = state.carouselItems,
                         carouselState = carouselState
                     )
+                }
+
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        TextButton(
+                            onClick = {
+                                onEvent(FeedEvent.Navigate.NewTask)
+                            }
+                        ) {
+                            Text(
+                                text = "Show all",
+                                style = typography.labelLarge
+                            )
+                        }
+                    }
                 }
 
                 item {

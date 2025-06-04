@@ -7,7 +7,6 @@ import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.feature.home.domain.usecase.GetUserInfoUseCase
-import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
 import com.datahiveorg.donetik.util.DispatcherProvider
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,6 +18,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 typealias GroupedTasks = Map<String, List<Task>>
 
@@ -259,23 +260,29 @@ class FeedViewModel(
     }
 
     private fun getCarouselItems() {
+        val mutex = Mutex()
         viewModelScope.launch(dispatcher.default) {
             val allTasks = _state.value.tasks
-            val carouselItems =
-                allTasks.sortedByDescending { it.createdAt }
-                    .groupBy { it.category }
-                    .map { (category, tasksInCategory) ->
-                        CarouselItem(
-                            category = category,
-                            count = tasksInCategory.count(),
-                            contentDescription = category
-                        )
-                    }
+            mutex.withLock {
+                val carouselItems =
+                    allTasks
+                        .take(3)
+                        .asSequence()
+                        .sortedByDescending { it.createdAt }
+                        .groupBy { it.category }
+                        .map { (category, tasksInCategory) ->
+                            CarouselItem(
+                                category = category,
+                                count = tasksInCategory.count(),
+                                contentDescription = category
+                            )
+                        }.toSet()
 
-            _state.update { currentState ->
-                currentState.copy(
-                    carouselItems = carouselItems
-                )
+                _state.update { currentState ->
+                    currentState.copy(
+                        carouselItems = carouselItems
+                    )
+                }
             }
         }
     }

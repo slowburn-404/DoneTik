@@ -36,7 +36,7 @@ import com.datahiveorg.donetik.ui.components.AnimatedText
 @Composable
 fun StatsCarousel(
     modifier: Modifier = Modifier,
-    carouselItems: List<CarouselItem>,
+    carouselItems: Set<CarouselItem>,
     carouselState: CarouselState
 ) {
     HorizontalMultiBrowseCarousel(
@@ -49,7 +49,7 @@ fun StatsCarousel(
         contentPadding = PaddingValues(vertical = 8.dp)
     ) { i ->
         if (carouselItems.isEmpty() ) return@HorizontalMultiBrowseCarousel
-        val item = carouselItems[i]
+        val item = carouselItems.elementAt(i)
         StatsCarouselItem(
             modifier = Modifier.maskClip(shapes.extraLarge),
             carouselItem = item

@@ -37,12 +37,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-            navigationBarStyle = SystemBarStyle.auto(
-                Color.Transparent.toArgb(),
-                Color.Transparent.toArgb()
-            )
-        )
+        enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
             val navigator = getKoin().get<DoneTikNavigator> { parametersOf(navController) }
@@ -78,7 +73,6 @@ class MainActivity : ComponentActivity() {
                     currentScreen = currentScreen,
                     currentDestination = currentDestination,
                     snackBarHostState = activityState.snackBarHostState,
-                    activityState = activityState,
                     bottomBarScreens = bottomBarScreens,
                     content = { innerPadding ->
                         RootNavGraph(
@@ -89,7 +83,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 )
-
             }
         }
     }
