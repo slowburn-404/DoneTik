@@ -17,3 +17,4 @@ local.properties
 /.wakatime-project
 sha.txt
 /sha.txt
+/app/build/outputs/bundle/debug/app-debug.aab

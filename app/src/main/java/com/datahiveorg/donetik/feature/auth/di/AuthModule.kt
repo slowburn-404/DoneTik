@@ -5,7 +5,7 @@ import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationViewModel
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationNavigator
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationNavigatorImpl
-import com.datahiveorg.donetik.firebase.authentication.AuthDataSource
+import com.datahiveorg.donetik.core.firebase.authentication.AuthDataSource
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.util.DispatcherProvider
 import org.koin.core.module.dsl.viewModel

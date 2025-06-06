@@ -3,7 +3,7 @@ package com.datahiveorg.donetik.feature.auth.data
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
-import com.datahiveorg.donetik.firebase.authentication.AuthDataSource
+import com.datahiveorg.donetik.core.firebase.authentication.AuthDataSource
 import com.datahiveorg.donetik.util.DispatcherProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

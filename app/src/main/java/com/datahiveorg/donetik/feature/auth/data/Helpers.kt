@@ -2,7 +2,7 @@ package com.datahiveorg.donetik.feature.auth.data
 
 import android.net.Uri
 import com.datahiveorg.donetik.feature.auth.domain.model.User
-import com.datahiveorg.donetik.firebase.model.FirebaseRequest
+import com.datahiveorg.donetik.core.firebase.model.FirebaseRequest
 import com.google.firebase.auth.FirebaseAuthEmailException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException

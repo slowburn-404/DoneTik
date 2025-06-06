@@ -10,7 +10,7 @@ import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigato
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigatorImpl
 import com.datahiveorg.donetik.feature.home.presentation.newtask.NewTaskViewModel
 import com.datahiveorg.donetik.feature.home.presentation.taskview.TaskViewModel
-import com.datahiveorg.donetik.firebase.firestore.FireStoreDataSource
+import com.datahiveorg.donetik.core.firebase.firestore.FireStoreDataSource
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.util.DispatcherProvider
 import org.koin.core.module.dsl.viewModel
