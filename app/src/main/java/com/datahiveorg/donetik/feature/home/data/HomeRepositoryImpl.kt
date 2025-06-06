@@ -3,7 +3,7 @@ package com.datahiveorg.donetik.feature.home.data
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.model.Task
-import com.datahiveorg.donetik.firebase.firestore.FireStoreDataSource
+import com.datahiveorg.donetik.core.firebase.firestore.FireStoreDataSource
 
 class HomeRepositoryImpl(
     private val fireStoreDataSource: FireStoreDataSource

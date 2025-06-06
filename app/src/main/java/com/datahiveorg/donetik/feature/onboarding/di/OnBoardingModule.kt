@@ -2,7 +2,7 @@ package com.datahiveorg.donetik.feature.onboarding.di
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.datahiveorg.donetik.datastore.di.datastoreModule
+import com.datahiveorg.donetik.core.datastore.di.datastoreModule
 import com.datahiveorg.donetik.feature.onboarding.data.OnBoardingRepository
 import com.datahiveorg.donetik.feature.onboarding.data.OnBoardingRepositoryImpl
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingViewModel
