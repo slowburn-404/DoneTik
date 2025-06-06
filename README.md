@@ -1,6 +1,6 @@
 # DoneTik
 
-A modern Todo App built with **Kotlin** and **Jetpack Compose**, featuring:
+A modern Todo App built with **Kotlin** and **Jetpack Compose**
 
 ---
 
