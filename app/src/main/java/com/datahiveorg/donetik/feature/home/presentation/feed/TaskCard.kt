@@ -58,7 +58,6 @@ fun TaskCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold
                 )
 
                 if (task.isDone) {

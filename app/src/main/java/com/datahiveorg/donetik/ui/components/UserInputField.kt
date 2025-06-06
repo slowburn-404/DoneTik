@@ -56,11 +56,9 @@ fun UserInputField(
     value: String,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     isReadOnly: Boolean = false,
-    onClick: () -> Unit = {}
-
 ) {
     Column(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         label?.let {
