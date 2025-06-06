@@ -20,7 +20,7 @@ data object LoginScreen : FeatureScreen {
 @Serializable
 data object SignUpScreen : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo<LoginScreen> {
+        builder.popUpTo<SignUpScreen> {
             inclusive = true
         }
     }

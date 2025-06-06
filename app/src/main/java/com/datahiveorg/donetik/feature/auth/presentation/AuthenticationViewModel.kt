@@ -25,7 +25,7 @@ class AuthenticationViewModel(
     private val _uiEvents = Channel<AuthenticationUiEvent>(Channel.BUFFERED)
     val uiEvents = _uiEvents.receiveAsFlow()
 
-    private val _uiIntents: MutableSharedFlow<AuthenticationIntent> = MutableSharedFlow()
+    private val _uiIntents: MutableSharedFlow<AuthenticationIntent> = MutableSharedFlow(extraBufferCapacity = 64)
     private val uiIntents: SharedFlow<AuthenticationIntent> = _uiIntents.asSharedFlow()
 
     init {
@@ -130,6 +130,7 @@ class AuthenticationViewModel(
             }
         }
         validateAndUpdateFormState()
+        emitEvent(AuthenticationUiEvent.Navigate.Home)
     }
 
     private suspend fun signUp() {
@@ -156,6 +157,7 @@ class AuthenticationViewModel(
             }
         }
         validateAndUpdateFormState()
+        emitEvent(AuthenticationUiEvent.Navigate.Home)
     }
 
     private fun validateForm(): Boolean {
@@ -188,6 +190,7 @@ class AuthenticationViewModel(
                         isAuthenticated = true,
                     )
                 }
+                emitEvent(AuthenticationUiEvent.Navigate.Home)
             }
 
             is DomainResponse.Failure -> {

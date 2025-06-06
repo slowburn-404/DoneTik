@@ -127,7 +127,7 @@ fun NewTaskContent(
             state.selectedDate?.let {
                 calendar.timeInMillis = it
                 calendar.time.toHomeDomain().substringBefore(",")
-            } ?: "Select date"
+            } ?: "Select due date"
         }
     }
     val selectedTime by remember(state.selectedHour, state.selectedMinute) {
@@ -204,7 +204,7 @@ fun NewTaskContent(
                 onClick = {
                     onIntent(NewTaskIntent.ToggleDatePicker)
                 },
-                iconId = R.drawable.ic_teams,
+                iconId = R.drawable.ic_calendar,
                 label = selectedDate
             )
 
@@ -213,7 +213,7 @@ fun NewTaskContent(
                 onClick = {
                     onIntent(NewTaskIntent.ToggleTimePicker)
                 },
-                iconId = R.drawable.ic_teams,
+                iconId = R.drawable.ic_clock,
                 label = selectedTime
             )
 

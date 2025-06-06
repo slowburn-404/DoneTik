@@ -31,7 +31,7 @@ fun ClickableItemCard(
             containerColor = colorScheme.surface,
             contentColor = colorScheme.onSurface
         ),
-        shape = shapes.extraLarge,
+        shape = shapes.medium,
     ) {
         Row(
             modifier = Modifier.padding(20.dp),

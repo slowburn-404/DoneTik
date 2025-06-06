@@ -79,6 +79,8 @@ class FeedViewModel(
                     is FeedIntent.EnterQuery -> enterQuery(uiIntent.query)
 
                     is FeedIntent.Search -> search()
+
+                    is FeedIntent.Refresh -> getUserInfo()
                 }
             }
         }
@@ -267,7 +269,7 @@ class FeedViewModel(
             val allTasks = _state.value.tasks
                 val carouselItems =
                     allTasks
-                        .take(3)
+                        //.take(3)
                         .asSequence()
                         .sortedByDescending { it.createdAt }
                         .groupBy { it.category }

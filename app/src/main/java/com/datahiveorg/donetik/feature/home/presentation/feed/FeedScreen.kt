@@ -8,6 +8,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -48,6 +49,7 @@ import com.datahiveorg.donetik.ui.components.BottomSheetOptions
 import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
 import com.datahiveorg.donetik.ui.components.OptionsBottomSheet
 import com.datahiveorg.donetik.ui.components.ScreenTitle
+import com.datahiveorg.donetik.ui.components.SecondaryButton
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -60,8 +62,6 @@ fun FeedScreen(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
     val filterState by viewModel.filteredTasks.collectAsStateWithLifecycle(initialValue = FilterState())
-    val searchState by viewModel.searchState.collectAsStateWithLifecycle()
-
     val pullToRefreshState = rememberPullToRefreshState()
 
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -113,7 +113,6 @@ fun FeedScreen(
         },
         pullToRefreshState = pullToRefreshState,
         carouselState = carouselState,
-        searchState = searchState
     )
 
     if (showBottomSheet) {
@@ -154,7 +153,6 @@ fun FeedContent(
     modifier: Modifier = Modifier,
     state: FeedState,
     filterState: FilterState,
-    searchState: SearchState,
     onEvent: (FeedEvent) -> Unit,
     onIntent: (FeedIntent) -> Unit,
     onTaskLongPress: (Task) -> Unit,
@@ -164,22 +162,29 @@ fun FeedContent(
 
     PullToRefreshBox(
         onRefresh = {
-            onIntent(FeedIntent.GetTasks(state.user.uid))
+            onIntent(FeedIntent.Refresh)
         },
         isRefreshing = state.isLoading,
         state = pullToRefreshState
     ) {
 
-        if (state.tasks.isEmpty() && state.isLoading) {
-            Box(
+        if (state.tasks.isEmpty()) {
+            Column(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
             ) {
-                Text(
-                    text = "Such empty",
-                    textAlign = TextAlign.Center,
-                    style = typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
+                ScreenTitle(
+                    title = "Such empty, create a few tasks"
+                )
+
+                SecondaryButton(
+                    label = "Refresh",
+                    onClick = {
+                        onIntent(FeedIntent.Refresh)
+                    },
+                    leadingIcon = null,
+                    isLoading = state.isLoading,
                 )
             }
         } else {

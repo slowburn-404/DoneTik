@@ -85,7 +85,7 @@ fun FeatureScreen.getFABDestination(): FeatureScreen {
 
 fun buildTopBarActions(
     featureScreen: FeatureScreen,
-    imageUrl: Uri?,
+    imageUrl: Uri,
     onClick: () -> Unit,
     context: Context
 ): List<TopBarAction> {

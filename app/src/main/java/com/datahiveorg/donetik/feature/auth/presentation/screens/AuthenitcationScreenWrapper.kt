@@ -48,13 +48,11 @@ fun AuthenticationScreenWrapper(
                 is AuthenticationUiEvent.Navigate.SignUp -> {
                     navigator.navigateToSignUp()
                 }
-            }
-        }
-    }
 
-    LaunchedEffect(state) {
-        if (state.isAuthenticated) {
-            navigator.navigateToHomeFeature()
+                is AuthenticationUiEvent.Navigate.Home -> {
+                    navigator.navigateToHomeFeature()
+                }
+            }
         }
     }
 

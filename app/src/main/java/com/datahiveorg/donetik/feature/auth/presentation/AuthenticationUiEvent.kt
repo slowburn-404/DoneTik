@@ -6,5 +6,7 @@ sealed interface AuthenticationUiEvent {
     sealed interface Navigate {
         data object Login : AuthenticationUiEvent
         data object SignUp : AuthenticationUiEvent
+        data object Home : AuthenticationUiEvent
+
     }
 }
