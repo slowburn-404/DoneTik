@@ -1,6 +1,5 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
-import android.widget.Toast
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -37,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -62,6 +60,7 @@ fun FeedScreen(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
     val filterState by viewModel.filteredTasks.collectAsStateWithLifecycle(initialValue = FilterState())
+    val searchState by viewModel.searchState.collectAsStateWithLifecycle()
 
     val pullToRefreshState = rememberPullToRefreshState()
 
@@ -113,7 +112,8 @@ fun FeedScreen(
             }
         },
         pullToRefreshState = pullToRefreshState,
-        carouselState = carouselState
+        carouselState = carouselState,
+        searchState = searchState
     )
 
     if (showBottomSheet) {
@@ -154,6 +154,7 @@ fun FeedContent(
     modifier: Modifier = Modifier,
     state: FeedState,
     filterState: FilterState,
+    searchState: SearchState,
     onEvent: (FeedEvent) -> Unit,
     onIntent: (FeedIntent) -> Unit,
     onTaskLongPress: (Task) -> Unit,
@@ -168,24 +169,52 @@ fun FeedContent(
         isRefreshing = state.isLoading,
         state = pullToRefreshState
     ) {
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            if (state.tasks.isEmpty() && state.isLoading) {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Such empty",
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            } else {
+
+        if (state.tasks.isEmpty() && state.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Such empty",
+                    textAlign = TextAlign.Center,
+                    style = typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+//                item {
+//                    DoneTikSearchBar(
+//                        query = searchState.query,
+//                        onSearch = {
+//                            onIntent(FeedIntent.Search)
+//                        },
+//                        searchResults = searchState.searchResults,
+//                        onQueryChange = { query ->
+//                            onIntent(FeedIntent.EnterQuery(query))
+//                        },
+//                        isExpanded = searchState.isSearchBarExpanded,
+//                        onExpandedChanged = {
+//                            onIntent(FeedIntent.ToggleSearchBar)
+//                        },
+//                        leadingIcon = {
+//                            Icon(
+//                                Icons.Rounded.Search,
+//                                contentDescription = "Search"
+//                            )
+//                        },
+//                        onSearchResultClick = {
+//                            onIntent(FeedIntent.Search)
+//                        },
+//                        placeholder = "Search Tasks"
+//                    )
+//                }
+
                 item {
                     ScreenTitle(
                         title = state.title
@@ -216,7 +245,7 @@ fun FeedContent(
                     ) {
                         TextButton(
                             onClick = {
-                               onEvent(FeedEvent.ShowSnackBar("Coming soon"))
+                                onEvent(FeedEvent.ShowSnackBar("Coming soon"))
                             }
                         ) {
                             Text(

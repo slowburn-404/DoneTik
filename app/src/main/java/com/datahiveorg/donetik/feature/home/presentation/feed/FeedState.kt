@@ -21,7 +21,7 @@ data class FeedState(
         password = ""
     ),
     val title: String = "",
-    val carouselItems: Set<CarouselItem> = emptySet()
+    val carouselItems: Set<CarouselItem> = emptySet(),
 )
 
 @Stable
@@ -34,3 +34,11 @@ data class FilterState(
 enum class FilterOption {
     ALL, ACTIVE, DONE
 }
+
+@Stable
+@Immutable
+data class SearchState(
+    val searchResults: List<Task> = emptyList(),
+    val isSearchBarExpanded: Boolean = false,
+    val query: String = "",
+)

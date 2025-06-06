@@ -4,6 +4,7 @@ import androidx.navigation.NavOptionsBuilder
 import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import com.datahiveorg.donetik.ui.navigation.ScreenUIConfig
+import com.datahiveorg.donetik.ui.navigation.buildTopBarActions
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,7 +24,7 @@ data object Feed : FeatureScreen {
             hasFAB = true,
             bottomNavIconRes = R.drawable.ic_home,
             enterTransition = homeEnterTransition(),
-            exitTransition = homeExitTransition()
+            exitTransition = homeExitTransition(),
         )
 }
 

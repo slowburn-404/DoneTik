@@ -47,6 +47,13 @@ class FeedViewModel(
         emitIntent(FeedIntent.Filter(FilterOption.ALL))
     }
 
+    private val _searchState = MutableStateFlow(SearchState())
+    val searchState = _searchState.stateIn(
+        scope = viewModelScope,
+        initialValue = SearchState(),
+        started = WhileSubscribed(5000)
+    )
+
     private val _intent = MutableSharedFlow<FeedIntent>(extraBufferCapacity = 64)
     private val intent = _intent.asSharedFlow()
 
@@ -57,25 +64,21 @@ class FeedViewModel(
         viewModelScope.launch {
             intent.collect { uiIntent ->
                 when (uiIntent) {
-                    is FeedIntent.GetTasks -> {
-                        getTasks(uiIntent.userId)
-                    }
+                    is FeedIntent.GetTasks -> getTasks(uiIntent.userId)
 
-                    is FeedIntent.GetUserInfo -> {
-                        getUserInfo()
-                    }
+                    is FeedIntent.GetUserInfo -> getUserInfo()
 
-                    is FeedIntent.Filter -> {
-                        filterByDone(uiIntent.filter)
-                    }
+                    is FeedIntent.Filter -> filterByDone(uiIntent.filter)
 
-                    is FeedIntent.Delete -> {
-                        deleteTask(uiIntent.task)
-                    }
+                    is FeedIntent.Delete -> deleteTask(uiIntent.task)
 
-                    is FeedIntent.ToggleDoneStatus -> {
-                        toggleDoneStatus(uiIntent.task)
-                    }
+                    is FeedIntent.ToggleDoneStatus -> toggleDoneStatus(uiIntent.task)
+
+                    is FeedIntent.ToggleSearchBar -> toggleSearchBar()
+
+                    is FeedIntent.EnterQuery -> enterQuery(uiIntent.query)
+
+                    is FeedIntent.Search -> search()
                 }
             }
         }
@@ -260,10 +263,8 @@ class FeedViewModel(
     }
 
     private fun getCarouselItems() {
-        val mutex = Mutex()
         viewModelScope.launch(dispatcher.default) {
             val allTasks = _state.value.tasks
-            mutex.withLock {
                 val carouselItems =
                     allTasks
                         .take(3)
@@ -283,7 +284,42 @@ class FeedViewModel(
                         carouselItems = carouselItems
                     )
                 }
-            }
+        }
+    }
+
+    private fun toggleSearchBar() {
+        _searchState.update { currentState ->
+            currentState.copy(
+                isSearchBarExpanded = !currentState.isSearchBarExpanded
+            )
+        }
+    }
+
+    private fun enterQuery(query: String) {
+        _searchState.update { currentState ->
+            currentState.copy(
+                query = query
+            )
+        }
+    }
+
+
+    //TODO: Fetch from firebase instead
+    private fun search() {
+        val query = _searchState.value.query
+        val allTasks = _state.value.tasks
+        val filteredTasks = allTasks.filter {
+            it.title.contains(
+                query,
+                ignoreCase = true
+            ) || it.description.contains(query, ignoreCase = true)
+        }
+
+        _searchState.update { currentState ->
+            currentState.copy(
+                searchResults = filteredTasks,
+                isSearchBarExpanded = false
+            )
         }
     }
 

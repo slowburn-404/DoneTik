@@ -26,11 +26,10 @@ fun AuthenticationScreenWrapper(
         onEvent: (AuthenticationUiEvent) -> Unit,
         onIntent: (AuthenticationIntent) -> Unit,
         googleSignInHelper: GoogleSignHelper
-    ) -> Unit
+    ) -> Unit,
+    googleSignInHelper: GoogleSignHelper
 ) {
-    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val googleSignHelper = remember { GoogleSignHelper(context) }
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvents.collectLatest { event ->
@@ -63,7 +62,7 @@ fun AuthenticationScreenWrapper(
         state,
         viewModel::emitEvent,
         viewModel::emitIntent,
-        googleSignHelper
+        googleSignInHelper
     )
 
 }

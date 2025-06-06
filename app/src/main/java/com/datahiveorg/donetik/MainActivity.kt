@@ -1,15 +1,16 @@
 package com.datahiveorg.donetik
 
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -21,14 +22,19 @@ import com.datahiveorg.donetik.feature.auth.presentation.navigation.SignUpScreen
 import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
 import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
 import com.datahiveorg.donetik.feature.home.presentation.navigation.TaskScreen
-import com.datahiveorg.donetik.ui.components.AppScaffold
+import com.datahiveorg.donetik.ui.components.DoneTikScaffold
+import com.datahiveorg.donetik.ui.navigation.AuthFeature
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
 import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
 import com.datahiveorg.donetik.ui.navigation.RootNavGraph
 import com.datahiveorg.donetik.ui.navigation.RouterScreen
+import com.datahiveorg.donetik.ui.navigation.buildTopBarActions
 import com.datahiveorg.donetik.ui.theme.DoneTikTheme
+import com.datahiveorg.donetik.util.GoogleSignHelper
 import com.datahiveorg.donetik.util.Logger
+import com.datahiveorg.donetik.util.signOut
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.getKoin
 import org.koin.core.parameter.parametersOf
@@ -47,9 +53,11 @@ class MainActivity : ComponentActivity() {
                 getCurrentScreen(destination = currentDestination)
             val viewModel: MainActivityViewModel = koinViewModel()
             val activityState by viewModel.state.collectAsStateWithLifecycle()
+            val googleSignHelper = remember { GoogleSignHelper(this@MainActivity) }
             val bottomBarScreens = listOf(
                 Feed
             )
+            val coroutineScope = rememberCoroutineScope()
 
             DisposableEffect(navController) {
                 val listener =
@@ -68,7 +76,7 @@ class MainActivity : ComponentActivity() {
             }
 
             DoneTikTheme {
-                AppScaffold(
+                DoneTikScaffold(
                     navigator = navigator,
                     currentScreen = currentScreen,
                     currentDestination = currentDestination,
@@ -80,6 +88,27 @@ class MainActivity : ComponentActivity() {
                             paddingValues = innerPadding,
                             snackBarHostState = activityState.snackBarHostState,
                             navController = navController,
+                            googleSignInHelper = googleSignHelper,
+                        )
+                    },
+                    topBarActions = currentScreen?.let {
+                        buildTopBarActions(
+                            featureScreen = it,
+                            imageUrl = activityState.user.imageUrl,
+                            onClick = {
+                                Toast.makeText(this, "Logging out...", Toast.LENGTH_SHORT).show()
+                                viewModel.signOut()
+                                coroutineScope.launch {
+                                    this@MainActivity.signOut(googleSignHelper)
+                                }
+                                navController.navigate(AuthFeature) {
+                                    launchSingleTop = true
+                                    popUpTo<Feed> {
+                                        inclusive = true
+                                    }
+                                }
+                            },
+                            context = this@MainActivity
                         )
                     }
                 )

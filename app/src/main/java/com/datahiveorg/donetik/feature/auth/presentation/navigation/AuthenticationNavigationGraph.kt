@@ -6,9 +6,9 @@ import androidx.navigation.navigation
 import com.datahiveorg.donetik.feature.auth.presentation.screens.AuthenticationScreenWrapper
 import com.datahiveorg.donetik.feature.auth.presentation.screens.LoginScreen
 import com.datahiveorg.donetik.feature.auth.presentation.screens.SignUpScreen
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.AuthFeature
 import com.datahiveorg.donetik.ui.navigation.animatedComposable
+import com.datahiveorg.donetik.util.GoogleSignHelper
 
 
 /**
@@ -27,6 +27,7 @@ import com.datahiveorg.donetik.ui.navigation.animatedComposable
 fun NavGraphBuilder.authenticationNavGraph(
     authenticationNavigator: AuthenticationNavigator,
     snackBarHostState: SnackbarHostState,
+    googleSignHelper: GoogleSignHelper
 ) {
 
     navigation<AuthFeature>(
@@ -36,27 +37,31 @@ fun NavGraphBuilder.authenticationNavGraph(
             AuthenticationScreenWrapper(
                 navigator = authenticationNavigator,
                 snackBarHostState = snackBarHostState,
-            ) { state, onEvent, onIntent, googleSignHelper ->
-                LoginScreen(
-                    state = state,
-                    onEvent = onEvent,
-                    onIntent = onIntent,
-                    googleSignHelper = googleSignHelper
-                )
-            }
+                googleSignInHelper = googleSignHelper,
+                content = { state, onEvent, onIntent, googleSignHelper ->
+                    LoginScreen(
+                        state = state,
+                        onEvent = onEvent,
+                        onIntent = onIntent,
+                        googleSignHelper = googleSignHelper
+                    )
+                }
+            )
         }
         animatedComposable<SignUpScreen> {
             AuthenticationScreenWrapper(
                 navigator = authenticationNavigator,
                 snackBarHostState = snackBarHostState,
-            ) { state, onEvent, onIntent, googleSignInHelper ->
-                SignUpScreen(
-                    state = state,
-                    onEvent = onEvent,
-                    onIntent = onIntent,
-                    googleSignHelper = googleSignInHelper
-                )
-            }
+                googleSignInHelper = googleSignHelper,
+                content = { state, onEvent, onIntent, googleSignInHelper ->
+                    SignUpScreen(
+                        state = state,
+                        onEvent = onEvent,
+                        onIntent = onIntent,
+                        googleSignHelper = googleSignInHelper
+                    )
+                }
+            )
         }
 
     }

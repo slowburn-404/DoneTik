@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.ui.navigation.TopBarAction
 import com.datahiveorg.donetik.ui.navigation.getFABDestination
 import com.datahiveorg.donetik.util.Logger
 
@@ -27,14 +28,15 @@ import com.datahiveorg.donetik.util.Logger
  * @param bottomBarScreens The list of screens to be displayed in the bottom bar.
  */
 @Composable
-fun AppScaffold(
+fun DoneTikScaffold(
     modifier: Modifier = Modifier,
     content: @Composable (PaddingValues) -> Unit,
     snackBarHostState: SnackbarHostState,
     navigator: DoneTikNavigator,
     currentScreen: FeatureScreen?,
     currentDestination: NavDestination?,
-    bottomBarScreens: List<FeatureScreen>
+    bottomBarScreens: List<FeatureScreen>,
+    topBarActions: List<TopBarAction>?
 ) {
     Scaffold(
         snackbarHost = {
@@ -57,7 +59,7 @@ fun AppScaffold(
                             navigator.navigateUp()
                         },
                         title = screen.screenUIConfig.title,
-                        actions = null,
+                        actions = topBarActions,
                         enterAnimationTransition = screen.screenUIConfig.enterTransition,
                         exitAnimationTransition = screen.screenUIConfig.exitTransition
                     )

@@ -8,4 +8,7 @@ interface FeedIntent {
     data class Filter(val filter: FilterOption) : FeedIntent
     data class ToggleDoneStatus(val task: Task) : FeedIntent
     data class Delete(val task: Task): FeedIntent
+    data object ToggleSearchBar: FeedIntent
+    data class EnterQuery(val query: String): FeedIntent
+    data object Search: FeedIntent
 }

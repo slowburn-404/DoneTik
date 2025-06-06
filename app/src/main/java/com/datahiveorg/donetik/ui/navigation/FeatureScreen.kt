@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.ui.navigation
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -84,22 +85,23 @@ fun FeatureScreen.getFABDestination(): FeatureScreen {
 
 fun buildTopBarActions(
     featureScreen: FeatureScreen,
-    imageUrl: Uri,
-    onClick: () -> Unit
+    imageUrl: Uri?,
+    onClick: () -> Unit,
+    context: Context
 ): List<TopBarAction> {
     return when (featureScreen) {
         is Feed -> {
             listOf(
                 TopBarAction(
                     icon = {
-                        val context = LocalContext.current
-
                         IconButton(
                             onClick = onClick
                         ) {
                             AsyncImageLoader(
                                 imageUrl = imageUrl,
                                 context = context,
+                                enterTransition = featureScreen.screenUIConfig.enterTransition,
+                                exitTransition = featureScreen.screenUIConfig.exitTransition
                             )
                         }
                     },
