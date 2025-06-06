@@ -24,7 +24,7 @@ A modern Todo App built with **Kotlin** and **Jetpack Compose**, featuring:
 - [Firestore Database](https://firebase.google.com/docs/firestore)
 - [**Credential Manager**](https://developer.android.com/training/sign-in/credential-manager)
 - [**Jetpack DataStore**](https://developer.android.com/topic/libraries/architecture/datastore)
-- [**Koin (Dependency Injection)**](https://insert-koin.io/docs/)
+- [**Koin (Dependency Injection)**](https://insert-koin.io/)
 - [**Lottie for Compose**](https://airbnb.io/lottie/#/android)
 - [**Kotlinx Serialization**](https://github.com/Kotlin/kotlinx.serialization)
 - [**Coil (Image Loading)**](https://coil-kt.github.io/coil/)
