@@ -9,11 +9,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
-import com.datahiveorg.donetik.MainActivityState
 import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.ui.navigation.buildTopBarActions
+import com.datahiveorg.donetik.ui.navigation.TopBarAction
 import com.datahiveorg.donetik.ui.navigation.getFABDestination
+import com.datahiveorg.donetik.util.Logger
 
 /**
  * Composable function that provides a scaffold for the app, including top bar, bottom bar,
@@ -28,14 +28,15 @@ import com.datahiveorg.donetik.ui.navigation.getFABDestination
  * @param bottomBarScreens The list of screens to be displayed in the bottom bar.
  */
 @Composable
-fun AppScaffold(
+fun DoneTikScaffold(
     modifier: Modifier = Modifier,
     content: @Composable (PaddingValues) -> Unit,
     snackBarHostState: SnackbarHostState,
     navigator: DoneTikNavigator,
     currentScreen: FeatureScreen?,
     currentDestination: NavDestination?,
-    bottomBarScreens: List<FeatureScreen>
+    bottomBarScreens: List<FeatureScreen>,
+    topBarActions: List<TopBarAction>?
 ) {
     Scaffold(
         snackbarHost = {
@@ -49,14 +50,18 @@ fun AppScaffold(
         },
         topBar = {
             currentScreen?.let { screen ->
+                Logger.i("Screen State", screen.screenUIConfig.title)
                 if (screen.screenUIConfig.hasTopAppBar) {
                     TopBar(
                         showNavigationIcon = screen.screenUIConfig.hasNavIcon,
+                        navigationIcon = screen.screenUIConfig.navIconRes,
                         onBackClick = {
                             navigator.navigateUp()
                         },
                         title = screen.screenUIConfig.title,
-                        actions = null
+                        actions = topBarActions,
+                        enterAnimationTransition = screen.screenUIConfig.enterTransition,
+                        exitAnimationTransition = screen.screenUIConfig.exitTransition
                     )
                 }
             }

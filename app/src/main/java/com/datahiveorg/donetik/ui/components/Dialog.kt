@@ -2,14 +2,17 @@ package com.datahiveorg.donetik.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
@@ -31,7 +34,6 @@ import androidx.compose.ui.unit.dp
  * @param onSaveClick Callback to be invoked when the save button is clicked.
  * It provides the entered text as a parameter.
  * @param confirmButtonText Text to be displayed on the confirm button. Defaults to "Confirm".
- * @param dismissButtonText Text to be displayed on the dismiss button. Defaults to "Cancel".
  * @param title The title of the dialog.
  * @param label An optional label to be displayed above the input field.
  * @param showDialog A boolean indicating whether the dialog should be shown. Defaults to false.
@@ -43,7 +45,6 @@ fun InputFieldDialog(
     onDismiss: () -> Unit,
     onSaveClick: (String) -> Unit,
     confirmButtonText: String = "Confirm",
-    dismissButtonText: String = "Cancel",
     title: String,
     label: String? = null,
     showDialog: Boolean = false,
@@ -67,6 +68,15 @@ fun InputFieldDialog(
                     modifier = Modifier.padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    IconButton(
+                        onClick = onDismiss
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = "Close"
+                        )
+                    }
+
                     Text(
                         text = title,
                         style = typography.titleLarge,
@@ -95,28 +105,16 @@ fun InputFieldDialog(
                         placeholder = "Enter Category",
                         value = inputValue,
                     )
-
-                    Row(
+                    PrimaryButton(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                    ) {
-                        SecondaryButton(
-                            label = dismissButtonText,
-                            onClick = onDismiss,
-                            leadingIcon = null,
-                            isLoading = false
-                        )
-
-                        PrimaryButton(
-                            label = confirmButtonText,
-                            onClick = {
-                                onSaveClick(inputValue)
-                                onDismiss()
-                            },
-                            isEnabled = inputValue.isNotEmpty(),
-                            isLoading = false
-                        )
-                    }
+                        label = confirmButtonText,
+                        onClick = {
+                            onSaveClick(inputValue)
+                            onDismiss()
+                        },
+                        isEnabled = inputValue.isNotEmpty(),
+                        isLoading = false
+                    )
                 }
             }
         }

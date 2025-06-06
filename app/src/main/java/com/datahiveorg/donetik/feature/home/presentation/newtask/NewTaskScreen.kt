@@ -23,7 +23,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -31,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.feature.home.data.toHomeDomain
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
+import com.datahiveorg.donetik.ui.components.ClickableItemCard
 import com.datahiveorg.donetik.ui.components.DoneTikDatePicker
 import com.datahiveorg.donetik.ui.components.DoneTikTimePicker
 import com.datahiveorg.donetik.ui.components.InputFieldDialog
@@ -38,7 +38,6 @@ import com.datahiveorg.donetik.ui.components.PrimaryButton
 import com.datahiveorg.donetik.ui.components.UserInputField
 import com.datahiveorg.donetik.ui.components.rememberCalendarInstance
 import kotlinx.coroutines.flow.collectLatest
-import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +79,6 @@ fun NewTaskScreen(
             viewModel.emitIntent(NewTaskIntent.EnterCategory(it))
         },
         confirmButtonText = "Save",
-        dismissButtonText = "Dismiss",
         title = "Save category",
         label = null,
         showDialog = state.showCategoryDialog,
@@ -129,7 +127,7 @@ fun NewTaskContent(
             state.selectedDate?.let {
                 calendar.timeInMillis = it
                 calendar.time.toHomeDomain().substringBefore(",")
-            } ?: ""
+            } ?: "Select due date"
         }
     }
     val selectedTime by remember(state.selectedHour, state.selectedMinute) {
@@ -137,7 +135,7 @@ fun NewTaskContent(
             if (state.selectedHour != null && state.selectedMinute != null) {
                 "${state.selectedHour}: ${state.selectedMinute}"
             } else {
-                ""
+                "Select time"
             }
         }
     }
@@ -201,46 +199,22 @@ fun NewTaskContent(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            UserInputField(
-                modifier = Modifier
-                    .weight(1f),
-                label = "Due date",
-                enterValue = {},
-                value = selectedDate,
-                onTogglePasswordVisibility = {},
-                error = state.selectedDateError,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text
-                ),
-                leadingIcon = painterResource(R.drawable.ic_teams),
-                trailingIcon = null,
-                placeholder = "Due date",
-                visualTransformation = VisualTransformation.None,
-                isReadOnly = true,
+            ClickableItemCard(
+                modifier = Modifier.weight(1f),
                 onClick = {
                     onIntent(NewTaskIntent.ToggleDatePicker)
-                }
+                },
+                iconId = R.drawable.ic_calendar,
+                label = selectedDate
             )
 
-            UserInputField(
-                modifier = Modifier
-                    .weight(1f),
-                label = "Time",
-                enterValue = {},
-                value = selectedTime,
-                onTogglePasswordVisibility = {},
-                error = state.selectedTimeError,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text
-                ),
-                leadingIcon = painterResource(R.drawable.ic_teams),
-                trailingIcon = null,
-                placeholder = "Time",
-                visualTransformation = VisualTransformation.None,
-                isReadOnly = true,
+            ClickableItemCard(
+                modifier = Modifier.weight(1f),
                 onClick = {
                     onIntent(NewTaskIntent.ToggleTimePicker)
-                }
+                },
+                iconId = R.drawable.ic_clock,
+                label = selectedTime
             )
 
         }

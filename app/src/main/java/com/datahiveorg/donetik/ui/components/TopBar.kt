@@ -1,14 +1,23 @@
 package com.datahiveorg.donetik.ui.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import com.datahiveorg.donetik.ui.navigation.TopBarAction
 
 /**
@@ -29,12 +38,18 @@ fun TopBar(
     @DrawableRes navigationIcon: Int? = null,
     onBackClick: () -> Unit,
     actions: List<TopBarAction>?,
-    title: String
+    title: String,
+    enterAnimationTransition: EnterTransition,
+    exitAnimationTransition: ExitTransition
 ) {
     TopAppBar(
         modifier = modifier.fillMaxWidth(),
         navigationIcon = {
-            if (showNavigationIcon) {
+            AnimatedVisibility(
+                visible = showNavigationIcon,
+                enter = enterAnimationTransition,
+                exit = exitAnimationTransition
+            ) {
                 IconButton(
                     onClick = onBackClick
                 ) {
@@ -48,19 +63,21 @@ fun TopBar(
             }
         },
         title = {
-            ScreenTitle(
-                title = title
-            )
+            AnimatedVisibility(
+                visible = title.isNotEmpty(),
+                enter = enterAnimationTransition,
+                exit = exitAnimationTransition
+            ) {
+                ScreenTitle(title = title)
+            }
 
         },
         actions = {
             actions?.let {
                 it.forEach { action ->
                     action.icon()
-
                 }
             }
         },
     )
-
 }

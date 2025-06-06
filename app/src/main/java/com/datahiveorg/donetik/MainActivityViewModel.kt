@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik
 
+import android.net.Uri
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +15,7 @@ class MainActivityViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
     init {
-       getUserInfo()
+        getUserInfo()
     }
 
     private val _state = MutableStateFlow(MainActivityState())
@@ -25,16 +26,29 @@ class MainActivityViewModel(
             val response = authRepository.getUser()
             if (response is DomainResponse.Success) {
                 _state.value = _state.value.copy(
-                    user = response.data
+                    user = response.data ?: MainActivityState().user
                 )
             }
 
         }
     }
 
+    //TODO: improve error handling
+    fun signOut() {
+        viewModelScope.launch {
+            authRepository.logout()
+        }
+    }
+
 }
 
 data class MainActivityState(
-    val user: User? = null,
+    val user: User = User(
+        uid = "",
+        username = "",
+        email = "",
+        imageUrl = Uri.EMPTY,
+        password = ""
+    ),
     val snackBarHostState: SnackbarHostState = SnackbarHostState()
 )

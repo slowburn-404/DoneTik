@@ -7,7 +7,6 @@ import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.feature.home.domain.usecase.GetUserInfoUseCase
-import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
 import com.datahiveorg.donetik.util.DispatcherProvider
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,6 +18,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 typealias GroupedTasks = Map<String, List<Task>>
 
@@ -46,7 +47,14 @@ class FeedViewModel(
         emitIntent(FeedIntent.Filter(FilterOption.ALL))
     }
 
-    private val _intent = MutableSharedFlow<FeedIntent>(replay = 0, extraBufferCapacity = 5)
+    private val _searchState = MutableStateFlow(SearchState())
+    val searchState = _searchState.stateIn(
+        scope = viewModelScope,
+        initialValue = SearchState(),
+        started = WhileSubscribed(5000)
+    )
+
+    private val _intent = MutableSharedFlow<FeedIntent>(extraBufferCapacity = 64)
     private val intent = _intent.asSharedFlow()
 
     private val _event = Channel<FeedEvent>(Channel.BUFFERED)
@@ -56,25 +64,23 @@ class FeedViewModel(
         viewModelScope.launch {
             intent.collect { uiIntent ->
                 when (uiIntent) {
-                    is FeedIntent.GetTasks -> {
-                        getTasks(uiIntent.userId)
-                    }
+                    is FeedIntent.GetTasks -> getTasks(uiIntent.userId)
 
-                    is FeedIntent.GetUserInfo -> {
-                        getUserInfo()
-                    }
+                    is FeedIntent.GetUserInfo -> getUserInfo()
 
-                    is FeedIntent.Filter -> {
-                        filterByDone(uiIntent.filter)
-                    }
+                    is FeedIntent.Filter -> filterByDone(uiIntent.filter)
 
-                    is FeedIntent.Delete -> {
-                        deleteTask(uiIntent.task)
-                    }
+                    is FeedIntent.Delete -> deleteTask(uiIntent.task)
 
-                    is FeedIntent.ToggleDoneStatus -> {
-                        toggleDoneStatus(uiIntent.task)
-                    }
+                    is FeedIntent.ToggleDoneStatus -> toggleDoneStatus(uiIntent.task)
+
+                    is FeedIntent.ToggleSearchBar -> toggleSearchBar()
+
+                    is FeedIntent.EnterQuery -> enterQuery(uiIntent.query)
+
+                    is FeedIntent.Search -> search()
+
+                    is FeedIntent.Refresh -> getUserInfo()
                 }
             }
         }
@@ -261,22 +267,61 @@ class FeedViewModel(
     private fun getCarouselItems() {
         viewModelScope.launch(dispatcher.default) {
             val allTasks = _state.value.tasks
-            val carouselItems =
-                allTasks.sortedByDescending { it.createdAt }
-                    .groupBy { it.category }
-                    .map { (category, tasksInCategory) ->
-                        CarouselItem(
-                            category = category,
-                            count = tasksInCategory.count(),
-                            contentDescription = category
-                        )
-                    }
+                val carouselItems =
+                    allTasks
+                        //.take(3)
+                        .asSequence()
+                        .sortedByDescending { it.createdAt }
+                        .groupBy { it.category }
+                        .map { (category, tasksInCategory) ->
+                            CarouselItem(
+                                category = category,
+                                count = tasksInCategory.count(),
+                                contentDescription = category
+                            )
+                        }.toSet()
 
-            _state.update { currentState ->
-                currentState.copy(
-                    carouselItems = carouselItems
-                )
-            }
+                _state.update { currentState ->
+                    currentState.copy(
+                        carouselItems = carouselItems
+                    )
+                }
+        }
+    }
+
+    private fun toggleSearchBar() {
+        _searchState.update { currentState ->
+            currentState.copy(
+                isSearchBarExpanded = !currentState.isSearchBarExpanded
+            )
+        }
+    }
+
+    private fun enterQuery(query: String) {
+        _searchState.update { currentState ->
+            currentState.copy(
+                query = query
+            )
+        }
+    }
+
+
+    //TODO: Fetch from firebase instead
+    private fun search() {
+        val query = _searchState.value.query
+        val allTasks = _state.value.tasks
+        val filteredTasks = allTasks.filter {
+            it.title.contains(
+                query,
+                ignoreCase = true
+            ) || it.description.contains(query, ignoreCase = true)
+        }
+
+        _searchState.update { currentState ->
+            currentState.copy(
+                searchResults = filteredTasks,
+                isSearchBarExpanded = false
+            )
         }
     }
 

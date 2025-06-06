@@ -25,6 +25,7 @@ fun RouterScreen(
         viewModel.event.collectLatest { event ->
             when (event) {
                 is RouterEvent.Navigate -> {
+                    delay(1000) //mbogi lazima waone animation
                     onNavigate(
                         event.screen
                     )

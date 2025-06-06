@@ -118,7 +118,7 @@ fun AnimatedBottomNavBar(
                     },
                     label = {
                         Text(
-                            screen.screenUIConfig.title
+                            screen.screenUIConfig.title ?: ""
                         )
                     },
                     selected = currentDestination?.route?.let { route ->

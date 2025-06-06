@@ -79,7 +79,7 @@ fun TaskViewContent(
         )
 
         Text(
-            text = "Last modified",
+            text = "Due date",
             style = typography.labelSmall,
             color = Color.Gray
         )

@@ -8,7 +8,9 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +20,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.carousel.CarouselState
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -44,9 +47,9 @@ import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigato
 import com.datahiveorg.donetik.ui.components.AnimatedText
 import com.datahiveorg.donetik.ui.components.BottomSheetOptions
 import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
-import com.datahiveorg.donetik.ui.components.LoadingAnimation
 import com.datahiveorg.donetik.ui.components.OptionsBottomSheet
 import com.datahiveorg.donetik.ui.components.ScreenTitle
+import com.datahiveorg.donetik.ui.components.SecondaryButton
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -59,7 +62,6 @@ fun FeedScreen(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
     val filterState by viewModel.filteredTasks.collectAsStateWithLifecycle(initialValue = FilterState())
-
     val pullToRefreshState = rememberPullToRefreshState()
 
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -110,7 +112,7 @@ fun FeedScreen(
             }
         },
         pullToRefreshState = pullToRefreshState,
-        carouselState = carouselState
+        carouselState = carouselState,
     )
 
     if (showBottomSheet) {
@@ -160,29 +162,64 @@ fun FeedContent(
 
     PullToRefreshBox(
         onRefresh = {
-            onIntent(FeedIntent.GetTasks(state.user.uid))
+            onIntent(FeedIntent.Refresh)
         },
         isRefreshing = state.isLoading,
         state = pullToRefreshState
     ) {
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            if (state.tasks.isEmpty() && state.isLoading) {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        Text(
-                            text = "Such empty",
-                            textAlign = TextAlign.Start
-                        )
-                    }
-                }
-            } else {
+
+        if (state.tasks.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
+            ) {
+                ScreenTitle(
+                    title = "Such empty, create a few tasks"
+                )
+
+                SecondaryButton(
+                    label = "Refresh",
+                    onClick = {
+                        onIntent(FeedIntent.Refresh)
+                    },
+                    leadingIcon = null,
+                    isLoading = state.isLoading,
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+//                item {
+//                    DoneTikSearchBar(
+//                        query = searchState.query,
+//                        onSearch = {
+//                            onIntent(FeedIntent.Search)
+//                        },
+//                        searchResults = searchState.searchResults,
+//                        onQueryChange = { query ->
+//                            onIntent(FeedIntent.EnterQuery(query))
+//                        },
+//                        isExpanded = searchState.isSearchBarExpanded,
+//                        onExpandedChanged = {
+//                            onIntent(FeedIntent.ToggleSearchBar)
+//                        },
+//                        leadingIcon = {
+//                            Icon(
+//                                Icons.Rounded.Search,
+//                                contentDescription = "Search"
+//                            )
+//                        },
+//                        onSearchResultClick = {
+//                            onIntent(FeedIntent.Search)
+//                        },
+//                        placeholder = "Search Tasks"
+//                    )
+//                }
+
                 item {
                     ScreenTitle(
                         title = state.title
@@ -198,11 +235,30 @@ fun FeedContent(
                     )
                 }
 
+
                 item {
                     StatsCarousel(
                         carouselItems = state.carouselItems,
                         carouselState = carouselState
                     )
+                }
+
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        TextButton(
+                            onClick = {
+                                onEvent(FeedEvent.ShowSnackBar("Coming soon"))
+                            }
+                        ) {
+                            Text(
+                                text = "Show all",
+                                style = typography.labelLarge
+                            )
+                        }
+                    }
                 }
 
                 item {

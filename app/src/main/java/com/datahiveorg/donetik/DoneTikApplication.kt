@@ -10,6 +10,12 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 
+/**
+ * Custom Application class for DoneTik.
+ *
+ * This class is responsible for initializing application-wide components,
+ * such as Firebase and Koin dependency injection.
+ */
 class DoneTikApplication : Application() {
     override fun onCreate() {
         super.onCreate()
