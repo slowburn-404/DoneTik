@@ -31,7 +31,7 @@ fun NavGraphBuilder.homeNavigationGraph(
     navigation<HomeFeature>(
         startDestination = Feed,
     ) {
-        composable<Feed> {
+        animatedComposable<Feed> {
             FeedScreen(
                 viewModel = koinViewModel<FeedViewModel>(),
                 navigator = homeNavigator,

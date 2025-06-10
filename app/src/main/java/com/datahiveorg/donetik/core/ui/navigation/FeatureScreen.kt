@@ -4,11 +4,10 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavOptionsBuilder
+import com.datahiveorg.donetik.core.ui.components.AsyncImageLoader
 import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
 import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
-import com.datahiveorg.donetik.core.ui.components.AsyncImageLoader
 import kotlinx.serialization.Serializable
 
 /**
@@ -27,6 +26,7 @@ interface FeatureScreen {
      * @param builder The [NavOptionsBuilder] to configure navigation options.
      */
     fun buildNavOptions(builder: NavOptionsBuilder) {}
+
     /**
      * Configuration for the screen's UI, such as whether to show the top bar or bottom bar.
      * Defaults to a new [ScreenUIConfig] instance with default values (all UI elements shown).
@@ -78,6 +78,24 @@ data object HomeFeature : FeatureScreen {
 
 @Serializable
 data object LeaderBoardFeature : FeatureScreen {
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<RouterScreen> {
+            inclusive = true
+        }
+    }
+}
+
+@Serializable
+data object ProfileFeature : FeatureScreen {
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<RouterScreen> {
+            inclusive = true
+        }
+    }
+}
+
+@Serializable
+data object TeamsFeature: FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
         builder.popUpTo<RouterScreen> {
             inclusive = true

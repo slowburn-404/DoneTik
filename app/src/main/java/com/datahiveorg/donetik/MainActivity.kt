@@ -31,6 +31,8 @@ import com.datahiveorg.donetik.core.ui.navigation.RootNavGraph
 import com.datahiveorg.donetik.core.ui.navigation.RouterScreen
 import com.datahiveorg.donetik.core.ui.navigation.buildTopBarActions
 import com.datahiveorg.donetik.core.ui.theme.DoneTikTheme
+import com.datahiveorg.donetik.feature.profile.presentation.navigation.Profile
+import com.datahiveorg.donetik.feature.teams.presentation.navigation.Teams
 import com.datahiveorg.donetik.util.GoogleSignHelper
 import com.datahiveorg.donetik.util.Logger
 import com.datahiveorg.donetik.util.signOut
@@ -54,9 +56,11 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainActivityViewModel = koinViewModel()
             val activityState by viewModel.state.collectAsStateWithLifecycle()
             val googleSignHelper = remember { GoogleSignHelper(this@MainActivity) }
-            val bottomBarScreens = listOf(
+            val bottomNavigationScreens = listOf(
                 Feed,
-                LeaderBoard
+                LeaderBoard,
+                Teams,
+                Profile
             )
             val coroutineScope = rememberCoroutineScope()
 
@@ -82,10 +86,10 @@ class MainActivity : ComponentActivity() {
                     currentScreen = currentScreen,
                     currentDestination = currentDestination,
                     snackBarHostState = activityState.snackBarHostState,
-                    bottomBarScreens = bottomBarScreens,
+                    bottomNavigationScreens = bottomNavigationScreens,
                     content = { innerPadding ->
                         RootNavGraph(
-                            navigator = navigator,
+                            donetikNavigator = navigator,
                             paddingValues = innerPadding,
                             snackBarHostState = activityState.snackBarHostState,
                             navController = navController,
@@ -135,6 +139,8 @@ private fun getCurrentScreen(
         TaskScreen::class.simpleName.orEmpty() in route -> TaskScreen("", "")
         NewTaskScreen::class.simpleName.orEmpty() in route -> NewTaskScreen
         LeaderBoard::class.simpleName.orEmpty() in route -> LeaderBoard
+        Profile::class.simpleName.orEmpty() in route -> Profile
+        Teams::class.simpleName.orEmpty() in route -> Teams
         else -> null
     }
 }

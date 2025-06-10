@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.core.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -14,7 +15,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
 /**
@@ -53,7 +56,8 @@ import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 fun AnimatedFAB(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    isVisible: Boolean = false
+    isVisible: Boolean = false,
+    @DrawableRes iconRes: Int? = null
 ) {
     AnimatedVisibility(
         visible = isVisible,
@@ -76,7 +80,7 @@ fun AnimatedFAB(
             contentColor = colorScheme.onPrimary,
         ) {
             Icon(
-                imageVector = Icons.Rounded.Add,
+                painter = painterResource(id = iconRes ?: R.drawable.ic_add),
                 contentDescription = "Create new task"
             )
         }

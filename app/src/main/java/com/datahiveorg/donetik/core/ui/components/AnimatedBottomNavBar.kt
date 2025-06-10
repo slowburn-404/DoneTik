@@ -71,7 +71,7 @@ fun AnimatedBottomNavBar(
     navigator: DoneTikNavigator,
     currentDestination: NavDestination?,
     isVisible: Boolean,
-    bottomBarScreens: List<FeatureScreen>
+    bottomNavigationScreens: List<FeatureScreen>
 ) {
 
     AnimatedVisibility(
@@ -104,7 +104,7 @@ fun AnimatedBottomNavBar(
         )
     ) {
         BottomAppBar {
-            bottomBarScreens.forEach { screen: FeatureScreen ->
+            bottomNavigationScreens.forEach { screen: FeatureScreen ->
                 NavigationBarItem(
                     icon = {
                         screen.screenUIConfig.bottomNavIconRes?.let { iconId ->

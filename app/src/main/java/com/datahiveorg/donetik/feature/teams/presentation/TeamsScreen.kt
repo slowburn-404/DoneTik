@@ -1,14 +1,14 @@
-package com.datahiveorg.donetik.feature.profile.presentation
+package com.datahiveorg.donetik.feature.teams.presentation
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.datahiveorg.donetik.feature.profile.presentation.navigation.ProfileNavigator
+import com.datahiveorg.donetik.feature.teams.presentation.navigation.TeamsNavigator
 
 @Composable
-fun ProfileScreen(
+fun TeamsScreen(
     modifier: Modifier = Modifier,
-    profileNavigator: ProfileNavigator,
+    teamsNavigator: TeamsNavigator,
     snackBarHostState: SnackbarHostState
 ) {
 

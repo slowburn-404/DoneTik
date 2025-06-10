@@ -25,7 +25,7 @@ import com.datahiveorg.donetik.util.Logger
  * @param navigator The navigator used for navigating between screens.
  * @param currentScreen The current screen being displayed.
  * @param currentDestination The current destination in the navigation graph.
- * @param bottomBarScreens The list of screens to be displayed in the bottom bar.
+ * @param bottomNavigationScreens The list of screens to be displayed in the bottom bar.
  */
 @Composable
 fun DoneTikScaffold(
@@ -35,7 +35,7 @@ fun DoneTikScaffold(
     navigator: DoneTikNavigator,
     currentScreen: FeatureScreen?,
     currentDestination: NavDestination?,
-    bottomBarScreens: List<FeatureScreen>,
+    bottomNavigationScreens: List<FeatureScreen>,
     topBarActions: List<TopBarAction>?
 ) {
     Scaffold(
@@ -73,7 +73,7 @@ fun DoneTikScaffold(
                     navigator = navigator,
                     currentDestination = currentDestination,
                     isVisible = screen.screenUIConfig.hasBottomBar,
-                    bottomBarScreens = bottomBarScreens
+                    bottomNavigationScreens = bottomNavigationScreens
                 )
             }
 
