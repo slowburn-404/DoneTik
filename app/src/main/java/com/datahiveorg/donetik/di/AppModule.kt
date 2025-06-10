@@ -10,8 +10,9 @@ import com.datahiveorg.donetik.feature.onboarding.data.OnBoardingRepository
 import com.datahiveorg.donetik.feature.onboarding.di.onBoardingModule
 import com.datahiveorg.donetik.feature.router.RouterViewModel
 import com.datahiveorg.donetik.core.firebase.di.firebaseModule
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigatorImpl
+import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigatorImpl
+import com.datahiveorg.donetik.feature.leaderboard.di.leaderBoardModule
 import com.datahiveorg.donetik.util.dispatcherModule
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -30,6 +31,7 @@ val appModule = module {
         authModule,
         onBoardingModule,
         homeModule,
+        leaderBoardModule
     )
 
     viewModel<RouterViewModel> {

@@ -13,6 +13,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.datahiveorg.donetik.util.Animation
+import com.datahiveorg.donetik.R
 
 /**
  * Data class that holds the UI configuration for a screen.
@@ -41,7 +42,7 @@ data class ScreenUIConfig(
     val hasNavIcon: Boolean = false,
     val topBarActions: List<TopBarAction> = emptyList(),
     @DrawableRes val bottomNavIconRes: Int? = null,
-    @DrawableRes val navIconRes: Int? = null,
+    @DrawableRes val navIconRes: Int? = R.drawable.ic_arrow_back,
     @DrawableRes val fabIconRes: Int? = null,
     val enterTransition: EnterTransition = defaultEnterTransition(),
     val exitTransition: ExitTransition = defaultExitTransition()

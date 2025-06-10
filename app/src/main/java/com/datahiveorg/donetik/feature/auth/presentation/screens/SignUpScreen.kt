@@ -33,9 +33,9 @@ import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationIntent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiEvent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiState
-import com.datahiveorg.donetik.ui.components.PrimaryButton
-import com.datahiveorg.donetik.ui.components.SecondaryButton
-import com.datahiveorg.donetik.ui.components.UserInputField
+import com.datahiveorg.donetik.core.ui.components.PrimaryButton
+import com.datahiveorg.donetik.core.ui.components.SecondaryButton
+import com.datahiveorg.donetik.core.ui.components.UserInputField
 import com.datahiveorg.donetik.util.GoogleSignHelper
 import kotlinx.coroutines.launch
 

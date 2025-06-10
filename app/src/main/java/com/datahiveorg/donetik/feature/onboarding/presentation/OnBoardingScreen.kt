@@ -23,8 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.datahiveorg.donetik.ui.components.PrimaryButton
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.core.ui.components.PrimaryButton
+import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 import com.datahiveorg.donetik.util.Logger
 import kotlinx.coroutines.CoroutineScope

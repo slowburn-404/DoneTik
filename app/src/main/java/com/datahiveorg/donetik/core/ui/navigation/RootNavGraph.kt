@@ -4,17 +4,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.AuthenticationNavigator
 import com.datahiveorg.donetik.feature.auth.presentation.navigation.authenticationNavGraph
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
 import com.datahiveorg.donetik.feature.home.presentation.navigation.homeNavigationGraph
-import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingEvents
+import com.datahiveorg.donetik.feature.leaderboard.presentation.navigation.LeaderBoardNavigator
+import com.datahiveorg.donetik.feature.leaderboard.presentation.navigation.leaderBoardNavGraph
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingScreen
 import com.datahiveorg.donetik.feature.onboarding.presentation.OnBoardingViewModel
 import com.datahiveorg.donetik.feature.router.RouterScreen
@@ -48,6 +47,7 @@ fun RootNavGraph(
 ) {
     val authNavigator = getKoin().get<AuthenticationNavigator> { parametersOf(navigator) }
     val homeNavigator = getKoin().get<HomeNavigator> { parametersOf(navigator) }
+    val leaderBoardNavigator = getKoin().get<LeaderBoardNavigator> { parametersOf(navigator) }
 
     NavHost(
         modifier = modifier
@@ -84,5 +84,10 @@ fun RootNavGraph(
                 viewModel = koinViewModel<OnBoardingViewModel>()
             )
         }
+
+        leaderBoardNavGraph(
+            leaderBoardNavigator = leaderBoardNavigator,
+            snackBarHostState = snackBarHostState
+        )
     }
 }

@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavOptionsBuilder
 import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
 import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
-import com.datahiveorg.donetik.ui.components.AsyncImageLoader
+import com.datahiveorg.donetik.core.ui.components.AsyncImageLoader
 import kotlinx.serialization.Serializable
 
 /**
@@ -69,6 +69,15 @@ data object OnBoardingFeature : FeatureScreen {
 
 @Serializable
 data object HomeFeature : FeatureScreen {
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<RouterScreen> {
+            inclusive = true
+        }
+    }
+}
+
+@Serializable
+data object LeaderBoardFeature : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
         builder.popUpTo<RouterScreen> {
             inclusive = true

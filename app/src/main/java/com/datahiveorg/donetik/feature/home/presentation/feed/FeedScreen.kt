@@ -44,12 +44,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
-import com.datahiveorg.donetik.ui.components.AnimatedText
-import com.datahiveorg.donetik.ui.components.BottomSheetOptions
-import com.datahiveorg.donetik.ui.components.FeedSegmentedButtons
-import com.datahiveorg.donetik.ui.components.OptionsBottomSheet
-import com.datahiveorg.donetik.ui.components.ScreenTitle
-import com.datahiveorg.donetik.ui.components.SecondaryButton
+import com.datahiveorg.donetik.core.ui.components.AnimatedText
+import com.datahiveorg.donetik.core.ui.components.BottomSheetOptions
+import com.datahiveorg.donetik.core.ui.components.FeedSegmentedButtons
+import com.datahiveorg.donetik.core.ui.components.OptionsBottomSheet
+import com.datahiveorg.donetik.core.ui.components.ScreenTitle
+import com.datahiveorg.donetik.core.ui.components.SecondaryButton
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

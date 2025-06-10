@@ -1,6 +1,6 @@
 package com.datahiveorg.donetik.feature.home.presentation.navigation
 
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
 
 interface HomeNavigator {
     fun navigateToFeedScreen()

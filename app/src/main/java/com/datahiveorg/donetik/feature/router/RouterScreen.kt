@@ -5,8 +5,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.datahiveorg.donetik.ui.components.LoadingAnimation
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.core.ui.components.LoadingAnimation
+import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel

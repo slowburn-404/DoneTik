@@ -1,6 +1,5 @@
 package com.datahiveorg.donetik
 
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -22,15 +21,16 @@ import com.datahiveorg.donetik.feature.auth.presentation.navigation.SignUpScreen
 import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
 import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
 import com.datahiveorg.donetik.feature.home.presentation.navigation.TaskScreen
-import com.datahiveorg.donetik.ui.components.DoneTikScaffold
-import com.datahiveorg.donetik.ui.navigation.AuthFeature
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
-import com.datahiveorg.donetik.ui.navigation.RootNavGraph
-import com.datahiveorg.donetik.ui.navigation.RouterScreen
-import com.datahiveorg.donetik.ui.navigation.buildTopBarActions
-import com.datahiveorg.donetik.ui.theme.DoneTikTheme
+import com.datahiveorg.donetik.feature.leaderboard.presentation.navigation.LeaderBoard
+import com.datahiveorg.donetik.core.ui.components.DoneTikScaffold
+import com.datahiveorg.donetik.core.ui.navigation.AuthFeature
+import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.core.ui.navigation.OnBoardingFeature
+import com.datahiveorg.donetik.core.ui.navigation.RootNavGraph
+import com.datahiveorg.donetik.core.ui.navigation.RouterScreen
+import com.datahiveorg.donetik.core.ui.navigation.buildTopBarActions
+import com.datahiveorg.donetik.core.ui.theme.DoneTikTheme
 import com.datahiveorg.donetik.util.GoogleSignHelper
 import com.datahiveorg.donetik.util.Logger
 import com.datahiveorg.donetik.util.signOut
@@ -55,7 +55,8 @@ class MainActivity : ComponentActivity() {
             val activityState by viewModel.state.collectAsStateWithLifecycle()
             val googleSignHelper = remember { GoogleSignHelper(this@MainActivity) }
             val bottomBarScreens = listOf(
-                Feed
+                Feed,
+                LeaderBoard
             )
             val coroutineScope = rememberCoroutineScope()
 
@@ -133,6 +134,7 @@ private fun getCurrentScreen(
         Feed::class.simpleName.orEmpty() in route -> Feed
         TaskScreen::class.simpleName.orEmpty() in route -> TaskScreen("", "")
         NewTaskScreen::class.simpleName.orEmpty() in route -> NewTaskScreen
+        LeaderBoard::class.simpleName.orEmpty() in route -> LeaderBoard
         else -> null
     }
 }

@@ -5,8 +5,8 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.onboarding.data.OnBoardingRepository
-import com.datahiveorg.donetik.ui.navigation.AuthFeature
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.core.ui.navigation.AuthFeature
+import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

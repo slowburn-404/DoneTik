@@ -12,13 +12,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import com.datahiveorg.donetik.ui.navigation.TopBarAction
+import com.datahiveorg.donetik.core.ui.navigation.TopBarAction
 
 /**
  * A composable function that displays a top app bar.
@@ -42,7 +44,7 @@ fun TopBar(
     enterAnimationTransition: EnterTransition,
     exitAnimationTransition: ExitTransition
 ) {
-    TopAppBar(
+    MediumTopAppBar(
         modifier = modifier.fillMaxWidth(),
         navigationIcon = {
             AnimatedVisibility(
@@ -68,7 +70,12 @@ fun TopBar(
                 enter = enterAnimationTransition,
                 exit = exitAnimationTransition
             ) {
-                ScreenTitle(title = title)
+                Text(
+                    text = title,
+                    style = typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+//                ScreenTitle(title = title)
             }
 
         },

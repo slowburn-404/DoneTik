@@ -20,8 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
-import com.datahiveorg.donetik.ui.components.PrimaryButton
-import com.datahiveorg.donetik.ui.components.ScreenTitle
+import com.datahiveorg.donetik.core.ui.components.PrimaryButton
+import com.datahiveorg.donetik.core.ui.components.ScreenTitle
 
 @Composable
 fun TaskViewScreen(

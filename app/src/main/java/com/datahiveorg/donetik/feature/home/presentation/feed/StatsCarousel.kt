@@ -30,7 +30,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.datahiveorg.donetik.R
-import com.datahiveorg.donetik.ui.components.AnimatedText
+import com.datahiveorg.donetik.core.ui.components.AnimatedText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
