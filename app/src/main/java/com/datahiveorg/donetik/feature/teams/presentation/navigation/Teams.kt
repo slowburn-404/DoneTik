@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 object Teams : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo<HomeFeature> {
+        builder.popUpTo<Teams> {
             inclusive = false
         }
     }

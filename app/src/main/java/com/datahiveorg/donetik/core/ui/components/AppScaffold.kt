@@ -85,7 +85,8 @@ fun DoneTikScaffold(
                     isVisible = screen.screenUIConfig.hasFAB,
                     onClick = {
                         navigator.navigate(destination)
-                    }
+                    },
+                    iconRes = screen.screenUIConfig.fabIconRes
                 )
             }
         },
