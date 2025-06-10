@@ -1,6 +1,6 @@
 # DoneTik
 
-A modern Todo App built with **Kotlin** and **Jetpack Compose**, featuring:
+A modern Todo App built with **Kotlin** and **Jetpack Compose**
 
 ---
 
@@ -82,4 +82,4 @@ We welcome contributions!
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE.txt).
+This project is licensed under the [MIT License](/LICENSE.txt).

@@ -1,8 +1,8 @@
 package com.datahiveorg.donetik.feature.auth.presentation.navigation
 
 import androidx.navigation.NavOptionsBuilder
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.ui.navigation.ScreenUIConfig
+import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.core.ui.navigation.ScreenUIConfig
 import kotlinx.serialization.Serializable
 
 @Serializable

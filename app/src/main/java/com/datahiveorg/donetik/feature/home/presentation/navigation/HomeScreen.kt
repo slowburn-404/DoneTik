@@ -2,9 +2,9 @@ package com.datahiveorg.donetik.feature.home.presentation.navigation
 
 import androidx.navigation.NavOptionsBuilder
 import com.datahiveorg.donetik.R
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.ui.navigation.ScreenUIConfig
-import com.datahiveorg.donetik.ui.navigation.buildTopBarActions
+import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.core.ui.navigation.ScreenUIConfig
+import com.datahiveorg.donetik.core.ui.navigation.buildTopBarActions
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,6 +19,7 @@ data object Feed : FeatureScreen {
 
     override val screenUIConfig: ScreenUIConfig
         get() = ScreenUIConfig(
+            title = "Home",
             hasTopAppBar = true,
             hasBottomBar = true,
             hasFAB = true,

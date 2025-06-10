@@ -1,6 +1,5 @@
 package com.datahiveorg.donetik
 
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -22,15 +21,18 @@ import com.datahiveorg.donetik.feature.auth.presentation.navigation.SignUpScreen
 import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
 import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
 import com.datahiveorg.donetik.feature.home.presentation.navigation.TaskScreen
-import com.datahiveorg.donetik.ui.components.DoneTikScaffold
-import com.datahiveorg.donetik.ui.navigation.AuthFeature
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
-import com.datahiveorg.donetik.ui.navigation.RootNavGraph
-import com.datahiveorg.donetik.ui.navigation.RouterScreen
-import com.datahiveorg.donetik.ui.navigation.buildTopBarActions
-import com.datahiveorg.donetik.ui.theme.DoneTikTheme
+import com.datahiveorg.donetik.feature.leaderboard.presentation.navigation.LeaderBoard
+import com.datahiveorg.donetik.core.ui.components.DoneTikScaffold
+import com.datahiveorg.donetik.core.ui.navigation.AuthFeature
+import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.core.ui.navigation.OnBoardingFeature
+import com.datahiveorg.donetik.core.ui.navigation.RootNavGraph
+import com.datahiveorg.donetik.core.ui.navigation.RouterScreen
+import com.datahiveorg.donetik.core.ui.navigation.buildTopBarActions
+import com.datahiveorg.donetik.core.ui.theme.DoneTikTheme
+import com.datahiveorg.donetik.feature.profile.presentation.navigation.Profile
+import com.datahiveorg.donetik.feature.teams.presentation.navigation.Teams
 import com.datahiveorg.donetik.util.GoogleSignHelper
 import com.datahiveorg.donetik.util.Logger
 import com.datahiveorg.donetik.util.signOut
@@ -54,8 +56,11 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainActivityViewModel = koinViewModel()
             val activityState by viewModel.state.collectAsStateWithLifecycle()
             val googleSignHelper = remember { GoogleSignHelper(this@MainActivity) }
-            val bottomBarScreens = listOf(
-                Feed
+            val bottomNavigationScreens = listOf(
+                Feed,
+                LeaderBoard,
+                Teams,
+                Profile
             )
             val coroutineScope = rememberCoroutineScope()
 
@@ -81,10 +86,10 @@ class MainActivity : ComponentActivity() {
                     currentScreen = currentScreen,
                     currentDestination = currentDestination,
                     snackBarHostState = activityState.snackBarHostState,
-                    bottomBarScreens = bottomBarScreens,
+                    bottomNavigationScreens = bottomNavigationScreens,
                     content = { innerPadding ->
                         RootNavGraph(
-                            navigator = navigator,
+                            donetikNavigator = navigator,
                             paddingValues = innerPadding,
                             snackBarHostState = activityState.snackBarHostState,
                             navController = navController,
@@ -133,6 +138,9 @@ private fun getCurrentScreen(
         Feed::class.simpleName.orEmpty() in route -> Feed
         TaskScreen::class.simpleName.orEmpty() in route -> TaskScreen("", "")
         NewTaskScreen::class.simpleName.orEmpty() in route -> NewTaskScreen
+        LeaderBoard::class.simpleName.orEmpty() in route -> LeaderBoard
+        Profile::class.simpleName.orEmpty() in route -> Profile
+        Teams::class.simpleName.orEmpty() in route -> Teams
         else -> null
     }
 }

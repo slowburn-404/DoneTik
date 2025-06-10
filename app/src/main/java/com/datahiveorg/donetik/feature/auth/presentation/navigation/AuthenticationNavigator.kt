@@ -1,7 +1,7 @@
 package com.datahiveorg.donetik.feature.auth.presentation.navigation
 
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.HomeFeature
+import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.core.ui.navigation.HomeFeature
 
 interface AuthenticationNavigator {
     fun navigateToLogin()

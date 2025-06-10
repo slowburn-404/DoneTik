@@ -9,10 +9,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
-import com.datahiveorg.donetik.ui.navigation.TopBarAction
-import com.datahiveorg.donetik.ui.navigation.getFABDestination
+import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.core.ui.navigation.TopBarAction
+import com.datahiveorg.donetik.core.ui.navigation.getFABDestination
 import com.datahiveorg.donetik.util.Logger
 
 /**
@@ -25,7 +25,7 @@ import com.datahiveorg.donetik.util.Logger
  * @param navigator The navigator used for navigating between screens.
  * @param currentScreen The current screen being displayed.
  * @param currentDestination The current destination in the navigation graph.
- * @param bottomBarScreens The list of screens to be displayed in the bottom bar.
+ * @param bottomNavigationScreens The list of screens to be displayed in the bottom bar.
  */
 @Composable
 fun DoneTikScaffold(
@@ -35,7 +35,7 @@ fun DoneTikScaffold(
     navigator: DoneTikNavigator,
     currentScreen: FeatureScreen?,
     currentDestination: NavDestination?,
-    bottomBarScreens: List<FeatureScreen>,
+    bottomNavigationScreens: List<FeatureScreen>,
     topBarActions: List<TopBarAction>?
 ) {
     Scaffold(
@@ -50,7 +50,7 @@ fun DoneTikScaffold(
         },
         topBar = {
             currentScreen?.let { screen ->
-                Logger.i("Screen State", screen.screenUIConfig.title)
+                Logger.i("Screen State", screen.screenUIConfig.toString())
                 if (screen.screenUIConfig.hasTopAppBar) {
                     TopBar(
                         showNavigationIcon = screen.screenUIConfig.hasNavIcon,
@@ -68,11 +68,12 @@ fun DoneTikScaffold(
         },
         bottomBar = {
             currentScreen?.let { screen ->
+                Logger.i("Screen State", screen.screenUIConfig.toString())
                 AnimatedBottomNavBar(
                     navigator = navigator,
                     currentDestination = currentDestination,
                     isVisible = screen.screenUIConfig.hasBottomBar,
-                    bottomBarScreens = bottomBarScreens
+                    bottomNavigationScreens = bottomNavigationScreens
                 )
             }
 
@@ -82,7 +83,10 @@ fun DoneTikScaffold(
                 val destination = screen.getFABDestination()
                 AnimatedFAB(
                     isVisible = screen.screenUIConfig.hasFAB,
-                    onClick = { navigator.navigate(destination) }
+                    onClick = {
+                        navigator.navigate(destination)
+                    },
+                    iconRes = screen.screenUIConfig.fabIconRes
                 )
             }
         },

@@ -127,7 +127,7 @@ fun NewTaskContent(
             state.selectedDate?.let {
                 calendar.timeInMillis = it
                 calendar.time.toHomeDomain().substringBefore(",")
-            } ?: "Select due date"
+            } ?: "Due date"
         }
     }
     val selectedTime by remember(state.selectedHour, state.selectedMinute) {

@@ -15,8 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavDestination
-import com.datahiveorg.donetik.ui.navigation.DoneTikNavigator
-import com.datahiveorg.donetik.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
 import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
 /**
@@ -71,7 +71,7 @@ fun AnimatedBottomNavBar(
     navigator: DoneTikNavigator,
     currentDestination: NavDestination?,
     isVisible: Boolean,
-    bottomBarScreens: List<FeatureScreen>
+    bottomNavigationScreens: List<FeatureScreen>
 ) {
 
     AnimatedVisibility(
@@ -104,22 +104,24 @@ fun AnimatedBottomNavBar(
         )
     ) {
         BottomAppBar {
-            bottomBarScreens.forEach { screen: FeatureScreen ->
+            bottomNavigationScreens.forEach { screen: FeatureScreen ->
                 NavigationBarItem(
                     icon = {
                         screen.screenUIConfig.bottomNavIconRes?.let { iconId ->
                             painterResource(iconId)
                         }?.let { icon ->
                             Icon(
-                                icon,
+                                painter = icon,
                                 contentDescription = screen.screenUIConfig.title
                             )
                         }
                     },
                     label = {
-                        Text(
-                            screen.screenUIConfig.title ?: ""
-                        )
+                        if(screen.screenUIConfig.hasBottomBar) {
+                            Text(
+                                screen.screenUIConfig.title
+                            )
+                        }
                     },
                     selected = currentDestination?.route?.let { route ->
                         screen::class.simpleName.orEmpty() in route

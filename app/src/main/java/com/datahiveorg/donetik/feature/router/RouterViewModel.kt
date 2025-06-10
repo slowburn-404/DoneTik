@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
 import com.datahiveorg.donetik.feature.onboarding.data.OnBoardingRepository
-import com.datahiveorg.donetik.ui.navigation.AuthFeature
-import com.datahiveorg.donetik.ui.navigation.HomeFeature
-import com.datahiveorg.donetik.ui.navigation.OnBoardingFeature
+import com.datahiveorg.donetik.core.ui.navigation.AuthFeature
+import com.datahiveorg.donetik.core.ui.navigation.HomeFeature
+import com.datahiveorg.donetik.core.ui.navigation.OnBoardingFeature
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
