@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.feature.auth.domain.repository
 
+import android.net.Uri
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 
@@ -22,4 +23,8 @@ interface AuthRepository {
     suspend fun getUser(): DomainResponse<User?>
 
     suspend fun checkLoginStatus(): DomainResponse<Boolean>
+
+    suspend fun updateProfilePicture(newImage: Uri, userId: String): DomainResponse<Unit>
+
+    suspend fun updateUsername(userName: String): DomainResponse<Unit>
 }

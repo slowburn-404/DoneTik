@@ -20,3 +20,4 @@ sha.txt
 /app/build/outputs/bundle/debug/app-debug.aab
 /app/debug/app-debug.aab
 /app/release/
+/app/debug/
