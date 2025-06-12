@@ -28,3 +28,15 @@ data object SignUpScreen : FeatureScreen {
     override val screenUIConfig: ScreenUIConfig
         get() = super.screenUIConfig
 }
+
+@Serializable
+data object UpdateUsernameScreen : FeatureScreen {
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<SignUpScreen> {
+            inclusive = false
+        }
+    }
+
+    override val screenUIConfig: ScreenUIConfig
+        get() = super.screenUIConfig
+}

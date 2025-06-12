@@ -3,11 +3,12 @@ package com.datahiveorg.donetik.feature.auth.presentation.navigation
 import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navigation
+import com.datahiveorg.donetik.core.ui.navigation.AuthFeature
+import com.datahiveorg.donetik.core.ui.navigation.animatedComposable
 import com.datahiveorg.donetik.feature.auth.presentation.screens.AuthenticationScreenWrapper
 import com.datahiveorg.donetik.feature.auth.presentation.screens.LoginScreen
 import com.datahiveorg.donetik.feature.auth.presentation.screens.SignUpScreen
-import com.datahiveorg.donetik.core.ui.navigation.AuthFeature
-import com.datahiveorg.donetik.core.ui.navigation.animatedComposable
+import com.datahiveorg.donetik.feature.auth.presentation.screens.UsernameScreen
 import com.datahiveorg.donetik.util.GoogleSignHelper
 
 
@@ -18,7 +19,7 @@ import com.datahiveorg.donetik.util.GoogleSignHelper
  * within the authentication module. It utilizes a nested navigation graph
  * specific to the `AuthFeature`.
  *
- * Each screen (`LoginScreen`, `SignUpScreen`) is wrapped with `AuthenticationScreenWrapper`
+ * Each screen (`LoginScreen`, `SignUpScreen`, `UpdateUsernameScreen`) is wrapped with `AuthenticationScreenWrapper`
  * which likely provides common UI elements or logic for authentication screens.
  *
  * @param authenticationNavigator An instance of [AuthenticationNavigator] responsible for handling navigation actions within the authentication flow.
@@ -64,5 +65,18 @@ fun NavGraphBuilder.authenticationNavGraph(
             )
         }
 
+        animatedComposable<UpdateUsernameScreen> {
+            AuthenticationScreenWrapper(
+                navigator = authenticationNavigator,
+                snackBarHostState = snackBarHostState,
+                googleSignInHelper = googleSignHelper,
+                content = { state, _, onIntent, _ ->
+                    UsernameScreen(
+                        state = state,
+                        onIntent = onIntent
+                    )
+                }
+            )
+        }
     }
 }

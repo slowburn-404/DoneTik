@@ -8,18 +8,24 @@ import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MainActivityViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
-    init {
-        getUserInfo()
-    }
 
     private val _state = MutableStateFlow(MainActivityState())
-    val state = _state.asStateFlow()
+    val state = _state.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = MainActivityState()
+    ).onStart {
+        getUserInfo()
+    }
 
     private fun getUserInfo() {
         viewModelScope.launch {

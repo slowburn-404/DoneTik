@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,12 +26,13 @@ class AuthenticationViewModel(
     private val _uiEvents = Channel<AuthenticationUiEvent>(Channel.BUFFERED)
     val uiEvents = _uiEvents.receiveAsFlow()
 
-    private val _uiIntents: MutableSharedFlow<AuthenticationIntent> = MutableSharedFlow(extraBufferCapacity = 64)
+    private val _uiIntents: MutableSharedFlow<AuthenticationIntent> =
+        MutableSharedFlow(extraBufferCapacity = 64)
     private val uiIntents: SharedFlow<AuthenticationIntent> = _uiIntents.asSharedFlow()
 
     init {
         viewModelScope.launch {
-            uiIntents.collect { intent ->
+            uiIntents.collectLatest { intent ->
                 when (intent) {
                     is AuthenticationIntent.EnterEmail -> enterEmail(intent.email)
                     is AuthenticationIntent.EnterPassword -> enterPassword(intent.password)
@@ -38,6 +40,8 @@ class AuthenticationViewModel(
                     is AuthenticationIntent.Login -> login()
                     is AuthenticationIntent.ValidateForm -> validateAndUpdateFormState()
                     is AuthenticationIntent.SignInWithGoogle -> signInWithGoogle(intent.idToken)
+                    is AuthenticationIntent.EnterUsername -> enterUsername(intent.username)
+                    is AuthenticationIntent.UpdateUsername -> updateUsername()
                 }
             }
         }
@@ -127,10 +131,11 @@ class AuthenticationViewModel(
                         isAuthenticated = true
                     )
                 }
+
+                emitEvent(AuthenticationUiEvent.Navigate.Home)
             }
         }
         validateAndUpdateFormState()
-        emitEvent(AuthenticationUiEvent.Navigate.Home)
     }
 
     private suspend fun signUp() {
@@ -154,10 +159,11 @@ class AuthenticationViewModel(
                         isAuthenticated = true
                     )
                 }
+
+                emitEvent(AuthenticationUiEvent.Navigate.UpdateUsername)
             }
         }
         validateAndUpdateFormState()
-        emitEvent(AuthenticationUiEvent.Navigate.Home)
     }
 
     private fun validateForm(): Boolean {
@@ -205,4 +211,35 @@ class AuthenticationViewModel(
         }
     }
 
+    private fun enterUsername(username: String) {
+        _state.update { currentState ->
+            currentState.copy(
+                user = currentState.user.copy(username = username)
+            )
+        }
+    }
+
+    private suspend fun updateUsername() {
+        val username = _state.value.user.username
+        showLoadingIndicator()
+        when (val response = authRepository.updateUsername(username)) {
+            is DomainResponse.Success -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        isLoading = false,
+                    )
+                }
+                emitEvent(AuthenticationUiEvent.Navigate.Home)
+            }
+
+            is DomainResponse.Failure -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        isLoading = false,
+                    )
+                }
+                emitEvent(AuthenticationUiEvent.ShowSnackBar(response.message))
+            }
+        }
+    }
 }
