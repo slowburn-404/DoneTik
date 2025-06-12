@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik
 
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -10,18 +11,16 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.datahiveorg.donetik.feature.auth.presentation.navigation.LoginScreen
-import com.datahiveorg.donetik.feature.auth.presentation.navigation.SignUpScreen
-import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
-import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
-import com.datahiveorg.donetik.feature.home.presentation.navigation.TaskScreen
-import com.datahiveorg.donetik.feature.leaderboard.presentation.navigation.LeaderBoard
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.datahiveorg.donetik.core.ui.components.DoneTikScaffold
 import com.datahiveorg.donetik.core.ui.navigation.AuthFeature
 import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
@@ -31,9 +30,16 @@ import com.datahiveorg.donetik.core.ui.navigation.RootNavGraph
 import com.datahiveorg.donetik.core.ui.navigation.RouterScreen
 import com.datahiveorg.donetik.core.ui.navigation.buildTopBarActions
 import com.datahiveorg.donetik.core.ui.theme.DoneTikTheme
+import com.datahiveorg.donetik.feature.auth.presentation.navigation.LoginScreen
+import com.datahiveorg.donetik.feature.auth.presentation.navigation.SignUpScreen
+import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
+import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
+import com.datahiveorg.donetik.feature.home.presentation.navigation.TaskScreen
+import com.datahiveorg.donetik.feature.leaderboard.presentation.navigation.LeaderBoard
 import com.datahiveorg.donetik.feature.profile.presentation.navigation.Profile
 import com.datahiveorg.donetik.feature.teams.presentation.navigation.Teams
 import com.datahiveorg.donetik.util.GoogleSignHelper
+import com.datahiveorg.donetik.util.Keys
 import com.datahiveorg.donetik.util.Logger
 import com.datahiveorg.donetik.util.signOut
 import kotlinx.coroutines.launch
@@ -63,6 +69,21 @@ class MainActivity : ComponentActivity() {
                 Profile
             )
             val coroutineScope = rememberCoroutineScope()
+            val profileImage = rememberAsyncImagePainter(
+                model = ImageRequest
+                    .Builder(this@MainActivity)
+                    .data(
+                        if (activityState.user.imageUrl == Uri.EMPTY) {
+                            Keys.RANDOM_AVATAR_SERVICE_URL
+                        } else {
+                            activityState.user.imageUrl
+                        }
+                    )
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.ic_profile),
+                fallback = painterResource(R.drawable.ic_profile)
+            )
 
             DisposableEffect(navController) {
                 val listener =
@@ -96,10 +117,9 @@ class MainActivity : ComponentActivity() {
                             googleSignInHelper = googleSignHelper,
                         )
                     },
-                    topBarActions = currentScreen?.let {
+                    topBarActions = currentScreen?.let { screen ->
                         buildTopBarActions(
-                            featureScreen = it,
-                            imageUrl = activityState.user.imageUrl,
+                            featureScreen = screen,
                             onClick = {
                                 Toast.makeText(this, "Logging out...", Toast.LENGTH_SHORT).show()
                                 viewModel.signOut()
@@ -113,7 +133,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             },
-                            context = this@MainActivity
+                            painter = profileImage
                         )
                     }
                 )

@@ -1,11 +1,14 @@
 package com.datahiveorg.donetik.core.firebase.authentication
 
+import android.net.Uri
 import com.datahiveorg.donetik.core.firebase.model.FirebaseRequest
 import com.datahiveorg.donetik.util.Logger
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -71,6 +74,22 @@ interface AuthDataSource {
      * @return A [Result] indicating success (with a success message) or failure (with an exception).
      */
     suspend fun logOut(): Result<String>
+
+    /**
+     * Updates the user's profile picture.
+     *
+     * @param newImage The new profile picture URI.
+     * @return A [Result] indicating success (with the new profile picture URI from storage bucket) or failure (with an exception).
+     * */
+    suspend fun updateProfilePicture(newImage: Uri): Result<Unit>
+
+    /**
+     * Updates the user's username.
+     *
+     * @param username The new username.
+     * @return A [Result] indicating success or failure.
+     */
+    suspend fun updateUsername(username: String): Result<Unit>
 }
 
 
@@ -144,12 +163,42 @@ internal class AuthDataSourceImpl(
         }
     }
 
+    override suspend fun updateProfilePicture(newImage: Uri): Result<Unit> {
+        return safeFirebaseAuthCall(FirebaseAuthOperation.UPDATE_PROFILE_PICTURE) {
+            val user = firebaseAuth.currentUser
+                ?: throw FirebaseException("Log in to continue")
+
+            val profileUpdate = UserProfileChangeRequest
+                .Builder()
+                .setPhotoUri(newImage)
+                .build()
+
+            user.updateProfile(profileUpdate).await()
+        }
+    }
+
+    override suspend fun updateUsername(username: String): Result<Unit> {
+       return safeFirebaseAuthCall(FirebaseAuthOperation.UPDATE_USERNAME) {
+           val user = firebaseAuth.currentUser
+               ?: throw FirebaseException("Log in to continue")
+
+           val profileUpdate = UserProfileChangeRequest
+               .Builder()
+               .setDisplayName(username)
+               .build()
+
+           user.updateProfile(profileUpdate)
+       }
+    }
+
 }
 
-enum class FirebaseAuthOperation{
+enum class FirebaseAuthOperation {
     LOGIN,
     CREATE_ACCOUNT,
     LOGOUT,
     SIGN_IN_WITH_GOOGLE,
-    FETCH_USER_INFO
+    FETCH_USER_INFO,
+    UPDATE_PROFILE_PICTURE,
+    UPDATE_USERNAME
 }

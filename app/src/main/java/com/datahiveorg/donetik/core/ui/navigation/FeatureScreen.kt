@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavOptionsBuilder
+import coil3.compose.AsyncImagePainter
 import com.datahiveorg.donetik.core.ui.components.AsyncImageLoader
 import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
 import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
@@ -112,9 +113,8 @@ fun FeatureScreen.getFABDestination(): FeatureScreen {
 
 fun buildTopBarActions(
     featureScreen: FeatureScreen,
-    imageUrl: Uri,
     onClick: () -> Unit,
-    context: Context
+    painter: AsyncImagePainter
 ): List<TopBarAction> {
     return when (featureScreen) {
         is Feed -> {
@@ -125,10 +125,9 @@ fun buildTopBarActions(
                             onClick = onClick
                         ) {
                             AsyncImageLoader(
-                                imageUrl = imageUrl,
-                                context = context,
                                 enterTransition = featureScreen.screenUIConfig.enterTransition,
-                                exitTransition = featureScreen.screenUIConfig.exitTransition
+                                exitTransition = featureScreen.screenUIConfig.exitTransition,
+                                painter = painter
                             )
                         }
                     },
