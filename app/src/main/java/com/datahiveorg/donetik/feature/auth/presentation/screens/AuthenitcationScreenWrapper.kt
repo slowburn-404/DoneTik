@@ -4,8 +4,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationIntent
 import com.datahiveorg.donetik.feature.auth.presentation.AuthenticationUiEvent
@@ -34,24 +32,16 @@ fun AuthenticationScreenWrapper(
     LaunchedEffect(key1 = true) {
         viewModel.uiEvents.collectLatest { event ->
             when (event) {
-                is AuthenticationUiEvent.None -> {}
+                is AuthenticationUiEvent.ShowSnackBar -> snackBarHostState
+                    .showSnackbar(event.message)
 
-                is AuthenticationUiEvent.ShowSnackBar -> {
-                    snackBarHostState
-                        .showSnackbar(event.message)
-                }
+                is AuthenticationUiEvent.Navigate.Login -> navigator.navigateToLogin()
 
-                is AuthenticationUiEvent.Navigate.Login -> {
-                    navigator.navigateToLogin()
-                }
+                is AuthenticationUiEvent.Navigate.SignUp -> navigator.navigateToSignUp()
 
-                is AuthenticationUiEvent.Navigate.SignUp -> {
-                    navigator.navigateToSignUp()
-                }
+                is AuthenticationUiEvent.Navigate.Home -> navigator.navigateToHomeFeature()
 
-                is AuthenticationUiEvent.Navigate.Home -> {
-                    navigator.navigateToHomeFeature()
-                }
+                is AuthenticationUiEvent.Navigate.UpdateUsername -> navigator.navigateToUpdateUsername()
             }
         }
     }

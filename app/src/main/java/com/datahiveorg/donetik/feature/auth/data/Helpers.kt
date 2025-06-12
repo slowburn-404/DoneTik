@@ -33,7 +33,7 @@ fun FirebaseUser.toAuthDomain(): User {
     return User(
         uid = uid,
         email = email!!, // can never be null since sign up requires email
-        username = uid,
+        username = displayName ?: email!!,
         imageUrl = photoUrl ?: Uri.EMPTY,
         password = ""
     )

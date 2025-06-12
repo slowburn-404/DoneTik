@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
             val currentScreen =
                 getCurrentScreen(destination = currentDestination)
             val viewModel: MainActivityViewModel = koinViewModel()
-            val activityState by viewModel.state.collectAsStateWithLifecycle()
+            val activityState by viewModel.state.collectAsStateWithLifecycle(MainActivityState())
             val googleSignHelper = remember { GoogleSignHelper(this@MainActivity) }
             val bottomNavigationScreens = listOf(
                 Feed,

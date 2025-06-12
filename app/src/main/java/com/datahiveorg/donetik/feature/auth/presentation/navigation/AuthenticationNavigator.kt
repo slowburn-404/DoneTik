@@ -8,6 +8,8 @@ interface AuthenticationNavigator {
 
     fun navigateToSignUp()
 
+    fun navigateToUpdateUsername()
+
     fun navigateToHomeFeature()
 }
 
@@ -30,6 +32,12 @@ class AuthenticationNavigatorImpl(
     override fun navigateToHomeFeature() {
         doneTikNavigator.navigate(
             destination = HomeFeature
+        )
+    }
+
+    override fun navigateToUpdateUsername() {
+        doneTikNavigator.navigate(
+            destination = UpdateUsernameScreen
         )
     }
 
