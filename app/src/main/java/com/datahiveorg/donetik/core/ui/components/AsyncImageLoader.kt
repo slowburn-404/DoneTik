@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -22,34 +23,25 @@ import com.datahiveorg.donetik.R
 
 
 /**
- * A composable function that loads an image asynchronously from a URL and displays it in a circular shape.
+ * A composable function that loads an image asynchronously and displays it in a circular shape.
  *
- * @param modifier The modifier to be applied to the image.
- * @param imageUrl The URL of the image to load.
- * @param context The [Context] to use for loading the image.
- * @param isVisible Whether the image should be visible. Defaults to `true`.
- * @param [EnterTransition] The enter transition for the image.
- * @param [ExitTransition] The exit transition for the image.
- * @param placeholder The resource ID of the placeholder image to display while the image is loading.
+ * This function utilizes [AnimatedVisibility] to control the visibility of the image
+ * with specified enter and exit transitions. The image is clipped to a [CircleShape].
+ *
+ * @param modifier The [Modifier] to be applied to the layout. Defaults to [Modifier].
+ * @param painter The [AsyncImagePainter] used to load and display the image.
+ * @param isVisible A boolean indicating whether the image should be visible. Defaults to `true`.
+ * @param enterTransition The [EnterTransition] to apply when the image becomes visible.
+ * @param exitTransition The [ExitTransition] to apply when the image becomes invisible.
  */
 @Composable
 fun AsyncImageLoader(
     modifier: Modifier = Modifier,
-    imageUrl: Uri,
-    context: Context,
+    painter: AsyncImagePainter,
     isVisible: Boolean = true,
     enterTransition: EnterTransition,
     exitTransition: ExitTransition,
-    @DrawableRes placeholder: Int = R.drawable.ic_profile
 ) {
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(context)
-            .data(if (imageUrl == Uri.EMPTY) null else imageUrl)
-            .crossfade(true)
-            .build(),
-        placeholder = painterResource(placeholder),
-    )
-
     AnimatedVisibility(
         visible = isVisible,
         enter = enterTransition,
