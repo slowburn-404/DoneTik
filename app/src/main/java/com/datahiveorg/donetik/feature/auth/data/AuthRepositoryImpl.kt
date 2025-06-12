@@ -36,7 +36,6 @@ class AuthRepositoryImpl(
     override suspend fun logout() {
         return withContext(dispatcher.io) {
             authDataSource.logOut()
-            //clear google auth credentials
         }
     }
 
@@ -118,26 +117,33 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun updateProfilePicture(newImage: Uri, userId: String): DomainResponse<Unit> {
+    override suspend fun updateProfilePicture(newImage: Uri): DomainResponse<Unit> {
         return withContext(dispatcher.io) {
-            val uploadedImageUri = uploadImageToStorage(newImage, userId).getOrElse {
-                return@withContext DomainResponse.Failure(it.toAuthDomain())
-            }
-
-            val firebaseAuthResponse = authDataSource.updateProfilePicture(uploadedImageUri)
-            if (firebaseAuthResponse.isFailure) {
-                return@withContext DomainResponse.Failure(
-                    firebaseAuthResponse.exceptionOrNull()?.toAuthDomain()
-                        ?: "Unknown error please try again"
+            authDataSource
+                .updateProfilePicture(newImage = newImage)
+                .fold(
+                    onSuccess = {
+                        DomainResponse.Success(Unit)
+                    },
+                    onFailure = { exception ->
+                        DomainResponse.Failure(exception.toAuthDomain())
+                    }
                 )
-            }
-            DomainResponse.Success(Unit)
         }
     }
 
-    private suspend fun uploadImageToStorage(imageUrl: Uri, userId: String): Result<Uri> {
+    override suspend fun uploadProfileImage(newImage: Uri, userId: String): DomainResponse<Uri> {
         return withContext(dispatcher.io) {
-            storageDataSource.uploadImage(imageUrl, userId)
+            storageDataSource
+                .uploadImage(newImage, userId)
+                .fold(
+                    onSuccess = { uri ->
+                        DomainResponse.Success(uri)
+                    },
+                    onFailure = {
+                        DomainResponse.Failure(it.toAuthDomain())
+                    }
+                )
         }
     }
 }

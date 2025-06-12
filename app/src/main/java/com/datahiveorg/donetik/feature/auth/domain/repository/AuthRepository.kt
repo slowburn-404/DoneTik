@@ -24,7 +24,9 @@ interface AuthRepository {
 
     suspend fun checkLoginStatus(): DomainResponse<Boolean>
 
-    suspend fun updateProfilePicture(newImage: Uri, userId: String): DomainResponse<Unit>
+    suspend fun uploadProfileImage(newImage: Uri, userId: String): DomainResponse<Uri>
+
+    suspend fun updateProfilePicture(newImage: Uri): DomainResponse<Unit>
 
     suspend fun updateUsername(userName: String): DomainResponse<Unit>
 }
