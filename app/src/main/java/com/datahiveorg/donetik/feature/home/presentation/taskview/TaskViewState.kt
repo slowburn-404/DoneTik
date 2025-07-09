@@ -22,6 +22,7 @@ data class TaskViewState(
         category = "Uncategorized"
     ),
     val isLoading: Boolean = false,
-    val error: String = ""
+    val error: String = "",
+    val showBottomSheet: Boolean = false
 
 )

@@ -35,21 +35,15 @@ class TaskViewModel(
         viewModelScope.launch {
             intent.collect { taskViewIntent ->
                 when (taskViewIntent) {
-                    is TaskViewIntent.GetTask -> {
-                        getTask(taskId = taskViewIntent.taskId, userId = taskViewIntent.userId)
-                    }
+                    is TaskViewIntent.GetTask -> getTask(taskId = taskViewIntent.taskId, userId = taskViewIntent.userId)
 
-                    is TaskViewIntent.UpdateTask -> {
-                        updateTask(taskViewIntent.task)
-                    }
+                    is TaskViewIntent.UpdateTask -> updateTask(taskViewIntent.task)
 
-                    is TaskViewIntent.DeleteTask -> {
-                        deleteTask(taskViewIntent.task)
-                    }
+                    is TaskViewIntent.DeleteTask -> deleteTask(taskViewIntent.task)
 
-                    is TaskViewIntent.ToggleDoneStatus -> {
-                        toggleDoneStatus(taskViewIntent.task)
-                    }
+                    is TaskViewIntent.ToggleDoneStatus -> toggleDoneStatus(taskViewIntent.task)
+
+                    is TaskViewIntent.ToggleBottomSheet -> toggleBottomSheet()
                 }
             }
         }
@@ -115,7 +109,7 @@ class TaskViewModel(
         when (val response = homeRepository.deleteTask((task))) {
             is DomainResponse.Success -> {
                 hideLoadingIndicator()
-                emitEvent(TaskViewEvent.ShowSnackBar(response.data))
+                emitEvent(TaskViewEvent.NavigateUp)
             }
 
             is DomainResponse.Failure -> {
@@ -143,6 +137,14 @@ class TaskViewModel(
                 hideLoadingIndicator()
                 emitEvent(TaskViewEvent.ShowSnackBar(response.message))
             }
+        }
+    }
+
+    private fun toggleBottomSheet() {
+        _state.update { currentState ->
+            currentState.copy(
+                showBottomSheet = !currentState.showBottomSheet
+            )
         }
     }
 

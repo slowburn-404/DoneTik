@@ -10,15 +10,15 @@ import com.google.firebase.firestore.ServerTimestamp
  * This interface defines the different types of data that can be sent to or received from Firebase.
  * Each data class represents a specific entity or data structure used in the application.
  *
- * - [CredentialsDTO]: Represents user credentials (email and password) for authentication.
+ * - [Credentials]: Represents user credentials (email and password) for authentication.
  * - [TaskDTO]: Represents a task item with its details.
  * - [UserDTO]: Represents a user profile with their details.
  */
-sealed interface FirebaseRequest {
-    data class CredentialsDTO(
+sealed interface FirebaseDTO {
+    data class Credentials(
         val email: String,
         val password: String
-    ) : FirebaseRequest
+    ) : FirebaseDTO
 
     data class TaskDTO(
         val id: String,
@@ -29,13 +29,18 @@ sealed interface FirebaseRequest {
         @ServerTimestamp val createdAt: Timestamp,
         @ServerTimestamp val dueDate: Timestamp,
         val category: String
-    ) : FirebaseRequest
+    ) : FirebaseDTO
 
     data class UserDTO(
         val uid: String,
         val email: String,
         val username: String,
         val imageUrl: Uri,
-    ): FirebaseRequest
+    ): FirebaseDTO
 
+    data class LeaderBoardUserDTO(
+        val username: String,
+        val points: String,
+        val imageUrl: Uri
+    ): FirebaseDTO
 }

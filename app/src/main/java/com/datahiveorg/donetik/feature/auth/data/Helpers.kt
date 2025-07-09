@@ -2,7 +2,7 @@ package com.datahiveorg.donetik.feature.auth.data
 
 import android.net.Uri
 import com.datahiveorg.donetik.feature.auth.domain.model.User
-import com.datahiveorg.donetik.core.firebase.model.FirebaseRequest
+import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO
 import com.google.firebase.auth.FirebaseAuthEmailException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -13,12 +13,12 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 
 /**
- * Converts a [User] object to a [FirebaseRequest.CredentialsDTO] object.
+ * Converts a [User] object to a [FirebaseDTO.Credentials] object.
  *
- * @return A [FirebaseRequest.CredentialsDTO] object containing the user's email and password.
+ * @return A [FirebaseDTO.Credentials] object containing the user's email and password.
  */
-fun User.toUserCredential(): FirebaseRequest.CredentialsDTO {
-    return FirebaseRequest.CredentialsDTO(
+fun User.toUserCredential(): FirebaseDTO.Credentials {
+    return FirebaseDTO.Credentials(
         email = email,
         password = password
     )

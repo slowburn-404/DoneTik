@@ -9,20 +9,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
+import com.datahiveorg.donetik.R
+import com.datahiveorg.donetik.core.ui.components.BottomSheetOptions
+import com.datahiveorg.donetik.core.ui.components.OptionsBottomSheet
 import com.datahiveorg.donetik.core.ui.components.PrimaryButton
 import com.datahiveorg.donetik.core.ui.components.ScreenTitle
+import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskViewScreen(
     viewModel: TaskViewModel,
@@ -34,6 +42,26 @@ fun TaskViewScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val scrollState = rememberScrollState()
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutineScope = rememberCoroutineScope()
+
+    val bottomSheetText = when (state.task.isDone) {
+        true -> "Mark as undone"
+        false -> "Mark as done"
+    }
+
+
+    val bottomSheetOptions = listOf(
+        BottomSheetOptions(
+            icon = R.drawable.ic_delete,
+            label = "Delete"
+        ),
+        BottomSheetOptions(
+            icon = R.drawable.ic_done,
+            label = bottomSheetText
+        )
+    )
+
 
     LaunchedEffect(taskId, userId) {
         viewModel.emitIntent(TaskViewIntent.GetTask(taskId, userId))
@@ -42,9 +70,8 @@ fun TaskViewScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                is TaskViewEvent.ShowSnackBar -> {
-                    snackBarHostState.showSnackbar(event.message)
-                }
+                is TaskViewEvent.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
+                is TaskViewEvent.NavigateUp -> navigator.navigateUp()
             }
         }
     }
@@ -56,6 +83,41 @@ fun TaskViewScreen(
         onIntent = viewModel::emitIntent,
         scrollState = scrollState
     )
+
+
+    if (state.showBottomSheet) {
+        OptionsBottomSheet(
+            onDismiss = {
+                coroutineScope.launch {
+                    bottomSheetState.hide()
+                }
+                viewModel.emitIntent(TaskViewIntent.ToggleBottomSheet)
+            },
+            options = bottomSheetOptions,
+            onOptionsClicked = { bottomSheetOption ->
+                when (bottomSheetOption.label) {
+                    "Delete" -> {
+                        viewModel.emitIntent(TaskViewIntent.DeleteTask(state.task))
+                        viewModel.emitIntent(TaskViewIntent.ToggleBottomSheet)
+                    }
+
+                    "Mark as done" -> {
+                        viewModel.emitIntent(TaskViewIntent.ToggleDoneStatus(state.task))
+                        viewModel.emitIntent(TaskViewIntent.ToggleBottomSheet)
+                    }
+
+                    "Mark as undone" -> {
+                        viewModel.emitIntent(TaskViewIntent.ToggleDoneStatus(state.task))
+                        viewModel.emitIntent(TaskViewIntent.ToggleBottomSheet)
+                    }
+
+                }
+
+            },
+            sheetState = bottomSheetState
+        )
+    }
+
 
 }
 

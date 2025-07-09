@@ -10,7 +10,7 @@ import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigato
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigatorImpl
 import com.datahiveorg.donetik.feature.home.presentation.newtask.NewTaskViewModel
 import com.datahiveorg.donetik.feature.home.presentation.taskview.TaskViewModel
-import com.datahiveorg.donetik.core.firebase.firestore.FireStoreDataSource
+import com.datahiveorg.donetik.core.firebase.firestore.TasksDataSource
 import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
 import com.datahiveorg.donetik.util.DispatcherProvider
 import org.koin.core.module.dsl.viewModel
@@ -25,7 +25,7 @@ import org.koin.dsl.module
 val homeModule = module {
     factory<HomeRepository> {
         HomeRepositoryImpl(
-            fireStoreDataSource = get<FireStoreDataSource>()
+            tasksDataSource = get<TasksDataSource>()
         )
     }
 

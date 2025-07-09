@@ -1,7 +1,7 @@
 package com.datahiveorg.donetik.core.firebase.authentication
 
 import android.net.Uri
-import com.datahiveorg.donetik.core.firebase.model.FirebaseRequest
+import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO
 import com.datahiveorg.donetik.util.Logger
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
@@ -31,20 +31,20 @@ interface AuthDataSource {
     /**
      * Creates a new user account with the given email and password.
      *
-     * @param credentialsDTO The data transfer object containing the email and password for the new account.
+     * @param credentials The data transfer object containing the email and password for the new account.
      * @return A [Result] object that encapsulates either the successfully created [FirebaseUser] or an [Exception] if the operation failed.
      */
-    suspend fun createAccount(credentialsDTO: FirebaseRequest.CredentialsDTO): Result<FirebaseUser?>
+    suspend fun createAccount(credentials: FirebaseDTO.Credentials): Result<FirebaseUser?>
 
     /**
      * Attempts to log in a user with the provided email and password credentials.
      *
-     * @param credentialsDTO A [FirebaseRequest.CredentialsDTO] object containing the user's email and password.
+     * @param credentials A [FirebaseDTO.Credentials] object containing the user's email and password.
      * @return A [Result] object.
      *         On success, it contains the [FirebaseUser] object representing the logged-in user.
      *         On failure, it contains an [Exception] detailing the error.
      */
-    suspend fun login(credentialsDTO: FirebaseRequest.CredentialsDTO): Result<FirebaseUser?>
+    suspend fun login(credentials: FirebaseDTO.Credentials): Result<FirebaseUser?>
 
     /**
      * Signs up a user with their Google account.
@@ -123,19 +123,19 @@ internal class AuthDataSourceImpl(
 
         }
 
-    override suspend fun createAccount(credentialsDTO: FirebaseRequest.CredentialsDTO): Result<FirebaseUser?> {
+    override suspend fun createAccount(credentials: FirebaseDTO.Credentials): Result<FirebaseUser?> {
         return safeFirebaseAuthCall(FirebaseAuthOperation.CREATE_ACCOUNT) {
             firebaseAuth
-                .createUserWithEmailAndPassword(credentialsDTO.email, credentialsDTO.password)
+                .createUserWithEmailAndPassword(credentials.email, credentials.password)
                 .await()
                 .user
         }
     }
 
-    override suspend fun login(credentialsDTO: FirebaseRequest.CredentialsDTO): Result<FirebaseUser?> {
+    override suspend fun login(credentials: FirebaseDTO.Credentials): Result<FirebaseUser?> {
         return safeFirebaseAuthCall(FirebaseAuthOperation.LOGIN) {
             firebaseAuth
-                .signInWithEmailAndPassword(credentialsDTO.email, credentialsDTO.password)
+                .signInWithEmailAndPassword(credentials.email, credentials.password)
                 .await()
                 .user
         }

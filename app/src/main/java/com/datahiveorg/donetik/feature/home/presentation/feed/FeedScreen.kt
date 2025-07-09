@@ -64,22 +64,6 @@ fun FeedScreen(
     val filterState by viewModel.filteredTasks.collectAsStateWithLifecycle(initialValue = FilterState())
     val pullToRefreshState = rememberPullToRefreshState()
 
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
-
-    val bottomSheetOptions = listOf(
-        BottomSheetOptions(
-            icon = R.drawable.ic_delete,
-            label = "Delete"
-        ),
-        BottomSheetOptions(
-            icon = R.drawable.ic_done,
-            label = "Change complete status"
-        )
-    )
-    val coroutineScope = rememberCoroutineScope()
-    var selectedTask by remember { mutableStateOf<Task?>(null) }
-
     val carouselState = rememberCarouselState { uiState.carouselItems.count() }
 
     LaunchedEffect(Unit) {
@@ -104,47 +88,9 @@ fun FeedScreen(
         onEvent = viewModel::emitEvent,
         onIntent = viewModel::emitIntent,
         filterState = filterState,
-        onTaskLongPress = { task ->
-            selectedTask = task
-            showBottomSheet = true
-            coroutineScope.launch {
-                bottomSheetState.show()
-            }
-        },
         pullToRefreshState = pullToRefreshState,
         carouselState = carouselState,
     )
-
-    if (showBottomSheet) {
-        OptionsBottomSheet(
-            onDismiss = {
-                coroutineScope.launch {
-                    bottomSheetState.hide()
-                }
-                selectedTask = null
-                showBottomSheet = false
-            },
-            options = bottomSheetOptions,
-            onOptionsClicked = { bottomSheetOption ->
-                selectedTask?.let { task ->
-                    when (bottomSheetOption.label) {
-                        "Delete" -> {
-                            viewModel.emitIntent(FeedIntent.Delete(task))
-                            showBottomSheet = false
-                        }
-
-                        "Change complete status" -> {
-                            viewModel.emitIntent(FeedIntent.ToggleDoneStatus(task))
-                            showBottomSheet = false
-                        }
-                    }
-                }
-
-            },
-            sheetState = bottomSheetState
-        )
-    }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -155,7 +101,6 @@ fun FeedContent(
     filterState: FilterState,
     onEvent: (FeedEvent) -> Unit,
     onIntent: (FeedIntent) -> Unit,
-    onTaskLongPress: (Task) -> Unit,
     pullToRefreshState: PullToRefreshState,
     carouselState: CarouselState
 ) {
@@ -321,9 +266,6 @@ fun FeedContent(
                                     )
                                 )
                             },
-                            onLongClick = {
-                                onTaskLongPress(task)
-                            }
                         )
                     }
                 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.typography
@@ -69,27 +70,29 @@ fun OptionsBottomSheet(
  */
 @Composable
 fun BottomSheetItem(
+    modifier: Modifier = Modifier,
     iconId: Int,
     label: String,
     onClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .clickable(
-                onClick = onClick,
-                role = Role.Button,
-            ),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick
     ) {
-        Icon(
-            painter = painterResource(iconId),
-            contentDescription = label
-        )
-        Text(
-            text = label,
-            style = typography.bodyLarge,
-        )
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                painter = painterResource(iconId),
+                contentDescription = label
+            )
+            Text(
+                text = label,
+                style = typography.bodyLarge,
+            )
+        }
     }
 }

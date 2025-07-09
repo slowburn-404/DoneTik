@@ -72,7 +72,7 @@ class FeedViewModel(
 
                     is FeedIntent.Delete -> deleteTask(uiIntent.task)
 
-                    is FeedIntent.ToggleDoneStatus -> toggleDoneStatus(uiIntent.task)
+//                    is FeedIntent.ToggleDoneStatus -> toggleDoneStatus(uiIntent.task)
 
                     is FeedIntent.ToggleSearchBar -> toggleSearchBar()
 
@@ -229,41 +229,41 @@ class FeedViewModel(
     }
 
     //TODO(create a use case)
-    private suspend fun toggleDoneStatus(task: Task) {
-        val newTask = task.copy(isDone = !task.isDone)
-        showLoading()
-        when (val response = homeRepository.markTaskAsDone(newTask)) {
-            is DomainResponse.Success -> {
-                _state.update { currentState ->
-                    val newTaskList = currentState.tasks.map {
-                        if (it.id == newTask.id) {
-                            newTask
-                        } else {
-                            it
-                        }
-                    }
-                    currentState.copy(
-                        isLoading = false,
-                        tasks = newTaskList
-                    )
-                }
-                filterByDone(_filteredTasks.value.filter)
-                emitEvent(FeedEvent.ShowSnackBar("Done status changed"))
-            }
-
-            is DomainResponse.Failure -> {
-                _state.update { currentState ->
-                    currentState.copy(
-                        error = response.message,
-                        isLoading = false
-                    )
-                }
-                emitEvent(FeedEvent.ShowSnackBar(response.message))
-            }
-
-        }
-    }
-
+//    private suspend fun toggleDoneStatus(task: Task) {
+//        val newTask = task.copy(isDone = !task.isDone)
+//        showLoading()
+//        when (val response = homeRepository.markTaskAsDone(newTask)) {
+//            is DomainResponse.Success -> {
+//                _state.update { currentState ->
+//                    val newTaskList = currentState.tasks.map {
+//                        if (it.id == newTask.id) {
+//                            newTask
+//                        } else {
+//                            it
+//                        }
+//                    }
+//                    currentState.copy(
+//                        isLoading = false,
+//                        tasks = newTaskList
+//                    )
+//                }
+//                filterByDone(_filteredTasks.value.filter)
+//                emitEvent(FeedEvent.ShowSnackBar("Done status changed"))
+//            }
+//
+//            is DomainResponse.Failure -> {
+//                _state.update { currentState ->
+//                    currentState.copy(
+//                        error = response.message,
+//                        isLoading = false
+//                    )
+//                }
+//                emitEvent(FeedEvent.ShowSnackBar(response.message))
+//            }
+//
+//        }
+//    }
+//
     private fun getCarouselItems() {
         viewModelScope.launch(dispatcher.default) {
             val allTasks = _state.value.tasks

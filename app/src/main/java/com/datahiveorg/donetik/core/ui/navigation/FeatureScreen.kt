@@ -1,7 +1,8 @@
 package com.datahiveorg.donetik.core.ui.navigation
 
-import android.content.Context
-import android.net.Uri
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavOptionsBuilder
@@ -9,6 +10,7 @@ import coil3.compose.AsyncImagePainter
 import com.datahiveorg.donetik.core.ui.components.AsyncImageLoader
 import com.datahiveorg.donetik.feature.home.presentation.navigation.Feed
 import com.datahiveorg.donetik.feature.home.presentation.navigation.NewTaskScreen
+import com.datahiveorg.donetik.feature.home.presentation.navigation.TaskScreen
 import kotlinx.serialization.Serializable
 
 /**
@@ -96,7 +98,7 @@ data object ProfileFeature : FeatureScreen {
 }
 
 @Serializable
-data object TeamsFeature: FeatureScreen {
+data object TeamsFeature : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
         builder.popUpTo<RouterScreen> {
             inclusive = true
@@ -132,6 +134,25 @@ fun buildTopBarActions(
                         }
                     },
                     description = "Avatar"
+                )
+            )
+        }
+
+        is TaskScreen -> {
+            listOf(
+                TopBarAction(
+                    icon = {
+                        IconButton(
+                            onClick = onClick
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.MoreVert,
+                                contentDescription = "Options"
+                            )
+
+                        }
+                    },
+                    description = "Options"
                 )
             )
         }

@@ -1,11 +1,13 @@
 package com.datahiveorg.donetik.core.firebase.firestore
 
-import com.datahiveorg.donetik.core.firebase.model.FirebaseRequest.TaskDTO
-import com.datahiveorg.donetik.util.Logger
+import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.TaskDTO
+import com.datahiveorg.donetik.core.firebase.util.FireStoreOperation
+import com.datahiveorg.donetik.core.firebase.util.safeFireStoreCall
+import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
@@ -14,7 +16,7 @@ import kotlinx.coroutines.tasks.await
  * Provides an abstraction layer for performing CRUD operations on user-specific tasks
  * stored in a FireStore database under the schema: users/{userId}/tasks/{taskId}.
  */
-interface FireStoreDataSource {
+interface TasksDataSource {
 
     /**
      * Creates a new task in FireStore under the author's document.
@@ -60,32 +62,23 @@ interface FireStoreDataSource {
     /**
      * Marks a task as done or not done.
      *
-     * @param userId The ID of the user who owns the task.
+     * @param authorDTO The ID of the user who owns the task.
      * @param taskId The ID of the task to update.
      * @param isDone A boolean indicating whether the task is done or not.
      * @return A [Result] indicating success or failure.
      */
-    suspend fun markTaskAsDone(userId: String, taskId: String, isDone: Boolean): Result<Unit>
+    suspend fun markTaskAsDone(
+        userDTO: Map<String, Any>,
+        taskId: String,
+        isDone: Boolean
+    ): Result<Unit>
 }
 
 
-internal class FireStoreDataSourceImpl(
-    firestore: FirebaseFirestore
-) : FireStoreDataSource {
+internal class TasksDataSourceImpl(
+    private val firestore: FirebaseFirestore
+) : TasksDataSource {
     private val usersCollection = firestore.collection(USER_COLLECTION)
-
-    private suspend fun <T> safeFireStoreCall(
-        operation: FireStoreOperation,
-        call: suspend () -> T
-    ): Result<T> = try {
-        Result.success(call())
-    } catch (e: FirebaseFirestoreException) {
-        Logger.e("$TAG ${operation.name}", e.message.orEmpty())
-        Result.failure(e)
-    } catch (e: Exception) {
-        Logger.e("$TAG ${operation.name}", e.message.orEmpty())
-        Result.failure(e)
-    }
 
     override suspend fun createTask(taskDTO: Map<String, Any>): Result<Unit> =
         safeFireStoreCall(FireStoreOperation.CREATE_TASK) {
@@ -131,16 +124,71 @@ internal class FireStoreDataSourceImpl(
         }
 
     override suspend fun markTaskAsDone(
-        userId: String,
+        userDTO: Map<String, Any>,
         taskId: String,
         isDone: Boolean
     ): Result<Unit> =
         safeFireStoreCall(FireStoreOperation.MARK_AS_DONE) {
-            getTaskCollectionReference(userId)
+            val userId = userDTO["uid"] as? String
+            val username = userDTO["username"] as? String
+            val imageUrl = userDTO["imageUrl"] as? String
+
+            if (userId == null) throw FirebaseException("Missing user information")
+
+            val taskDocRef = getTaskCollectionReference(userId)
                 .document(taskId)
-                .update("isDone", isDone)
-                .await()
+            val userPublicProfileDocRef = usersCollection.document(userId)
+                .collection(PUBLIC_USER_COLLECTION)
+                .document(PROFILE_DOCUMENT)
+
+            firestore.runTransaction { transaction ->
+                val taskSnapshot = transaction.get(taskDocRef)
+
+                if (!taskSnapshot.exists()) throw NoSuchElementException("Task not found")
+
+                val profileSnapshot = transaction.get(userPublicProfileDocRef)
+
+                val currentTaskIsDone = taskSnapshot.getBoolean("isDone") ?: false
+
+                if (currentTaskIsDone == isDone) return@runTransaction
+
+                transaction.update(taskDocRef, "isDone", isDone)
+
+                if (!profileSnapshot.exists()) {
+                    val newProfileData = mutableMapOf<String, Any>()
+                    if (username != null ) newProfileData["username"] = username
+                    if (imageUrl != null ) newProfileData["imageUrl"] = imageUrl
+                    newProfileData["points"] =
+                        if (isDone) POINTS_FOR_COMPLETING_TASK.toLong() else 0L
+                    transaction.set(
+                        userPublicProfileDocRef,
+                        newProfileData
+                    )
+                    return@runTransaction
+                }
+                val currentPoints = profileSnapshot.getLong("points") ?: 0L
+                val pointsChange =
+                    calculatePointsChange(currentPoints = currentPoints, isTaskDone = isDone)
+
+                transaction.update(
+                    userPublicProfileDocRef,
+                    "points",
+                    FieldValue.increment(pointsChange)
+                )
+            }.await()
+
         }
+
+    private fun calculatePointsChange(currentPoints: Long, isTaskDone: Boolean): Long {
+        return (if (isTaskDone) {
+            POINTS_FOR_COMPLETING_TASK.toLong()
+        } else {
+            when {
+                currentPoints <= 0L -> 0L
+                else -> -POINTS_FOR_COMPLETING_TASK.toLong()
+            }
+        })
+    }
 
 
     private fun getTaskDocumentReference(taskDTO: Map<String, Any>): DocumentReference {
@@ -162,15 +210,9 @@ internal class FireStoreDataSourceImpl(
     companion object {
         private const val USER_COLLECTION = "users"
         private const val TASKS_COLLECTION = "tasks"
-        private const val TAG = "FireStoreService:"
+        private const val PUBLIC_USER_COLLECTION = "public"
+        private const val PROFILE_DOCUMENT = "profile"
+        private const val POINTS_FOR_COMPLETING_TASK = 1
+        private const val TAG = "TasksDataSource:"
     }
-}
-
-enum class FireStoreOperation {
-    CREATE_TASK,
-    UPDATE_TASK,
-    DELETE_TASK,
-    GET_TASKS,
-    GET_SINGLE_TASK,
-    MARK_AS_DONE
 }

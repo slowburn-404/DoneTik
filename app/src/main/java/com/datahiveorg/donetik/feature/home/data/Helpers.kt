@@ -3,8 +3,8 @@ package com.datahiveorg.donetik.feature.home.data
 
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.domain.model.Task
-import com.datahiveorg.donetik.core.firebase.model.FirebaseRequest.TaskDTO
-import com.datahiveorg.donetik.core.firebase.model.FirebaseRequest.UserDTO
+import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.TaskDTO
+import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.UserDTO
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Date
