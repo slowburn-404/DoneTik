@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.model.Task
+import com.datahiveorg.donetik.util.Logger
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -121,6 +122,7 @@ class TaskViewModel(
 
     private suspend fun toggleDoneStatus(task: Task) {
         val newTask = task.copy(isDone = !task.isDone)
+        Logger.i("TaskVIewModel", newTask.toString())
         showLoadingIndicator()
         when (val response = homeRepository.markTaskAsDone((newTask))) {
             is DomainResponse.Success -> {

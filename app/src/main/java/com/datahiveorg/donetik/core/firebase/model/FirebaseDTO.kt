@@ -39,8 +39,9 @@ sealed interface FirebaseDTO {
     ): FirebaseDTO
 
     data class LeaderBoardUserDTO(
+        val uid: String,
         val username: String,
-        val points: String,
-        val imageUrl: Uri
+        val points: Long,
+        val imageUrl: String
     ): FirebaseDTO
 }

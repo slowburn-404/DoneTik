@@ -2,6 +2,8 @@ package com.datahiveorg.donetik.core.firebase.di
 
 import com.datahiveorg.donetik.core.firebase.authentication.AuthDataSource
 import com.datahiveorg.donetik.core.firebase.authentication.AuthDataSourceImpl
+import com.datahiveorg.donetik.core.firebase.firestore.LeaderBoardDataSource
+import com.datahiveorg.donetik.core.firebase.firestore.LeaderBoardDataSourceImpl
 import com.datahiveorg.donetik.core.firebase.firestore.TasksDataSource
 import com.datahiveorg.donetik.core.firebase.firestore.TasksDataSourceImpl
 import com.datahiveorg.donetik.core.firebase.storage.StorageDataSource
@@ -33,7 +35,7 @@ val firebaseModule = module {
 
     factory<TasksDataSource> {
         TasksDataSourceImpl(
-            firestore = get<FirebaseFirestore>()
+            firestore = inject<FirebaseFirestore>() as FirebaseFirestore
         )
     }
 
@@ -44,6 +46,12 @@ val firebaseModule = module {
     factory<StorageDataSource> {
         StorageDataSourceImpl(
             storage = get<FirebaseStorage>()
+        )
+    }
+
+    factory<LeaderBoardDataSource> {
+        LeaderBoardDataSourceImpl(
+            firestore = get<FirebaseFirestore>()
         )
     }
 }

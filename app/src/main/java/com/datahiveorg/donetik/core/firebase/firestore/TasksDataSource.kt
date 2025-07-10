@@ -3,6 +3,7 @@ package com.datahiveorg.donetik.core.firebase.firestore
 import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.TaskDTO
 import com.datahiveorg.donetik.core.firebase.util.FireStoreOperation
 import com.datahiveorg.donetik.core.firebase.util.safeFireStoreCall
+import com.datahiveorg.donetik.util.Logger
 import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -129,6 +130,7 @@ internal class TasksDataSourceImpl(
         isDone: Boolean
     ): Result<Unit> =
         safeFireStoreCall(FireStoreOperation.MARK_AS_DONE) {
+            Logger.i(TAG, userDTO.toString())
             val userId = userDTO["uid"] as? String
             val username = userDTO["username"] as? String
             val imageUrl = userDTO["imageUrl"] as? String
