@@ -52,17 +52,17 @@ class GoogleSignHelper(private val activity: Context) {
                     DomainResponse.Success(googleIdTokenCredential.idToken)
                 }
 
-                else -> DomainResponse.Failure("Invalid credential type")
+                else -> DomainResponse.Error("Invalid credential type")
             }
         } catch (exception: GetCredentialCancellationException) {
             Logger.e("Credential Manager", exception.message.toString())
-            DomainResponse.Failure(exception.message.toString())
+            DomainResponse.Error(exception.message.toString())
         } catch (exception: GetCredentialException) {
             Logger.e("Credential Manager", exception.message.toString())
-            DomainResponse.Failure(exception.message.toString())
+            DomainResponse.Error(exception.message.toString())
         } catch (exception: Exception) {
             Logger.e("Credential Manager", exception.message.toString())
-            DomainResponse.Failure("An unexpected error occurred, please try again")
+            DomainResponse.Error("An unexpected error occurred, please try again")
         }
     }
 

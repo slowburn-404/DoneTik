@@ -6,6 +6,8 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.CircleShape
@@ -39,8 +41,8 @@ fun AsyncImageLoader(
     modifier: Modifier = Modifier,
     painter: AsyncImagePainter,
     isVisible: Boolean = true,
-    enterTransition: EnterTransition,
-    exitTransition: ExitTransition,
+    enterTransition: EnterTransition = scaleIn(),
+    exitTransition: ExitTransition = scaleOut(),
 ) {
     AnimatedVisibility(
         visible = isVisible,

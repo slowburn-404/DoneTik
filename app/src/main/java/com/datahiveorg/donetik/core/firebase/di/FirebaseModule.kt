@@ -35,7 +35,7 @@ val firebaseModule = module {
 
     factory<TasksDataSource> {
         TasksDataSourceImpl(
-            firestore = inject<FirebaseFirestore>() as FirebaseFirestore
+            firestore = get<FirebaseFirestore>()
         )
     }
 

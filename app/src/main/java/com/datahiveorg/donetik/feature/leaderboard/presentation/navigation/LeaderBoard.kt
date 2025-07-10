@@ -12,8 +12,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object LeaderBoard : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo<HomeFeature> {
-            inclusive = false
+        builder.popUpTo<LeaderBoard> {
+            inclusive = true
             saveState = true
         }
         builder.restoreState = true

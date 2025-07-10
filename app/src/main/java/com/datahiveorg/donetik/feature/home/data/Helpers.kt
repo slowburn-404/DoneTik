@@ -1,10 +1,12 @@
 package com.datahiveorg.donetik.feature.home.data
 
 
+import coil3.toCoilUri
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.TaskDTO
 import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.UserDTO
+import com.datahiveorg.donetik.feature.leaderboard.data.toUri
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -65,7 +67,7 @@ fun User.toUserDTO(): Map<String, Any> {
         "uid" to uid,
         "username" to username,
         "email" to email,
-        "imageUrl" to imageUrl
+        "imageUrl" to imageUrl.toString()
     )
 }
 
@@ -83,7 +85,7 @@ fun UserDTO.toHomeDomain(): User {
         uid = uid,
         username = username,
         email = email,
-        imageUrl = imageUrl,
+        imageUrl = imageUrl.toUri(),
         password = ""
     )
 }

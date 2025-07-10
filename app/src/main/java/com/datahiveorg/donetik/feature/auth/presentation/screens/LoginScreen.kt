@@ -157,7 +157,7 @@ fun LoginScreen(
                             onIntent(AuthenticationIntent.SignInWithGoogle(result.data))
                         }
 
-                        is DomainResponse.Failure -> {
+                        is DomainResponse.Error -> {
                             Toast.makeText(
                                 context,
                                 result.message,

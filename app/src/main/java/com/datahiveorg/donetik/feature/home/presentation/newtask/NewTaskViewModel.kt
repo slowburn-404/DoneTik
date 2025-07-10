@@ -94,7 +94,7 @@ class NewTaskViewModel(
                 }
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 _state.update { currentState ->
                     currentState.copy(
                         error = response.message
@@ -120,7 +120,7 @@ class NewTaskViewModel(
                 emitEvent(NewTaskEvent.SaveSuccessful)
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 hideLoading()
                 emitEvent(NewTaskEvent.ShowSnackBar(response.message))
             }

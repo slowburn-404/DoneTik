@@ -1,6 +1,7 @@
 package com.datahiveorg.donetik.core.firebase.firestore
 
 import android.net.Uri
+import coil3.toCoilUri
 import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
@@ -24,7 +25,7 @@ internal fun DocumentSnapshot.toTaskDTO(): FirebaseDTO.TaskDTO {
             uid = it["uid"] as? String ?: "",
             email = it["email"] as? String ?: "",
             username = it["displayName"] as? String ?: "",
-            imageUrl = it["photoUrl"] as? Uri ?: Uri.EMPTY
+            imageUrl = it["photoUrl"] as? String ?: ""
         )
     } ?: throw IllegalArgumentException("Missing or invalid user object")
 

@@ -17,7 +17,7 @@ class HomeRepositoryImpl(
                 DomainResponse.Success(tasks)
             },
             onFailure = { exception ->
-                DomainResponse.Failure(exception.toHomeDomain())
+                DomainResponse.Error(exception.toHomeDomain())
             }
         )
     }
@@ -30,7 +30,7 @@ class HomeRepositoryImpl(
                 DomainResponse.Success("Task saved. What’s next?")
             },
             onFailure = {
-                DomainResponse.Failure(it.toHomeDomain())
+                DomainResponse.Error(it.toHomeDomain())
             }
         )
     }
@@ -43,7 +43,7 @@ class HomeRepositoryImpl(
                 DomainResponse.Success("Task updated")
             },
             onFailure = {
-                DomainResponse.Failure(it.toHomeDomain())
+                DomainResponse.Error(it.toHomeDomain())
             }
         )
     }
@@ -56,7 +56,7 @@ class HomeRepositoryImpl(
                 DomainResponse.Success("Task deleted")
             },
             onFailure = {
-                DomainResponse.Failure(it.toHomeDomain())
+                DomainResponse.Error(it.toHomeDomain())
             }
         )
     }
@@ -68,7 +68,7 @@ class HomeRepositoryImpl(
                 DomainResponse.Success(taskDTO.toHomeDomain())
             },
             onFailure = { exception ->
-                DomainResponse.Failure(exception.toHomeDomain())
+                DomainResponse.Error(exception.toHomeDomain())
             }
         )
     }
@@ -82,7 +82,7 @@ class HomeRepositoryImpl(
         return response.fold(
             onSuccess = { DomainResponse.Success("Done status changed") },
             onFailure = { exception ->
-                DomainResponse.Failure(exception.toHomeDomain())
+                DomainResponse.Error(exception.toHomeDomain())
             }
         )
     }

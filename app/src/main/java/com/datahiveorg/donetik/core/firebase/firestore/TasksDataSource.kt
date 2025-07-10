@@ -1,6 +1,11 @@
 package com.datahiveorg.donetik.core.firebase.firestore
 
 import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.TaskDTO
+import com.datahiveorg.donetik.core.firebase.util.Constants.LEADERBOARD_COLLECTION_ID
+import com.datahiveorg.donetik.core.firebase.util.Constants.POINTS_FOR_COMPLETING_TASK
+import com.datahiveorg.donetik.core.firebase.util.Constants.TAG
+import com.datahiveorg.donetik.core.firebase.util.Constants.TASKS_COLLECTION
+import com.datahiveorg.donetik.core.firebase.util.Constants.USER_COLLECTION
 import com.datahiveorg.donetik.core.firebase.util.FireStoreOperation
 import com.datahiveorg.donetik.core.firebase.util.safeFireStoreCall
 import com.datahiveorg.donetik.util.Logger
@@ -63,7 +68,7 @@ interface TasksDataSource {
     /**
      * Marks a task as done or not done.
      *
-     * @param authorDTO The ID of the user who owns the task.
+     * @param userDTO The ID of the user who owns the task.
      * @param taskId The ID of the task to update.
      * @param isDone A boolean indicating whether the task is done or not.
      * @return A [Result] indicating success or failure.
@@ -139,41 +144,41 @@ internal class TasksDataSourceImpl(
 
             val taskDocRef = getTaskCollectionReference(userId)
                 .document(taskId)
-            val userPublicProfileDocRef = usersCollection.document(userId)
-                .collection(PUBLIC_USER_COLLECTION)
-                .document(PROFILE_DOCUMENT)
+            val leaderBoardItemDocRef =
+                firestore.collection(LEADERBOARD_COLLECTION_ID)
+                    .document(userId)
 
             firestore.runTransaction { transaction ->
                 val taskSnapshot = transaction.get(taskDocRef)
 
                 if (!taskSnapshot.exists()) throw NoSuchElementException("Task not found")
 
-                val profileSnapshot = transaction.get(userPublicProfileDocRef)
+                val leaderBoardItemSnapshot = transaction.get(leaderBoardItemDocRef)
 
-                val currentTaskIsDone = taskSnapshot.getBoolean("isDone") ?: false
+                val isCurrentTaskDone = taskSnapshot.getBoolean("isDone") ?: false
 
-                if (currentTaskIsDone == isDone) return@runTransaction
+                if (isCurrentTaskDone == isDone) return@runTransaction
 
                 transaction.update(taskDocRef, "isDone", isDone)
 
-                if (!profileSnapshot.exists()) {
+                if (!leaderBoardItemSnapshot.exists()) {
                     val newProfileData = mutableMapOf<String, Any>()
-                    if (username != null ) newProfileData["username"] = username
-                    if (imageUrl != null ) newProfileData["imageUrl"] = imageUrl
+                    if (username != null) newProfileData["username"] = username
+                    if (imageUrl != null) newProfileData["imageUrl"] = imageUrl
                     newProfileData["points"] =
                         if (isDone) POINTS_FOR_COMPLETING_TASK.toLong() else 0L
                     transaction.set(
-                        userPublicProfileDocRef,
+                        leaderBoardItemDocRef,
                         newProfileData
                     )
                     return@runTransaction
                 }
-                val currentPoints = profileSnapshot.getLong("points") ?: 0L
+                val currentPoints = leaderBoardItemSnapshot.getLong("points") ?: 0L
                 val pointsChange =
                     calculatePointsChange(currentPoints = currentPoints, isTaskDone = isDone)
 
                 transaction.update(
-                    userPublicProfileDocRef,
+                    leaderBoardItemDocRef,
                     "points",
                     FieldValue.increment(pointsChange)
                 )
@@ -209,12 +214,4 @@ internal class TasksDataSourceImpl(
     private fun getTaskCollectionReference(userId: String): CollectionReference =
         usersCollection.document(userId).collection(TASKS_COLLECTION)
 
-    companion object {
-        private const val USER_COLLECTION = "users"
-        private const val TASKS_COLLECTION = "tasks"
-        private const val PUBLIC_USER_COLLECTION = "public"
-        private const val PROFILE_DOCUMENT = "profile"
-        private const val POINTS_FOR_COMPLETING_TASK = 1
-        private const val TAG = "TasksDataSource:"
-    }
 }

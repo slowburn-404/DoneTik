@@ -6,7 +6,6 @@ import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.util.Logger
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,7 +75,7 @@ class TaskViewModel(
                 }
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 _state.update { currentState ->
                     currentState.copy(
                         error = response.message,
@@ -98,7 +97,7 @@ class TaskViewModel(
                 emitEvent(TaskViewEvent.ShowSnackBar(response.data))
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 hideLoadingIndicator()
                 emitEvent(TaskViewEvent.ShowSnackBar(response.message))
             }
@@ -113,7 +112,7 @@ class TaskViewModel(
                 emitEvent(TaskViewEvent.NavigateUp)
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 hideLoadingIndicator()
                 emitEvent(TaskViewEvent.ShowSnackBar(response.message))
             }
@@ -135,7 +134,7 @@ class TaskViewModel(
                 emitEvent(TaskViewEvent.ShowSnackBar(response.data))
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 hideLoadingIndicator()
                 emitEvent(TaskViewEvent.ShowSnackBar(response.message))
             }

@@ -3,6 +3,7 @@ package com.datahiveorg.donetik.feature.router
 import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import coil3.toCoilUri
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 
 @Immutable

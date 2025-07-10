@@ -3,11 +3,10 @@ package com.datahiveorg.donetik.feature.home.presentation.newtask
 import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import coil3.toCoilUri
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.data.toHomeDomain
 import com.datahiveorg.donetik.feature.home.domain.model.Task
-import java.time.LocalDate
-import java.time.LocalTime
 import java.util.Date
 import java.util.UUID.randomUUID
 

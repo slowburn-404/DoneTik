@@ -1,6 +1,5 @@
 package com.datahiveorg.donetik.core.firebase.model
 
-import android.net.Uri
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ServerTimestamp
 
@@ -35,7 +34,7 @@ sealed interface FirebaseDTO {
         val uid: String,
         val email: String,
         val username: String,
-        val imageUrl: Uri,
+        val imageUrl: String,
     ): FirebaseDTO
 
     data class LeaderBoardUserDTO(

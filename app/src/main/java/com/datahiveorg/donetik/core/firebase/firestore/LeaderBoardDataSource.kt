@@ -1,9 +1,12 @@
 package com.datahiveorg.donetik.core.firebase.firestore
 
 import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.LeaderBoardUserDTO
+import com.datahiveorg.donetik.core.firebase.util.Constants.IMAGE_URL_FIELD
+import com.datahiveorg.donetik.core.firebase.util.Constants.LEADERBOARD_COLLECTION_ID
+import com.datahiveorg.donetik.core.firebase.util.Constants.POINTS_FIELD
+import com.datahiveorg.donetik.core.firebase.util.Constants.USERNAME_FIELD
 import com.datahiveorg.donetik.core.firebase.util.FireStoreOperation
 import com.datahiveorg.donetik.core.firebase.util.safeFireStoreCall
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
@@ -16,35 +19,23 @@ interface LeaderBoardDataSource {
 class LeaderBoardDataSourceImpl(
     private val firestore: FirebaseFirestore
 ) : LeaderBoardDataSource {
+    private val leadBoardCollection = firestore.collection(LEADERBOARD_COLLECTION_ID)
+
     override suspend fun getLeadBoard(): Result<List<LeaderBoardUserDTO>> =
         safeFireStoreCall(FireStoreOperation.GET_LEADERBOARD) {
-            val querySnapshot = firestore
-                .collectionGroup(USER_PUBLIC_COLLECTION_ID)
-                .whereEqualTo(FieldPath.documentId(), USER_PROFILE_DOCUMENT_ID)
+            val querySnapshot = leadBoardCollection
                 .orderBy(POINTS_FIELD, Query.Direction.DESCENDING)
                 .get()
                 .await()
 
             querySnapshot.documents.mapNotNull { documentSnapshot ->
-                val userId = documentSnapshot.reference.parent.parent?.id
-                val profileDoc = documentSnapshot.data
-
-                profileDoc?.let {
-                    LeaderBoardUserDTO(
-                        uid = userId ?: return@mapNotNull null,
-                        username = it[USERNAME_FIELD] as? String ?: return@mapNotNull null,
-                        points = it[POINTS_FIELD] as? Long ?: return@mapNotNull null,
-                        imageUrl = it[IMAGE_URL_FIELD] as? String ?: return@mapNotNull null
-                    )
-                }
+                val userId = documentSnapshot.reference.id
+                LeaderBoardUserDTO(
+                    uid = userId,
+                    username = documentSnapshot.getString(USERNAME_FIELD) ?: "",
+                    imageUrl = documentSnapshot.getString(IMAGE_URL_FIELD) ?: "",
+                    points = documentSnapshot.getLong(POINTS_FIELD) ?: 0L
+                )
             }
         }
-
-    companion object {
-        private const val USER_PUBLIC_COLLECTION_ID = "public"
-        private const val USER_PROFILE_DOCUMENT_ID = "profile"
-        private const val POINTS_FIELD = "points"
-        private const val USERNAME_FIELD = "username"
-        private const val IMAGE_URL_FIELD = "imageUrl"
-    }
 }

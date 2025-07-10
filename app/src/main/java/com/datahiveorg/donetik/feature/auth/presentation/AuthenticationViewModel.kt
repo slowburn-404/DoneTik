@@ -114,7 +114,7 @@ class AuthenticationViewModel(
         val user = _state.value.user
         showLoadingIndicator()
         when (val response = authRepository.login(user)) {
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 _state.update { currentState ->
                     currentState.copy(
                         isLoading = false,
@@ -142,7 +142,7 @@ class AuthenticationViewModel(
         val user = _state.value.user
         showLoadingIndicator()
         when (val response = authRepository.signUp(user)) {
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 _state.update { currentState ->
                     currentState.copy(
                         isLoading = false,
@@ -199,7 +199,7 @@ class AuthenticationViewModel(
                 emitEvent(AuthenticationUiEvent.Navigate.Home)
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 _state.update { currentState ->
                     currentState.copy(
                         isLoading = false,
@@ -232,7 +232,7 @@ class AuthenticationViewModel(
                 emitEvent(AuthenticationUiEvent.Navigate.Home)
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 _state.update { currentState ->
                     currentState.copy(
                         isLoading = false,

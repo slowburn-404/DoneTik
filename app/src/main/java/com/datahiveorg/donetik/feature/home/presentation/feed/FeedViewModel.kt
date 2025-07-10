@@ -18,8 +18,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 typealias GroupedTasks = Map<String, List<Task>>
 
@@ -110,7 +108,7 @@ class FeedViewModel(
                 }
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 _state.update { currentState ->
                     currentState.copy(
                         error = response.message,
@@ -138,7 +136,7 @@ class FeedViewModel(
 
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 _state.update { currentState ->
                     currentState.copy(
                         isLoading = false
@@ -216,7 +214,7 @@ class FeedViewModel(
                 emitEvent(FeedEvent.ShowSnackBar("Task deleted"))
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 _state.update { currentState ->
                     currentState.copy(
                         error = response.message,

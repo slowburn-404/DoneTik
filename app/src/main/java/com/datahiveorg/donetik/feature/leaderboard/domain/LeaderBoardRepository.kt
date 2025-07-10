@@ -1,6 +1,10 @@
 package com.datahiveorg.donetik.feature.leaderboard.domain
 
-interface LeaderBoardRepository {
+import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
+import com.datahiveorg.donetik.feature.auth.domain.model.User
 
-    fun fetchLeaderBoard()
+interface LeaderBoardRepository {
+    suspend fun fetchLeaderBoard(): DomainResponse<List<LeaderBoardItem>>
+
+    suspend fun getCurrentUserInfo(): DomainResponse<User>
 }
