@@ -12,4 +12,8 @@
         <item quantity="one">%d Task</item>
         <item quantity="other">%d Tasks</item>
     </plurals>
+    <plurals name="number_of_points">
+        <item quantity="one">%d tik</item>
+        <item quantity="other">%d tiks</item>
+    </plurals>
 </resources>

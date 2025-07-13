@@ -14,10 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
+import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.core.ui.components.AsyncImageLoader
 import com.datahiveorg.donetik.feature.leaderboard.domain.LeaderBoardItem
 
@@ -66,7 +68,11 @@ fun LeaderBoardItemCard(
                 )
 
                 Text(
-                    text = leaderBoardItem.points.toString(),
+                    text = pluralStringResource(
+                        R.plurals.number_of_points,
+                        leaderBoardItem.points.toInt(),
+                        leaderBoardItem.points.toInt()
+                    ),
                     style = typography.bodyLarge,
                     maxLines = 1,
                     color = Color.Gray,

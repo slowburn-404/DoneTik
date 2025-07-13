@@ -3,12 +3,10 @@ package com.datahiveorg.donetik.core.firebase.firestore
 import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.TaskDTO
 import com.datahiveorg.donetik.core.firebase.util.Constants.LEADERBOARD_COLLECTION_ID
 import com.datahiveorg.donetik.core.firebase.util.Constants.POINTS_FOR_COMPLETING_TASK
-import com.datahiveorg.donetik.core.firebase.util.Constants.TAG
 import com.datahiveorg.donetik.core.firebase.util.Constants.TASKS_COLLECTION
 import com.datahiveorg.donetik.core.firebase.util.Constants.USER_COLLECTION
 import com.datahiveorg.donetik.core.firebase.util.FireStoreOperation
 import com.datahiveorg.donetik.core.firebase.util.safeFireStoreCall
-import com.datahiveorg.donetik.util.Logger
 import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -144,69 +142,80 @@ internal class TasksDataSourceImpl(
         taskDTO: Map<String, Any>
     ): Result<Unit> =
         safeFireStoreCall(FireStoreOperation.MARK_AS_DONE) {
-            Logger.i(TAG, userDTO.toString())
             val taskId =
-                taskDTO["id"] as? String ?: throw FirebaseException("Missing task information")
-            val userId = userDTO["uid"] ?: throw FirebaseException("Missing user information")
-            val userIdFromTask = taskDTO["author"] as? String ?: ""
+                taskDTO["id"] as? String ?: throw FirebaseException("Missing taskId")
+            val userIdPerformingAction = userDTO["uid"] ?: throw FirebaseException("Missing userId")
+            val authorId =
+                taskDTO["author"] as? String ?: throw FirebaseException("Missing authorId")
             val username = userDTO["username"] as? String ?: ""
             val imageUrl = userDTO["imageUrl"] as? String ?: ""
-            val isDone = taskDTO["isDone"] as? Boolean ?: false
+            val newIsDoneState = taskDTO["isDone"] as? Boolean
+                ?: throw IllegalArgumentException("Missing task isDone information")
 
-            val taskDocRef = getTaskCollectionReference(userIdFromTask)
+            val taskDocRef = getTaskCollectionReference(authorId)
                 .document(taskId)
             val leaderBoardItemDocRef =
                 firestore.collection(LEADERBOARD_COLLECTION_ID)
-                    .document(userId.toString())
+                    .document(userIdPerformingAction as String)
 
             firestore.runTransaction { transaction ->
                 val taskSnapshot = transaction.get(taskDocRef)
+                val leaderBoardItemSnapshot = transaction.get(leaderBoardItemDocRef)
 
                 if (!taskSnapshot.exists()) throw NoSuchElementException("Task not found")
 
-                val leaderBoardItemSnapshot = transaction.get(leaderBoardItemDocRef)
-
                 val isCurrentTaskDone = taskSnapshot.getBoolean("isDone") ?: false
 
-                if (isCurrentTaskDone == isDone) return@runTransaction
+                val taskStateChanging = isCurrentTaskDone != newIsDoneState
+                var pointsChange = 0L
 
-                transaction.update(taskDocRef, "isDone", isDone)
+                if (taskStateChanging) {
+                    pointsChange = if (newIsDoneState) {
+                        POINTS_FOR_COMPLETING_TASK.toLong()
+                    } else {
+                        val currentPoints = leaderBoardItemSnapshot.getLong("points") ?: 0L
+                        if (currentPoints > 0) {
+                            -POINTS_FOR_COMPLETING_TASK.toLong()
+                        } else {
+                            0L
+                        }
+                    }
+                }
 
-                val leaderBoardDTO = mutableMapOf<String, Any>()
-                leaderBoardDTO["username"] = username
-                leaderBoardDTO["imageUrl"] = imageUrl
-                leaderBoardDTO["points"] =
-                    if (isDone) POINTS_FOR_COMPLETING_TASK.toLong() else 0L
 
-                transaction.set(
-                    leaderBoardItemDocRef,
-                    leaderBoardDTO,
-                    SetOptions.merge()
-                )
-                val currentPoints = leaderBoardItemSnapshot.getLong("points") ?: 0L
-                val pointsChange =
-                    calculatePointsChange(currentPoints = currentPoints, isTaskDone = isDone)
+                if (taskStateChanging) {
+                    transaction.update(taskDocRef, "isDone", newIsDoneState)
+                }
 
-                transaction.update(
-                    leaderBoardItemDocRef,
-                    "points",
-                    FieldValue.increment(pointsChange)
-                )
+                if (!leaderBoardItemSnapshot.exists()) {
+                    val newLeaderBoardEntry = mutableMapOf<String, Any>(
+                        "username" to username,
+                        "imageUrl" to imageUrl,
+                        "points" to if (pointsChange > 0L) pointsChange else 0L
+                    )
+                    transaction.set(
+                        leaderBoardItemDocRef,
+                        newLeaderBoardEntry
+                    )
+                } else {
+                    val updatesForLeaderBoard = mutableMapOf<String, Any>()
+                    if (pointsChange != 0L) {
+                        updatesForLeaderBoard["points"] = FieldValue.increment(pointsChange)
+                    }
+                    if (username.isNotEmpty()) updatesForLeaderBoard["username"] = username
+                    if (imageUrl.isNotEmpty()) updatesForLeaderBoard["imageUrl"] = imageUrl
+
+                    if (updatesForLeaderBoard.isNotEmpty()) {
+                        transaction.set(
+                            leaderBoardItemDocRef,
+                            updatesForLeaderBoard,
+                            SetOptions.merge()
+                        )
+                    }
+                }
+
             }.await()
-
         }
-
-    private fun calculatePointsChange(currentPoints: Long, isTaskDone: Boolean): Long {
-        return (if (isTaskDone) {
-            POINTS_FOR_COMPLETING_TASK.toLong()
-        } else {
-            when {
-                currentPoints <= 0L -> 0L
-                else -> -POINTS_FOR_COMPLETING_TASK.toLong()
-            }
-        })
-    }
-
 
     private fun getTaskDocumentReference(taskDTO: Map<String, Any>): DocumentReference {
         val userId = taskDTO["author"] as? String
