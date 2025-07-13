@@ -67,12 +67,12 @@ fun SignUpScreen(
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "Donetik",
+            text = "Sign Up",
             style = typography.displayMedium,
         )
 
         Text(
-            text = "Create your account",
+            text = "Create a Donetik account",
             style = typography.bodyLarge
         )
 
@@ -140,7 +140,7 @@ fun SignUpScreen(
                             onIntent(AuthenticationIntent.SignInWithGoogle(result.data))
                         }
 
-                        is DomainResponse.Failure -> {
+                        is DomainResponse.Error -> {
                             Toast.makeText(
                                 context,
                                 result.message,

@@ -4,10 +4,8 @@ import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.datahiveorg.donetik.feature.auth.domain.model.User
-import com.datahiveorg.donetik.feature.home.data.toHomeDomain
+import com.datahiveorg.donetik.feature.home.data.toDomain
 import com.datahiveorg.donetik.feature.home.domain.model.Task
-import java.time.LocalDate
-import java.time.LocalTime
 import java.util.Date
 import java.util.UUID.randomUUID
 
@@ -16,18 +14,12 @@ import java.util.UUID.randomUUID
 data class NewTaskState(
     val task: Task = Task(
         id = randomUUID().toString(),
-        author = User(
-            uid = "",
-            username = "",
-            email = "",
-            imageUrl = Uri.EMPTY,
-            password = ""
-        ),
+        author = "",
         title = "",
         description = "",
         isDone = false,
-        createdAt = Date().toHomeDomain(),
-        dueDate = Date().toHomeDomain(),
+        createdAt = Date().toDomain(),
+        dueDate = Date().toDomain(),
         category = "Uncategorized"
     ),
     val error: String = "",
@@ -43,4 +35,11 @@ data class NewTaskState(
     val selectedDateError: String = "",
     val showDatePicker: Boolean = false,
     val showTimePicker: Boolean = false,
+    val user: User = User(
+        uid = "",
+        username = "",
+        email = "",
+        imageUrl = Uri.EMPTY,
+        password = "",
+    )
 )

@@ -6,6 +6,8 @@ import androidx.navigation.navigation
 import com.datahiveorg.donetik.core.ui.navigation.LeaderBoardFeature
 import com.datahiveorg.donetik.core.ui.navigation.animatedComposable
 import com.datahiveorg.donetik.feature.leaderboard.presentation.LeaderBoardScreen
+import com.datahiveorg.donetik.feature.leaderboard.presentation.LeaderBoardViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 fun NavGraphBuilder.leaderBoardNavGraph(
     leaderBoardNavigator: LeaderBoardNavigator,
@@ -18,7 +20,8 @@ fun NavGraphBuilder.leaderBoardNavGraph(
         animatedComposable<LeaderBoard> {
             LeaderBoardScreen(
                 navigator = leaderBoardNavigator,
-                snackBarHostState = snackBarHostState
+                snackBarHostState = snackBarHostState,
+                viewModel = koinViewModel<LeaderBoardViewModel>()
             )
         }
     }

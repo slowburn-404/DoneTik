@@ -28,7 +28,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.R
-import com.datahiveorg.donetik.feature.home.data.toHomeDomain
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
 import com.datahiveorg.donetik.core.ui.components.ClickableItemCard
 import com.datahiveorg.donetik.core.ui.components.DoneTikDatePicker
@@ -37,6 +36,7 @@ import com.datahiveorg.donetik.core.ui.components.InputFieldDialog
 import com.datahiveorg.donetik.core.ui.components.PrimaryButton
 import com.datahiveorg.donetik.core.ui.components.UserInputField
 import com.datahiveorg.donetik.core.ui.components.rememberCalendarInstance
+import com.datahiveorg.donetik.feature.home.data.toDomain
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -126,7 +126,7 @@ fun NewTaskContent(
         derivedStateOf {
             state.selectedDate?.let {
                 calendar.timeInMillis = it
-                calendar.time.toHomeDomain().substringBefore(",")
+                calendar.time.toDomain().substringBefore(",")
             } ?: "Due date"
         }
     }

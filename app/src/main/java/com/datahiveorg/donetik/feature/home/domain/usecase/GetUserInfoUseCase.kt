@@ -18,12 +18,12 @@ internal class GetUserInfoUseCaseImpl(
                 if (response.data != null) {
                     DomainResponse.Success(response.data)
                 } else {
-                    DomainResponse.Failure("No user is logged in")
+                    DomainResponse.Error("No user is logged in")
                 }
             }
 
-            is DomainResponse.Failure -> {
-                DomainResponse.Failure(response.message)
+            is DomainResponse.Error -> {
+                DomainResponse.Error(response.message)
             }
         }
     }

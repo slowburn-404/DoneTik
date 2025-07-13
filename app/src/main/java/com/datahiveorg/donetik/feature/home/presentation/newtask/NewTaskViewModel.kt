@@ -89,12 +89,14 @@ class NewTaskViewModel(
             is DomainResponse.Success -> {
                 _state.update { currentState ->
                     currentState.copy(
-                        task = currentState.task.copy(author = response.data)
+                        user = response.data,
+                        isLoading = false,
+                        task = currentState.task.copy(author = response.data.uid)
                     )
                 }
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 _state.update { currentState ->
                     currentState.copy(
                         error = response.message
@@ -120,7 +122,7 @@ class NewTaskViewModel(
                 emitEvent(NewTaskEvent.SaveSuccessful)
             }
 
-            is DomainResponse.Failure -> {
+            is DomainResponse.Error -> {
                 hideLoading()
                 emitEvent(NewTaskEvent.ShowSnackBar(response.message))
             }

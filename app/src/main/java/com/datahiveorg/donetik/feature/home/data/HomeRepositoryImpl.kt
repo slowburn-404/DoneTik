@@ -1,89 +1,110 @@
 package com.datahiveorg.donetik.feature.home.data
 
+import com.datahiveorg.donetik.core.firebase.authentication.AuthDataSource
+import com.datahiveorg.donetik.core.firebase.firestore.TasksDataSource
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
+import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
 import com.datahiveorg.donetik.feature.home.domain.model.Task
-import com.datahiveorg.donetik.core.firebase.firestore.FireStoreDataSource
 
 class HomeRepositoryImpl(
-    private val fireStoreDataSource: FireStoreDataSource
+    private val tasksDataSource: TasksDataSource,
+    private val authDataSource: AuthDataSource
 ) : HomeRepository {
     override suspend fun getTasks(userId: String): DomainResponse<List<Task>> {
-        val response = fireStoreDataSource.getTasks(userId)
+        val response = tasksDataSource.getTasks(userId)
 
         return response.fold(
             onSuccess = { taskDTOs ->
-                val tasks = taskDTOs.map { it.toHomeDomain() }
+                val tasks = taskDTOs.map { it.toTask() }
                 DomainResponse.Success(tasks)
             },
             onFailure = { exception ->
-                DomainResponse.Failure(exception.toHomeDomain())
+                DomainResponse.Error(exception.toDomain())
             }
         )
     }
 
     override suspend fun createTask(task: Task): DomainResponse<String> {
-        val response = fireStoreDataSource.createTask(task.toFireBase())
+        val response = tasksDataSource.createTask(task.toTaskDTO())
 
         return response.fold(
             onSuccess = {
                 DomainResponse.Success("Task saved. What’s next?")
             },
             onFailure = {
-                DomainResponse.Failure(it.toHomeDomain())
+                DomainResponse.Error(it.toDomain())
             }
         )
     }
 
     override suspend fun updateTask(task: Task): DomainResponse<String> {
-        val response = fireStoreDataSource.updateTask(task.toFireBase())
+        val response = tasksDataSource.updateTask(task.toTaskDTO())
 
         return response.fold(
             onSuccess = {
                 DomainResponse.Success("Task updated")
             },
             onFailure = {
-                DomainResponse.Failure(it.toHomeDomain())
+                DomainResponse.Error(it.toDomain())
             }
         )
     }
 
     override suspend fun deleteTask(task: Task): DomainResponse<String> {
-        val response = fireStoreDataSource.deleteTask(task.toFireBase())
+        val response = tasksDataSource.deleteTask(task.toTaskDTO())
 
         return response.fold(
             onSuccess = {
                 DomainResponse.Success("Task deleted")
             },
             onFailure = {
-                DomainResponse.Failure(it.toHomeDomain())
+                DomainResponse.Error(it.toDomain())
             }
         )
     }
 
     override suspend fun getSingleTask(taskId: String, userId: String): DomainResponse<Task> {
-        val response = fireStoreDataSource.getSingleTask(userId, taskId)
+        val response = tasksDataSource.getSingleTask(userId, taskId)
         return response.fold(
             onSuccess = { taskDTO ->
-                DomainResponse.Success(taskDTO.toHomeDomain())
+                DomainResponse.Success(taskDTO.toTask())
             },
             onFailure = { exception ->
-                DomainResponse.Failure(exception.toHomeDomain())
+                DomainResponse.Error(exception.toDomain())
             }
         )
     }
 
-    override suspend fun markTaskAsDone(task: Task): DomainResponse<String> {
-        val response = fireStoreDataSource.markTaskAsDone(
-            userId = task.author.uid,
-            taskId = task.id,
-            isDone = task.isDone
+    override suspend fun markTaskAsDone(task: Task, user: User): DomainResponse<String> {
+        val response = tasksDataSource.markTaskAsDone(
+            userDTO = user.toUserDTO(),
+            taskDTO = task.toTaskDTO()
         )
         return response.fold(
-            onSuccess = { DomainResponse.Success("Done status changed") },
+            onSuccess = {
+                DomainResponse.Success(if (task.isDone) "Marked as done" else "Marked as undone")
+            },
             onFailure = { exception ->
-                DomainResponse.Failure(exception.toHomeDomain())
+                DomainResponse.Error(exception.toDomain())
             }
         )
+    }
+
+    override suspend fun getCurrentUserInfo(): DomainResponse<User> {
+        val response = authDataSource.fetchUserInfo()
+
+        return response.fold(
+            onSuccess = { userDTO ->
+                val firebaseUser =
+                    userDTO ?: return@fold DomainResponse.Error("User not found")
+
+                DomainResponse.Success(firebaseUser.toUser())
+            },
+            onFailure = { exception ->
+                DomainResponse.Error(exception.toDomain())
+            }
+        )
+
     }
 }

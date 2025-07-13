@@ -23,11 +23,11 @@ class AuthRepositoryImpl(
                     if (user != null) {
                         DomainResponse.Success(user.toAuthDomain())
                     } else {
-                        DomainResponse.Failure("User not found")
+                        DomainResponse.Error("User not found")
                     }
                 },
                 onFailure = { exception ->
-                    DomainResponse.Failure(exception.toAuthDomain())
+                    DomainResponse.Error(exception.toAuthDomain())
                 }
             )
         }
@@ -47,11 +47,11 @@ class AuthRepositoryImpl(
                     if (user != null) {
                         DomainResponse.Success(user.toAuthDomain())
                     } else {
-                        DomainResponse.Failure("User not found")
+                        DomainResponse.Error("User not found")
                     }
                 },
                 onFailure = { exception ->
-                    DomainResponse.Failure(exception.toAuthDomain())
+                    DomainResponse.Error(exception.toAuthDomain())
                 }
             )
         }
@@ -65,11 +65,11 @@ class AuthRepositoryImpl(
                     user?.let {
                         DomainResponse.Success(it.toAuthDomain())
                     } ?: run {
-                        DomainResponse.Failure("User not found")
+                        DomainResponse.Error("User not found")
                     } //😏
                 },
                 onFailure = { exception ->
-                    DomainResponse.Failure(exception.toAuthDomain())
+                    DomainResponse.Error(exception.toAuthDomain())
                 }
             )
 
@@ -84,11 +84,11 @@ class AuthRepositoryImpl(
                     user?.let {
                         DomainResponse.Success(it.toAuthDomain())
                     } ?: run {
-                        DomainResponse.Failure("User not found")
+                        DomainResponse.Error("User not found")
                     }
                 },
                 onFailure = { exception ->
-                    DomainResponse.Failure(exception.toAuthDomain())
+                    DomainResponse.Error(exception.toAuthDomain())
 
                 }
             )
@@ -111,7 +111,7 @@ class AuthRepositoryImpl(
                         DomainResponse.Success(Unit)
                     },
                     onFailure = {
-                        DomainResponse.Failure(it.toAuthDomain())
+                        DomainResponse.Error(it.toAuthDomain())
                     }
                 )
         }
@@ -126,7 +126,7 @@ class AuthRepositoryImpl(
                         DomainResponse.Success(Unit)
                     },
                     onFailure = { exception ->
-                        DomainResponse.Failure(exception.toAuthDomain())
+                        DomainResponse.Error(exception.toAuthDomain())
                     }
                 )
         }
@@ -141,7 +141,7 @@ class AuthRepositoryImpl(
                         DomainResponse.Success(uri)
                     },
                     onFailure = {
-                        DomainResponse.Failure(it.toAuthDomain())
+                        DomainResponse.Error(it.toAuthDomain())
                     }
                 )
         }

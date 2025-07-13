@@ -3,6 +3,7 @@ package com.datahiveorg.donetik.feature.home.presentation.navigation
 import androidx.navigation.NavOptionsBuilder
 import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
+import com.datahiveorg.donetik.core.ui.navigation.HomeFeature
 import com.datahiveorg.donetik.core.ui.navigation.ScreenUIConfig
 import com.datahiveorg.donetik.core.ui.navigation.buildTopBarActions
 import kotlinx.serialization.Serializable
@@ -10,8 +11,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object Feed : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
-        builder.popUpTo<Feed> {
-            inclusive = true
+        builder.popUpTo<HomeFeature> {
+            inclusive = false
             saveState = true
         }
         builder.restoreState = true

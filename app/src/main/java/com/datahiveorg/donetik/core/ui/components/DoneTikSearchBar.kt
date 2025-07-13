@@ -69,7 +69,6 @@ fun DoneTikSearchBar(
                     TaskCard(
                         task = it,
                         onClick = { onSearchResultClick(it) },
-                        onLongClick = {}
                     )
                 }
             }
