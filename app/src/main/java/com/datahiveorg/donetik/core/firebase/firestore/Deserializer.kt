@@ -1,7 +1,5 @@
 package com.datahiveorg.donetik.core.firebase.firestore
 
-import android.net.Uri
-import coil3.toCoilUri
 import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
@@ -19,24 +17,13 @@ import com.google.firebase.firestore.DocumentSnapshot
  * @throws IllegalArgumentException if the "author" field is missing or invalid in the document.
  */
 internal fun DocumentSnapshot.toTaskDTO(): FirebaseDTO.TaskDTO {
-    val authorMap = this["author"] as? Map<*, *>
-    val author = authorMap?.let {
-        FirebaseDTO.UserDTO(
-            uid = it["uid"] as? String ?: "",
-            email = it["email"] as? String ?: "",
-            username = it["displayName"] as? String ?: "",
-            imageUrl = it["photoUrl"] as? String ?: ""
-        )
-    } ?: throw IllegalArgumentException("Missing or invalid user object")
-
     return FirebaseDTO.TaskDTO(
         id = getString("id") ?: "",
         title = getString("title") ?: "",
         description = getString("description") ?: "",
         createdAt = getTimestamp("createdAt") ?: Timestamp.now(),
-        //TODO: remove lastModified in favor of dueDate when moving to PROD
-        dueDate = getTimestamp("dueDate") ?: getTimestamp("lastModified") ?: Timestamp.now(),
-        author = author,
+        dueDate = getTimestamp("dueDate") ?: Timestamp.now(),
+        author = getString("author") ?: "",
         isDone = getBoolean("isDone") ?: false,
         category = getString("category") ?: "Uncategorized"
     )

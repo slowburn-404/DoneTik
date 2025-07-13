@@ -262,7 +262,7 @@ fun FeedContent(
                                 onEvent(
                                     FeedEvent.SelectTask(
                                         taskId = task.id,
-                                        userId = task.author.uid
+                                        userId = task.author
                                     )
                                 )
                             },

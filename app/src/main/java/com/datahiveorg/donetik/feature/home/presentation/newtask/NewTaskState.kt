@@ -14,7 +14,7 @@ import java.util.UUID.randomUUID
 data class NewTaskState(
     val task: Task = Task(
         id = randomUUID().toString(),
-        author  = "",
+        author = "",
         title = "",
         description = "",
         isDone = false,
@@ -35,4 +35,11 @@ data class NewTaskState(
     val selectedDateError: String = "",
     val showDatePicker: Boolean = false,
     val showTimePicker: Boolean = false,
+    val user: User = User(
+        uid = "",
+        username = "",
+        email = "",
+        imageUrl = Uri.EMPTY,
+        password = "",
+    )
 )

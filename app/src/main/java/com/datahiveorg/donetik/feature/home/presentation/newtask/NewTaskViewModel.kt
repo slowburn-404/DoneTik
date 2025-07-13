@@ -89,7 +89,9 @@ class NewTaskViewModel(
             is DomainResponse.Success -> {
                 _state.update { currentState ->
                     currentState.copy(
-                        task = currentState.task.copy(author = response.data)
+                        user = response.data,
+                        isLoading = false,
+                        task = currentState.task.copy(author = response.data.uid)
                     )
                 }
             }

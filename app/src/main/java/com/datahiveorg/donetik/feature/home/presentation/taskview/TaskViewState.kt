@@ -12,17 +12,18 @@ data class TaskViewState(
         createdAt = "",
         description = "",
         dueDate = "",
-        author = User(
-            uid = "",
-            username = "",
-            email = "",
-            imageUrl = Uri.EMPTY,
-            password = ""
-        ),
-        category = "Uncategorized"
+        category = "Uncategorized",
+        author = ""
     ),
     val isLoading: Boolean = false,
     val error: String = "",
-    val showBottomSheet: Boolean = false
+    val showBottomSheet: Boolean = false,
+    val user: User = User(
+        uid = "",
+        username = "",
+        email = "",
+        imageUrl = Uri.EMPTY,
+        password = ""
+    ),
 
-)
+    )

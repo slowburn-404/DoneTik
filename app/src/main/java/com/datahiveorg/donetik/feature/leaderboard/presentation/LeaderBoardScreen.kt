@@ -1,6 +1,7 @@
 package com.datahiveorg.donetik.feature.leaderboard.presentation
 
 import android.content.Context
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -79,7 +80,7 @@ fun LeaderBoardContent(
             ) { leaderBoardItem ->
                 val painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(context)
-                        .data(leaderBoardItem.imageUrl)
+                        .data(if (leaderBoardItem.imageUrl == Uri.EMPTY) null else leaderBoardItem.imageUrl)
                         .crossfade(true)
                         .build(),
                     placeholder = painterResource(R.drawable.ic_profile),
@@ -89,7 +90,7 @@ fun LeaderBoardContent(
                 LeaderBoardItemCard(
                     modifier = Modifier.fillMaxWidth(),
                     leaderBoardItem = leaderBoardItem,
-                    isCurrentUser = leaderBoardItem.uid == state.userId,
+                    isCurrentUser = leaderBoardItem.uid == state.user.uid,
                     painter = painter
                 )
             }

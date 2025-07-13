@@ -1,5 +1,6 @@
 package com.datahiveorg.donetik.feature.home.di
 
+import com.datahiveorg.donetik.core.firebase.authentication.AuthDataSource
 import com.datahiveorg.donetik.feature.auth.domain.repository.AuthRepository
 import com.datahiveorg.donetik.feature.home.data.HomeRepositoryImpl
 import com.datahiveorg.donetik.feature.home.domain.HomeRepository
@@ -25,7 +26,8 @@ import org.koin.dsl.module
 val homeModule = module {
     factory<HomeRepository> {
         HomeRepositoryImpl(
-            tasksDataSource = get<TasksDataSource>()
+            tasksDataSource = get<TasksDataSource>(),
+            authDataSource = get<AuthDataSource>()
         )
     }
 

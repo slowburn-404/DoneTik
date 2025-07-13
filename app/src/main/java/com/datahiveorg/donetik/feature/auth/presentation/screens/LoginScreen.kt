@@ -72,7 +72,7 @@ fun LoginScreen(
         )
 
         Text(
-            text = "Donetik",
+            text = "Login",
             style = typography.displayMedium,
         )
 

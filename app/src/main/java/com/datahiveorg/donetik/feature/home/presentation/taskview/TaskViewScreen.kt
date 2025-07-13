@@ -39,7 +39,7 @@ fun TaskViewScreen(
     taskId: String,
     userId: String
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle(initialValue = TaskViewState())
 
     val scrollState = rememberScrollState()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -102,12 +102,22 @@ fun TaskViewScreen(
                     }
 
                     "Mark as done" -> {
-                        viewModel.emitIntent(TaskViewIntent.ToggleDoneStatus(state.task))
+                        viewModel.emitIntent(
+                            TaskViewIntent.ToggleDoneStatus(
+                                task = state.task,
+                                user = state.user
+                            )
+                        )
                         viewModel.emitIntent(TaskViewIntent.ToggleBottomSheet)
                     }
 
                     "Mark as undone" -> {
-                        viewModel.emitIntent(TaskViewIntent.ToggleDoneStatus(state.task))
+                        viewModel.emitIntent(
+                            TaskViewIntent.ToggleDoneStatus(
+                                task = state.task,
+                                user = state.user
+                            )
+                        )
                         viewModel.emitIntent(TaskViewIntent.ToggleBottomSheet)
                     }
 
@@ -183,7 +193,7 @@ fun TaskViewContent(
                 .fillMaxWidth(),
             label = if (state.task.isDone) "Mark as undone" else "Mark as done",
             onClick = {
-                onIntent(TaskViewIntent.ToggleDoneStatus(state.task))
+                onIntent(TaskViewIntent.ToggleDoneStatus(task = state.task, user = state.user))
             },
             isEnabled = !state.isLoading,
             isLoading = state.isLoading

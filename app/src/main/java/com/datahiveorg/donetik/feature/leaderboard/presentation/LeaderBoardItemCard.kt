@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
@@ -47,27 +49,28 @@ fun LeaderBoardItemCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImageLoader(
-                modifier = modifier.weight(1f),
+                modifier = Modifier.size(36.dp),
                 painter = painter,
             )
 
             Column(
-                modifier = modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.Start
             ) {
                 Text(
                     text = leaderBoardItem.username,
-                    style = typography.bodyLarge,
+                    style = typography.titleMedium,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start
                 )
 
                 Text(
                     text = leaderBoardItem.points.toString(),
-                    style = typography.labelLarge,
+                    style = typography.bodyLarge,
                     maxLines = 1,
-                    color = Color.Gray
+                    color = Color.Gray,
+                    textAlign = TextAlign.Start
                 )
             }
         }
