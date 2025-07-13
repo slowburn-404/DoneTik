@@ -1,7 +1,6 @@
 package com.datahiveorg.donetik.feature.home.presentation.taskview
 
 import android.net.Uri
-import coil3.toCoilUri
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 

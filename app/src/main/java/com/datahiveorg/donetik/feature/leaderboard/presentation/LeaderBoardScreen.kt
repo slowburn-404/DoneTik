@@ -66,7 +66,6 @@ fun LeaderBoardContent(
         onRefresh = {
             onIntent(LeaderBoardIntent.FetchLeaderBoard)
         }
-
     ) {
         LazyColumn(
             modifier = modifier.fillMaxSize(),
@@ -86,6 +85,7 @@ fun LeaderBoardContent(
                     placeholder = painterResource(R.drawable.ic_profile),
                     fallback = painterResource(R.drawable.ic_profile),
                 )
+
                 LeaderBoardItemCard(
                     modifier = Modifier.fillMaxWidth(),
                     leaderBoardItem = leaderBoardItem,
@@ -95,6 +95,4 @@ fun LeaderBoardContent(
             }
         }
     }
-
-
 }

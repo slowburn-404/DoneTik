@@ -1,8 +1,10 @@
 package com.datahiveorg.donetik.feature.leaderboard.presentation
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.datahiveorg.donetik.feature.auth.domain.DomainResponse
+import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.leaderboard.domain.LeaderBoardItem
 import com.datahiveorg.donetik.feature.leaderboard.domain.LeaderBoardRepository
 import com.datahiveorg.donetik.util.Logger
@@ -98,7 +100,7 @@ class LeaderBoardViewModel(
                 _state.update { currentState ->
                     currentState.copy(
                         isLoading = false,
-                        userId = response.data.uid
+                        user = response.data
                     )
                 }
             }
@@ -127,7 +129,13 @@ class LeaderBoardViewModel(
 data class LeaderBoardState(
     val isLoading: Boolean = false,
     val leaderBoardItems: List<LeaderBoardItem> = emptyList(),
-    val userId: String = ""
+    val user: User = User(
+        uid = "",
+        email = "",
+        username = "",
+        imageUrl = Uri.EMPTY,
+        password = ""
+    )
 )
 
 sealed interface LeaderBoardIntent {

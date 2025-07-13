@@ -3,9 +3,8 @@ package com.datahiveorg.donetik.feature.home.presentation.newtask
 import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import coil3.toCoilUri
 import com.datahiveorg.donetik.feature.auth.domain.model.User
-import com.datahiveorg.donetik.feature.home.data.toHomeDomain
+import com.datahiveorg.donetik.feature.home.data.toDomain
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import java.util.Date
 import java.util.UUID.randomUUID
@@ -15,18 +14,12 @@ import java.util.UUID.randomUUID
 data class NewTaskState(
     val task: Task = Task(
         id = randomUUID().toString(),
-        author = User(
-            uid = "",
-            username = "",
-            email = "",
-            imageUrl = Uri.EMPTY,
-            password = ""
-        ),
+        author  = "",
         title = "",
         description = "",
         isDone = false,
-        createdAt = Date().toHomeDomain(),
-        dueDate = Date().toHomeDomain(),
+        createdAt = Date().toDomain(),
+        dueDate = Date().toDomain(),
         category = "Uncategorized"
     ),
     val error: String = "",

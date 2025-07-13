@@ -1,13 +1,14 @@
 package com.datahiveorg.donetik.feature.home.data
 
 
-import coil3.toCoilUri
+import android.net.Uri
 import com.datahiveorg.donetik.feature.auth.domain.model.User
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.TaskDTO
 import com.datahiveorg.donetik.core.firebase.model.FirebaseDTO.UserDTO
 import com.datahiveorg.donetik.feature.leaderboard.data.toUri
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseUser
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -22,20 +23,20 @@ import java.util.TimeZone
  *
  * @return A [Task] object populated with data from the [TaskDTO].
  */
-fun TaskDTO.toHomeDomain(): Task {
+fun TaskDTO.toTask(): Task {
     return Task(
         id = id,
-        author = author.toHomeDomain(),
+        author = author,
         title = title,
         description = description,
         isDone = isDone,
-        createdAt = createdAt.toDate().toHomeDomain(),
-        dueDate = dueDate.toDate().toHomeDomain(),
+        createdAt = createdAt.toDate().toDomain(),
+        dueDate = dueDate.toDate().toDomain(),
         category = category
     )
 }
 
-fun Throwable.toHomeDomain(): String {
+fun Throwable.toDomain(): String {
     return this.message.toString()
 }
 
@@ -44,9 +45,9 @@ fun Throwable.toHomeDomain(): String {
  *
  * @return A [Map] representing the [Task] object.
  */
-fun Task.toFireBase(): Map<String, Any> = mapOf(
+fun Task.toTaskDTO(): Map<String, Any> = mapOf(
     "id" to id,
-    "author" to author.toUserDTO(),
+    "author" to author,
     "title" to title,
     "description" to description,
     "isDone" to isDone,
@@ -80,12 +81,22 @@ fun User.toUserDTO(): Map<String, Any> {
  *
  * @return A [User] object representing the domain model.
  */
-fun UserDTO.toHomeDomain(): User {
+fun UserDTO.toUser(): User {
     return User(
         uid = uid,
         username = username,
         email = email,
         imageUrl = imageUrl.toUri(),
+        password = ""
+    )
+}
+
+fun FirebaseUser.toUser(): User {
+    return User(
+        uid = uid,
+        username = displayName ?: "Anonymous",
+        email = email!!,
+        imageUrl = photoUrl ?: Uri.EMPTY,
         password = ""
     )
 }
@@ -99,7 +110,7 @@ fun UserDTO.toHomeDomain(): User {
  *
  * */
  //TODO: Move to a more common place
-fun Date.toHomeDomain(): String {
+fun Date.toDomain(): String {
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
     sdf.timeZone = TimeZone.getDefault()
     return sdf.format(this)

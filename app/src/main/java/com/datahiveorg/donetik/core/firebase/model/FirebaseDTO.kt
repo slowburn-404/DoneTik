@@ -21,7 +21,7 @@ sealed interface FirebaseDTO {
 
     data class TaskDTO(
         val id: String,
-        val author: UserDTO,
+        val author: String,
         val title: String,
         val description: String,
         @field: JvmField val isDone: Boolean,

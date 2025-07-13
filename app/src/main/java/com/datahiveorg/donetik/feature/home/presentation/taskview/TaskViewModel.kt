@@ -123,7 +123,7 @@ class TaskViewModel(
         val newTask = task.copy(isDone = !task.isDone)
         Logger.i("TaskVIewModel", newTask.toString())
         showLoadingIndicator()
-        when (val response = homeRepository.markTaskAsDone((newTask))) {
+        when (val response = homeRepository.markTaskAsDone(task = newTask, )) {
             is DomainResponse.Success -> {
                 _state.update { currentState ->
                     currentState.copy(

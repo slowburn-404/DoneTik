@@ -66,17 +66,27 @@ interface TasksDataSource {
     suspend fun getSingleTask(userId: String, taskId: String): Result<TaskDTO>
 
     /**
-     * Marks a task as done or not done.
+     * Marks a task as done or not done and updates the user's points in the leaderboard.
      *
-     * @param userDTO The ID of the user who owns the task.
-     * @param taskId The ID of the task to update.
-     * @param isDone A boolean indicating whether the task is done or not.
-     * @return A [Result] indicating success or failure.
+     * This function performs a transaction to ensure atomicity:
+     * 1. Updates the `isDone` status of the specified task.
+     * 2. If the user does not exist in the leaderboard, creates a new entry with initial points.
+     * 3. If the user exists, updates their points based on whether the task is being marked as done or undone.
+     *    - If marked as done, `POINTS_FOR_COMPLETING_TASK` are added.
+     *    - If marked as not done, `POINTS_FOR_COMPLETING_TASK` are subtracted (points won't go below 0).
+     *
+     * @param userDTO A map containing user information, expecting "uid" (String), "username" (String, optional),
+     * and "imageUrl" (String, optional).
+     * @param taskDTO A map containing task information, expecting "id" (String) for the task ID.
+     *                The "isDone" field in this DTO determines the new state of the task.
+     * @return A [Result] indicating success ([Result.success] with [Unit]) or failure ([Result.failure] with an Exception).
+     * @throws FirebaseException if essential user information ("uid") is missing from `userDTO`.
+     * @throws NoSuchElementException if the specified task is not found.
+     * @throws IllegalArgumentException if task "id" is missing from `taskDTO`.
      */
     suspend fun markTaskAsDone(
         userDTO: Map<String, Any>,
-        taskId: String,
-        isDone: Boolean
+        taskDTO: Map<String, Any>
     ): Result<Unit>
 }
 
@@ -131,22 +141,23 @@ internal class TasksDataSourceImpl(
 
     override suspend fun markTaskAsDone(
         userDTO: Map<String, Any>,
-        taskId: String,
-        isDone: Boolean
+        taskDTO: Map<String, Any>
     ): Result<Unit> =
         safeFireStoreCall(FireStoreOperation.MARK_AS_DONE) {
             Logger.i(TAG, userDTO.toString())
-            val userId = userDTO["uid"] as? String
-            val username = userDTO["username"] as? String
-            val imageUrl = userDTO["imageUrl"] as? String
+            val taskId =
+                taskDTO["id"] as? String ?: throw FirebaseException("Missing task information")
+            val userId = userDTO["uid"] ?: throw FirebaseException("Missing user information")
+            val userIdFromTask = taskDTO["author"] as? String ?: ""
+            val username = userDTO["username"] as? String ?: ""
+            val imageUrl = userDTO["imageUrl"] as? String ?: ""
+            val isDone = taskDTO["isDone"] as? Boolean ?: false
 
-            if (userId == null) throw FirebaseException("Missing user information")
-
-            val taskDocRef = getTaskCollectionReference(userId)
+            val taskDocRef = getTaskCollectionReference(userIdFromTask)
                 .document(taskId)
             val leaderBoardItemDocRef =
                 firestore.collection(LEADERBOARD_COLLECTION_ID)
-                    .document(userId)
+                    .document(userId.toString())
 
             firestore.runTransaction { transaction ->
                 val taskSnapshot = transaction.get(taskDocRef)
@@ -161,18 +172,17 @@ internal class TasksDataSourceImpl(
 
                 transaction.update(taskDocRef, "isDone", isDone)
 
-                if (!leaderBoardItemSnapshot.exists()) {
-                    val newProfileData = mutableMapOf<String, Any>()
-                    if (username != null) newProfileData["username"] = username
-                    if (imageUrl != null) newProfileData["imageUrl"] = imageUrl
-                    newProfileData["points"] =
-                        if (isDone) POINTS_FOR_COMPLETING_TASK.toLong() else 0L
-                    transaction.set(
-                        leaderBoardItemDocRef,
-                        newProfileData
-                    )
-                    return@runTransaction
-                }
+                val leaderBoardDTO = mutableMapOf<String, Any>()
+                leaderBoardDTO["username"] = username
+                leaderBoardDTO["imageUrl"] = imageUrl
+                leaderBoardDTO["points"] =
+                    if (isDone) POINTS_FOR_COMPLETING_TASK.toLong() else 0L
+
+                transaction.set(
+                    leaderBoardItemDocRef,
+                    leaderBoardDTO,
+                    SetOptions.merge()
+                )
                 val currentPoints = leaderBoardItemSnapshot.getLong("points") ?: 0L
                 val pointsChange =
                     calculatePointsChange(currentPoints = currentPoints, isTaskDone = isDone)
@@ -199,9 +209,7 @@ internal class TasksDataSourceImpl(
 
 
     private fun getTaskDocumentReference(taskDTO: Map<String, Any>): DocumentReference {
-        val authorMap = taskDTO["author"] as? Map<*, *>
-            ?: throw IllegalArgumentException("Missing or invalid user object")
-        val userId = authorMap["uid"] as? String
+        val userId = taskDTO["author"] as? String
             ?: throw IllegalArgumentException("Missing or invalid user id")
         val taskId = taskDTO["id"] as? String
             ?: throw IllegalArgumentException("Missing or invalid task id")

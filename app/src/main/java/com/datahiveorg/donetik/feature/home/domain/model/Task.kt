@@ -1,10 +1,8 @@
 package com.datahiveorg.donetik.feature.home.domain.model
 
-import com.datahiveorg.donetik.feature.auth.domain.model.User
-
 data class Task(
     val id: String,
-    val author: User,
+    val author: String,
     val title: String,
     val description: String,
     val isDone: Boolean,
