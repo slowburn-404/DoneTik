@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,21 +34,15 @@ fun LeaderBoardItemCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (isCurrentUser) {
-                colorScheme.primary
-            } else {
-                colorScheme.surface
-            },
-            contentColor = if (isCurrentUser) {
-                colorScheme.onPrimary
-            } else {
-                colorScheme.onSurface
-            }
+            containerColor = if (isCurrentUser) colorScheme.primaryContainer else colorScheme.surface,
+            contentColor = if (isCurrentUser) colorScheme.onPrimaryContainer else colorScheme.onSurface
         )
     ) {
         Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImageLoader(
@@ -76,7 +71,8 @@ fun LeaderBoardItemCard(
                     style = typography.bodyLarge,
                     maxLines = 1,
                     color = Color.Gray,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Start,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

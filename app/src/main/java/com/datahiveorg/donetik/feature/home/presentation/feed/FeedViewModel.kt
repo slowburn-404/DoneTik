@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -52,6 +53,15 @@ class FeedViewModel(
         started = WhileSubscribed(5000)
     )
 
+    private val _pendingTasks = MutableStateFlow(emptyList<Task>())
+    val pendingTasks = _pendingTasks.stateIn(
+        scope = viewModelScope,
+        initialValue = emptyList(),
+        started = WhileSubscribed(5000)
+    ).onStart {
+        emitIntent(FeedIntent.GetPendingTasks)
+    }.flowOn(dispatcher.default)
+
     private val _intent = MutableSharedFlow<FeedIntent>(extraBufferCapacity = 64)
     private val intent = _intent.asSharedFlow()
 
@@ -76,9 +86,11 @@ class FeedViewModel(
 
                     is FeedIntent.EnterQuery -> enterQuery(uiIntent.query)
 
-                    is FeedIntent.Search -> search()
 
                     is FeedIntent.Refresh -> getUserInfo()
+
+                    is FeedIntent.GetPendingTasks -> getPendingTasks()
+
                 }
             }
         }
@@ -265,25 +277,25 @@ class FeedViewModel(
     private fun getCarouselItems() {
         viewModelScope.launch(dispatcher.default) {
             val allTasks = _state.value.tasks
-                val carouselItems =
-                    allTasks
-                        //.take(3)
-                        .asSequence()
-                        .sortedByDescending { it.createdAt }
-                        .groupBy { it.category }
-                        .map { (category, tasksInCategory) ->
-                            CarouselItem(
-                                category = category,
-                                count = tasksInCategory.count(),
-                                contentDescription = category
-                            )
-                        }.toSet()
+            val carouselItems =
+                allTasks
+                    //.take(3)
+                    .asSequence()
+                    .sortedByDescending { it.createdAt }
+                    .groupBy { it.category }
+                    .map { (category, tasksInCategory) ->
+                        CarouselItem(
+                            category = category,
+                            count = tasksInCategory.count(),
+                            contentDescription = category
+                        )
+                    }.toSet()
 
-                _state.update { currentState ->
-                    currentState.copy(
-                        carouselItems = carouselItems
-                    )
-                }
+            _state.update { currentState ->
+                currentState.copy(
+                    carouselItems = carouselItems
+                )
+            }
         }
     }
 
@@ -303,24 +315,13 @@ class FeedViewModel(
         }
     }
 
-
-    //TODO: Fetch from firebase instead
-    private fun search() {
-        val query = _searchState.value.query
+    private fun getPendingTasks() {
         val allTasks = _state.value.tasks
-        val filteredTasks = allTasks.filter {
-            it.title.contains(
-                query,
-                ignoreCase = true
-            ) || it.description.contains(query, ignoreCase = true)
-        }
-
-        _searchState.update { currentState ->
-            currentState.copy(
-                searchResults = filteredTasks,
-                isSearchBarExpanded = false
-            )
+        _pendingTasks.update {
+            allTasks
+                .filter {
+                    !it.isDone
+                }
         }
     }
-
 }

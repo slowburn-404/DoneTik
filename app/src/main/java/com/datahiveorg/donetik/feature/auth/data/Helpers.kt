@@ -13,12 +13,12 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 
 /**
- * Converts a [User] object to a [FirebaseDTO.Credentials] object.
+ * Converts a [User] object to a [FirebaseDTO.CredentialDTO] object.
  *
- * @return A [FirebaseDTO.Credentials] object containing the user's email and password.
+ * @return A [FirebaseDTO.CredentialDTO] object containing the user's email and password.
  */
-fun User.toUserCredential(): FirebaseDTO.Credentials {
-    return FirebaseDTO.Credentials(
+fun User.toUserCredential(): FirebaseDTO.CredentialDTO {
+    return FirebaseDTO.CredentialDTO(
         email = email,
         password = password
     )

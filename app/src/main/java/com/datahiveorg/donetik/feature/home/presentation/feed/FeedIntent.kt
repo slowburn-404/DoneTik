@@ -12,4 +12,5 @@ interface FeedIntent {
     data class EnterQuery(val query: String) : FeedIntent
     data object Search : FeedIntent
     data object Refresh : FeedIntent
+    data object GetPendingTasks: FeedIntent
 }

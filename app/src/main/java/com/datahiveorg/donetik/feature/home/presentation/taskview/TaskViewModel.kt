@@ -166,7 +166,7 @@ class TaskViewModel(
                         isLoading = false
                     )
                 }
-                emitEvent(TaskViewEvent.ShowSnackBar(response.data))
+                emitEvent(TaskViewEvent.NavigateUp)
             }
 
             is DomainResponse.Error -> {
