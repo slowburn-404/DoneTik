@@ -9,6 +9,8 @@ interface HomeNavigator {
 
     fun navigateToTaskViewScreen(taskId: String, userId: String)
 
+    fun navigateToTaskListScreen()
+
     fun navigateUp()
 }
 
@@ -36,5 +38,11 @@ class HomeNavigatorImpl(
 
     override fun navigateUp() {
         doneTikNavigator.navigateUp()
+    }
+
+    override fun navigateToTaskListScreen() {
+       doneTikNavigator.navigate(
+           destination = TaskListScreen
+       )
     }
 }

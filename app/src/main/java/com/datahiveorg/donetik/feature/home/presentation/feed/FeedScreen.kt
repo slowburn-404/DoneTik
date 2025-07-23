@@ -1,7 +1,6 @@
 package com.datahiveorg.donetik.feature.home.presentation.feed
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.carousel.CarouselState
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -43,7 +41,6 @@ fun FeedScreen(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle(initialValue = FeedState())
     val pendingTasks by viewModel.pendingTasks.collectAsStateWithLifecycle(initialValue = emptyList())
-    val filterState by viewModel.filteredTasks.collectAsStateWithLifecycle(initialValue = FilterState())
     val pullToRefreshState = rememberPullToRefreshState()
 
     val carouselState = rememberCarouselState { uiState.carouselItems.count() }
@@ -53,6 +50,7 @@ fun FeedScreen(
             when (event) {
                 is FeedEvent.Navigate.Feed -> navigator.navigateToFeedScreen()
                 is FeedEvent.Navigate.NewTask -> navigator.navigateToNewTaskScreen()
+                is FeedEvent.Navigate.TaskList -> navigator.navigateToTaskListScreen()
                 is FeedEvent.SelectTask -> navigator.navigateToTaskViewScreen(
                     taskId = event.taskId,
                     userId = event.userId
@@ -69,7 +67,6 @@ fun FeedScreen(
         state = uiState,
         onEvent = viewModel::emitEvent,
         onIntent = viewModel::emitIntent,
-        filterState = filterState,
         pullToRefreshState = pullToRefreshState,
         carouselState = carouselState,
         pendingTasks = pendingTasks,
@@ -81,7 +78,6 @@ fun FeedScreen(
 fun FeedContent(
     modifier: Modifier = Modifier,
     state: FeedState,
-    filterState: FilterState,
     onEvent: (FeedEvent) -> Unit,
     onIntent: (FeedIntent) -> Unit,
     pullToRefreshState: PullToRefreshState,
@@ -174,7 +170,7 @@ fun FeedContent(
 
                         CTATextButton(
                             onClick = {
-                                onEvent(FeedEvent.ShowSnackBar("Coming soon"))
+                                onEvent(FeedEvent.Navigate.TaskList)
                             },
                             text = "Show all"
                         )
@@ -216,7 +212,7 @@ fun FeedContent(
                         CTATextButton(
                             text = "Show all",
                             onClick = {
-                                onEvent(FeedEvent.ShowSnackBar("Coming soon"))
+                                onEvent(FeedEvent.Navigate.TaskList)
                             }
                         )
 
@@ -230,66 +226,6 @@ fun FeedContent(
                         carouselState = carouselState
                     )
                 }
-
-//                item {
-//                    Text(
-//                        text = "Your Tasks",
-//                        style = typography.titleLarge,
-//                        textAlign = TextAlign.Start,
-//                        fontWeight = FontWeight.SemiBold
-//                    )
-//                }
-//
-//                item {
-//                    FeedSegmentedButtons(
-//                        selectedIndex = filterState.filter,
-//                        onOptionsSelected = { newStatus ->
-//                            onIntent(FeedIntent.Filter(newStatus))
-//                        },
-//                        options = FilterOption.entries,
-//                    )
-//
-//                }
-//
-//                filterState.filteredTasks.forEach { (date, tasks) ->
-//                    stickyHeader {
-//                        Box(
-//                            modifier = Modifier
-//                                .padding(vertical = 8.dp)
-//                                .clip(RoundedCornerShape(10.dp))
-//                                .background(colorScheme.primaryContainer)
-//                        ) {
-//
-//                            AnimatedText(
-//                                text = date,
-//                                style = typography.bodyMedium,
-//                                color = colorScheme.onPrimaryContainer,
-//                                transitionSpec = {
-//                                    slideInVertically { it } + fadeIn() togetherWith
-//                                            slideOutVertically { -it } + fadeOut()
-//                                }
-//                            )
-//                        }
-//                    }
-//
-//                    items(
-//                        items = tasks,
-//                        key = { task -> task.id }
-//                    ) { task ->
-//                        TaskCard(
-//                            modifier = Modifier.animateItem(),
-//                            task = task,
-//                            onClick = {
-//                                onEvent(
-//                                    FeedEvent.SelectTask(
-//                                        taskId = task.id,
-//                                        userId = task.author
-//                                    )
-//                                )
-//                            },
-//                        )
-//                    }
-//                }
             }
         }
     }

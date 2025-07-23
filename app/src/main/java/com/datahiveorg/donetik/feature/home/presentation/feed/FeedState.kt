@@ -27,17 +27,6 @@ data class FeedState(
 
 @Stable
 @Immutable
-data class FilterState(
-    val filteredTasks: GroupedTasks = emptyMap(),
-    val filter: FilterOption = FilterOption.ALL
-)
-
-enum class FilterOption {
-    ALL, ACTIVE, DONE
-}
-
-@Stable
-@Immutable
 data class SearchState(
     val searchResults: List<Task> = emptyList(),
     val isSearchBarExpanded: Boolean = false,

@@ -5,7 +5,6 @@ import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
 import com.datahiveorg.donetik.core.ui.navigation.HomeFeature
 import com.datahiveorg.donetik.core.ui.navigation.ScreenUIConfig
-import com.datahiveorg.donetik.core.ui.navigation.buildTopBarActions
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,7 +19,7 @@ data object Feed : FeatureScreen {
 
     override val screenUIConfig: ScreenUIConfig
         get() = ScreenUIConfig(
-            title = "Home",
+            title = "",
             hasTopAppBar = true,
             hasBottomBar = true,
             hasFAB = true,
@@ -66,6 +65,29 @@ data class TaskScreen(val taskId: String, val userId: String) : FeatureScreen {
             hasTopAppBar = true,
             hasBottomBar = false,
             hasFAB = false,
+            hasNavIcon = true,
+            navIconRes = R.drawable.ic_arrow_back,
+            enterTransition = homeEnterTransition(),
+            exitTransition = homeExitTransition()
+        )
+}
+
+@Serializable
+data object TaskListScreen : FeatureScreen {
+    override fun buildNavOptions(builder: NavOptionsBuilder) {
+        builder.popUpTo<Feed> {
+            inclusive = false
+            saveState = true
+        }
+        builder.restoreState = true
+    }
+
+    override val screenUIConfig: ScreenUIConfig
+        get() = ScreenUIConfig(
+            title = "My tasks",
+            hasTopAppBar = true,
+            hasBottomBar = false,
+            hasFAB = true,
             hasNavIcon = true,
             navIconRes = R.drawable.ic_arrow_back,
             enterTransition = homeEnterTransition(),

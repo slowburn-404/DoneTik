@@ -13,6 +13,8 @@ import com.datahiveorg.donetik.feature.home.presentation.taskview.TaskViewModel
 import com.datahiveorg.donetik.feature.home.presentation.taskview.TaskViewScreen
 import com.datahiveorg.donetik.core.ui.navigation.HomeFeature
 import com.datahiveorg.donetik.core.ui.navigation.animatedComposable
+import com.datahiveorg.donetik.feature.home.presentation.tasklist.TaskListScreen
+import com.datahiveorg.donetik.feature.home.presentation.tasklist.TaskListViewModel
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -56,6 +58,15 @@ fun NavGraphBuilder.homeNavigationGraph(
                 navigator = homeNavigator,
                 snackBarHostState = snackBarHostState
             )
+        }
+
+        animatedComposable<TaskListScreen> {
+            TaskListScreen(
+                viewModel = koinViewModel<TaskListViewModel>(),
+                navigator = homeNavigator,
+                snackBar = snackBarHostState
+            )
+
         }
     }
 }

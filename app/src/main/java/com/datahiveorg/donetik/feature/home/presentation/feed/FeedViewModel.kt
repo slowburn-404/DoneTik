@@ -20,8 +20,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-typealias GroupedTasks = Map<String, List<Task>>
-
 class FeedViewModel(
     private val homeRepository: HomeRepository,
     private val getUserInfoUseCase: GetUserInfoUseCase,
@@ -35,15 +33,6 @@ class FeedViewModel(
         started = WhileSubscribed(5000)
     ).onStart {
         emitIntent(FeedIntent.GetUserInfo)
-    }
-
-    private val _filteredTasks = MutableStateFlow(FilterState())
-    val filteredTasks = _filteredTasks.stateIn(
-        scope = viewModelScope,
-        initialValue = FilterState(),
-        started = WhileSubscribed(5000)
-    ).onStart {
-        emitIntent(FeedIntent.Filter(FilterOption.ALL))
     }
 
     private val _searchState = MutableStateFlow(SearchState())
@@ -75,8 +64,6 @@ class FeedViewModel(
                     is FeedIntent.GetTasks -> getTasks(uiIntent.userId)
 
                     is FeedIntent.GetUserInfo -> getUserInfo()
-
-                    is FeedIntent.Filter -> filterByDone(uiIntent.filter)
 
                     is FeedIntent.Delete -> deleteTask(uiIntent.task)
 
@@ -167,31 +154,6 @@ class FeedViewModel(
         }
     }
 
-    private fun filterByDone(filter: FilterOption) {
-        viewModelScope.launch(dispatcher.default) {
-            val allTasks = _state.value.tasks
-
-            val sortedTasks = when (filter) {
-                FilterOption.ACTIVE -> allTasks.filter { !it.isDone }
-                FilterOption.DONE -> allTasks.filter { it.isDone }
-                FilterOption.ALL -> allTasks
-            }
-
-            val groupedTasks = groupByDate(sortedTasks)
-
-            _filteredTasks.update { currentState ->
-                currentState.copy(
-                    filteredTasks = groupedTasks,
-                    filter = filter
-                )
-
-            }
-
-        }
-    }
-
-    private fun groupByDate(tasks: List<Task>): Map<String, List<Task>> =
-        tasks.groupBy { it.createdAt.substringBefore(",") }
 
 
     private fun generateGreetingText() {
@@ -221,7 +183,6 @@ class FeedViewModel(
                         isLoading = false
                     )
                 }
-                filterByDone(_filteredTasks.value.filter)
                 getCarouselItems()
                 emitEvent(FeedEvent.ShowSnackBar("Task deleted"))
             }

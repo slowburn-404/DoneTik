@@ -7,6 +7,7 @@ interface FeedEvent {
     sealed interface Navigate {
         data object Feed : FeedEvent
         data object NewTask : FeedEvent
+        data object TaskList: FeedEvent
     }
     data object ToggleOptionsBottomSheet: FeedEvent
 }
