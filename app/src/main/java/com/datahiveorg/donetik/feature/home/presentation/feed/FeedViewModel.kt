@@ -13,13 +13,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-typealias GroupedTasks = Map<String, List<Task>>
 
 class FeedViewModel(
     private val homeRepository: HomeRepository,
@@ -36,21 +35,14 @@ class FeedViewModel(
         emitIntent(FeedIntent.GetUserInfo)
     }
 
-    private val _filteredTasks = MutableStateFlow(FilterState())
-    val filteredTasks = _filteredTasks.stateIn(
+    private val _pendingTasks = MutableStateFlow(emptyList<Task>())
+    val pendingTasks = _pendingTasks.stateIn(
         scope = viewModelScope,
-        initialValue = FilterState(),
+        initialValue = emptyList(),
         started = WhileSubscribed(5000)
     ).onStart {
-        emitIntent(FeedIntent.Filter(FilterOption.ALL))
-    }
-
-    private val _searchState = MutableStateFlow(SearchState())
-    val searchState = _searchState.stateIn(
-        scope = viewModelScope,
-        initialValue = SearchState(),
-        started = WhileSubscribed(5000)
-    )
+        emitIntent(FeedIntent.GetPendingTasks)
+    }.flowOn(dispatcher.default)
 
     private val _intent = MutableSharedFlow<FeedIntent>(extraBufferCapacity = 64)
     private val intent = _intent.asSharedFlow()
@@ -66,19 +58,14 @@ class FeedViewModel(
 
                     is FeedIntent.GetUserInfo -> getUserInfo()
 
-                    is FeedIntent.Filter -> filterByDone(uiIntent.filter)
-
                     is FeedIntent.Delete -> deleteTask(uiIntent.task)
 
 //                    is FeedIntent.ToggleDoneStatus -> toggleDoneStatus(uiIntent.task)
 
-                    is FeedIntent.ToggleSearchBar -> toggleSearchBar()
-
-                    is FeedIntent.EnterQuery -> enterQuery(uiIntent.query)
-
-                    is FeedIntent.Search -> search()
-
                     is FeedIntent.Refresh -> getUserInfo()
+
+                    is FeedIntent.GetPendingTasks -> getPendingTasks()
+
                 }
             }
         }
@@ -155,31 +142,6 @@ class FeedViewModel(
         }
     }
 
-    private fun filterByDone(filter: FilterOption) {
-        viewModelScope.launch(dispatcher.default) {
-            val allTasks = _state.value.tasks
-
-            val sortedTasks = when (filter) {
-                FilterOption.ACTIVE -> allTasks.filter { !it.isDone }
-                FilterOption.DONE -> allTasks.filter { it.isDone }
-                FilterOption.ALL -> allTasks
-            }
-
-            val groupedTasks = groupByDate(sortedTasks)
-
-            _filteredTasks.update { currentState ->
-                currentState.copy(
-                    filteredTasks = groupedTasks,
-                    filter = filter
-                )
-
-            }
-
-        }
-    }
-
-    private fun groupByDate(tasks: List<Task>): Map<String, List<Task>> =
-        tasks.groupBy { it.createdAt.substringBefore(",") }
 
 
     private fun generateGreetingText() {
@@ -209,7 +171,6 @@ class FeedViewModel(
                         isLoading = false
                     )
                 }
-                filterByDone(_filteredTasks.value.filter)
                 getCarouselItems()
                 emitEvent(FeedEvent.ShowSnackBar("Task deleted"))
             }
@@ -265,62 +226,35 @@ class FeedViewModel(
     private fun getCarouselItems() {
         viewModelScope.launch(dispatcher.default) {
             val allTasks = _state.value.tasks
-                val carouselItems =
-                    allTasks
-                        //.take(3)
-                        .asSequence()
-                        .sortedByDescending { it.createdAt }
-                        .groupBy { it.category }
-                        .map { (category, tasksInCategory) ->
-                            CarouselItem(
-                                category = category,
-                                count = tasksInCategory.count(),
-                                contentDescription = category
-                            )
-                        }.toSet()
+            val carouselItems =
+                allTasks
+                    //.take(3)
+                    .asSequence()
+                    .sortedByDescending { it.createdAt }
+                    .groupBy { it.category }
+                    .map { (category, tasksInCategory) ->
+                        CarouselItem(
+                            category = category,
+                            count = tasksInCategory.count(),
+                            contentDescription = category
+                        )
+                    }.toSet()
 
-                _state.update { currentState ->
-                    currentState.copy(
-                        carouselItems = carouselItems
-                    )
+            _state.update { currentState ->
+                currentState.copy(
+                    carouselItems = carouselItems
+                )
+            }
+        }
+    }
+
+    private fun getPendingTasks() {
+        val allTasks = _state.value.tasks
+        _pendingTasks.update {
+            allTasks
+                .filter {
+                    !it.isDone
                 }
         }
     }
-
-    private fun toggleSearchBar() {
-        _searchState.update { currentState ->
-            currentState.copy(
-                isSearchBarExpanded = !currentState.isSearchBarExpanded
-            )
-        }
-    }
-
-    private fun enterQuery(query: String) {
-        _searchState.update { currentState ->
-            currentState.copy(
-                query = query
-            )
-        }
-    }
-
-
-    //TODO: Fetch from firebase instead
-    private fun search() {
-        val query = _searchState.value.query
-        val allTasks = _state.value.tasks
-        val filteredTasks = allTasks.filter {
-            it.title.contains(
-                query,
-                ignoreCase = true
-            ) || it.description.contains(query, ignoreCase = true)
-        }
-
-        _searchState.update { currentState ->
-            currentState.copy(
-                searchResults = filteredTasks,
-                isSearchBarExpanded = false
-            )
-        }
-    }
-
 }

@@ -21,15 +21,12 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import com.datahiveorg.donetik.feature.home.presentation.feed.FilterOption
+import com.datahiveorg.donetik.feature.home.presentation.tasklist.FilterOption
 import com.datahiveorg.donetik.util.Animation.ANIMATION_DURATION_SHORT
 
 /**
@@ -150,7 +147,7 @@ fun SecondaryButton(
  * @param selectedIndex The currently selected [FilterOption].
  */
 @Composable
-fun FeedSegmentedButtons(
+fun TaskSegmentedButtons(
     modifier: Modifier = Modifier,
     onOptionsSelected: (FilterOption) -> Unit,
     options: List<FilterOption>,

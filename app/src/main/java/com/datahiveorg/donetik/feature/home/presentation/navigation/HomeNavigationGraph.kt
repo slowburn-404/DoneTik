@@ -2,7 +2,6 @@ package com.datahiveorg.donetik.feature.home.presentation.navigation
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.datahiveorg.donetik.feature.home.presentation.feed.FeedScreen
@@ -13,6 +12,8 @@ import com.datahiveorg.donetik.feature.home.presentation.taskview.TaskViewModel
 import com.datahiveorg.donetik.feature.home.presentation.taskview.TaskViewScreen
 import com.datahiveorg.donetik.core.ui.navigation.HomeFeature
 import com.datahiveorg.donetik.core.ui.navigation.animatedComposable
+import com.datahiveorg.donetik.feature.home.presentation.tasklist.TaskListScreen
+import com.datahiveorg.donetik.feature.home.presentation.tasklist.TaskListViewModel
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -47,15 +48,28 @@ fun NavGraphBuilder.homeNavigationGraph(
         }
 
         animatedComposable<TaskScreen> { backStackEntry ->
-            val route = backStackEntry.toRoute<TaskScreen>()
+            val navArgs = backStackEntry.toRoute<TaskScreen>()
 
             TaskViewScreen(
                 viewModel = koinViewModel<TaskViewModel>(),
-                taskId = route.taskId,
-                userId = route.userId,
+                taskId = navArgs.taskId,
+                userId = navArgs.userId,
                 navigator = homeNavigator,
                 snackBarHostState = snackBarHostState
             )
+        }
+
+        animatedComposable<TaskListScreen> { backStackEntry ->
+            val navArgs = backStackEntry.toRoute<TaskListScreen>()
+
+            TaskListScreen(
+                viewModel = koinViewModel<TaskListViewModel>(),
+                navigator = homeNavigator,
+                snackBar = snackBarHostState,
+                category = navArgs.category,
+                filterOption = navArgs.filterOption
+            )
+
         }
     }
 }

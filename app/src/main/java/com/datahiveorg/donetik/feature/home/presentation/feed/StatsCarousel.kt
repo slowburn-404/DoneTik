@@ -37,7 +37,8 @@ import com.datahiveorg.donetik.core.ui.components.AnimatedText
 fun StatsCarousel(
     modifier: Modifier = Modifier,
     carouselItems: Set<CarouselItem>,
-    carouselState: CarouselState
+    carouselState: CarouselState,
+    onCarouselItemClick: (CarouselItem) -> Unit = {}
 ) {
     HorizontalMultiBrowseCarousel(
         modifier = modifier
@@ -52,7 +53,10 @@ fun StatsCarousel(
         val item = carouselItems.elementAt(i)
         StatsCarouselItem(
             modifier = Modifier.maskClip(shapes.extraLarge),
-            carouselItem = item
+            carouselItem = item,
+            onClick = {
+                onCarouselItemClick(item)
+            }
         )
     }
 
@@ -62,7 +66,8 @@ fun StatsCarousel(
 @Composable
 fun StatsCarouselItem(
     modifier: Modifier = Modifier,
-    carouselItem: CarouselItem
+    carouselItem: CarouselItem,
+    onClick: () -> Unit
 ) {
 
     Card(
@@ -73,6 +78,7 @@ fun StatsCarouselItem(
             contentColor = colorScheme.onPrimaryContainer
         ),
         shape = shapes.extraLarge,
+        onClick = onClick
     ) {
         Box(
             modifier = Modifier

@@ -24,6 +24,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.feature.leaderboard.presentation.navigation.LeaderBoardNavigator
+import com.datahiveorg.donetik.util.Keys
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -80,7 +81,7 @@ fun LeaderBoardContent(
             ) { leaderBoardItem ->
                 val painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(context)
-                        .data(if (leaderBoardItem.imageUrl == Uri.EMPTY) null else leaderBoardItem.imageUrl)
+                        .data(if (leaderBoardItem.imageUrl == Uri.EMPTY) Keys.RANDOM_AVATAR_SERVICE_URL else leaderBoardItem.imageUrl)
                         .crossfade(true)
                         .build(),
                     placeholder = painterResource(R.drawable.ic_profile),

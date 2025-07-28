@@ -7,5 +7,6 @@ enum class FireStoreOperation {
     GET_TASKS,
     GET_SINGLE_TASK,
     MARK_AS_DONE,
-    GET_LEADERBOARD
+    GET_LEADERBOARD,
+    CREATE_LEADERBOARD
 }

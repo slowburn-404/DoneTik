@@ -1,6 +1,7 @@
 package com.datahiveorg.donetik.feature.home.presentation.navigation
 
 import com.datahiveorg.donetik.core.ui.navigation.DoneTikNavigator
+import com.datahiveorg.donetik.feature.home.presentation.tasklist.FilterOption
 
 interface HomeNavigator {
     fun navigateToFeedScreen()
@@ -8,6 +9,8 @@ interface HomeNavigator {
     fun navigateToNewTaskScreen()
 
     fun navigateToTaskViewScreen(taskId: String, userId: String)
+
+    fun navigateToTaskListScreen(category: String, filterOption: FilterOption)
 
     fun navigateUp()
 }
@@ -36,5 +39,11 @@ class HomeNavigatorImpl(
 
     override fun navigateUp() {
         doneTikNavigator.navigateUp()
+    }
+
+    override fun navigateToTaskListScreen(category: String, filterOption: FilterOption) {
+       doneTikNavigator.navigate(
+           destination = TaskListScreen(category = category, filterOption = filterOption)
+       )
     }
 }
