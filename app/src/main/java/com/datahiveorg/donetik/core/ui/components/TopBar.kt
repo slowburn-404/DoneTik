@@ -44,7 +44,7 @@ fun TopBar(
     enterAnimationTransition: EnterTransition,
     exitAnimationTransition: ExitTransition
 ) {
-    MediumTopAppBar(
+    TopAppBar(
         modifier = modifier.fillMaxWidth(),
         navigationIcon = {
             AnimatedVisibility(

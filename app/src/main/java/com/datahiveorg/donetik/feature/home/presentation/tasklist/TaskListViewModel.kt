@@ -184,7 +184,7 @@ class TaskListViewModel(
     }
 
     private fun calculateCategories(tasks: List<Task>): Set<String> {
-        return tasks.map { it.category.uppercase() }.toSet()
+        return tasks.map { it.category }.toSet()
     }
 
     private fun calculateDisplayedTasks(
@@ -193,9 +193,11 @@ class TaskListViewModel(
         selectedCategory: String
     ): GroupedTasks {
         val filteredByOption = when (filter) {
-            FilterOption.ACTIVE -> allTasks.filter { !it.isDone }
+            FilterOption.PENDING -> allTasks.filter { !it.isDone }
             FilterOption.DONE -> allTasks.filter { it.isDone }
-            FilterOption.ALL -> allTasks
+            FilterOption.ALL -> {
+                allTasks
+            }
         }
         val filteredByCategory = if (selectedCategory.isNotEmpty()) {
             filteredByOption.filter { it.category.equals(selectedCategory, ignoreCase = true) }

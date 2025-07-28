@@ -30,6 +30,7 @@ import com.datahiveorg.donetik.core.ui.components.ScreenTitle
 import com.datahiveorg.donetik.core.ui.components.SecondaryButton
 import com.datahiveorg.donetik.feature.home.domain.model.Task
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
+import com.datahiveorg.donetik.feature.home.presentation.tasklist.FilterOption
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +51,11 @@ fun FeedScreen(
             when (event) {
                 is FeedEvent.Navigate.Feed -> navigator.navigateToFeedScreen()
                 is FeedEvent.Navigate.NewTask -> navigator.navigateToNewTaskScreen()
-                is FeedEvent.Navigate.TaskList -> navigator.navigateToTaskListScreen()
+                is FeedEvent.Navigate.TaskList -> navigator.navigateToTaskListScreen(
+                    category = event.category,
+                    filterOption = event.filterOption
+                )
+
                 is FeedEvent.SelectTask -> navigator.navigateToTaskViewScreen(
                     taskId = event.taskId,
                     userId = event.userId
@@ -170,7 +175,12 @@ fun FeedContent(
 
                         CTATextButton(
                             onClick = {
-                                onEvent(FeedEvent.Navigate.TaskList)
+                                onEvent(
+                                    FeedEvent.Navigate.TaskList(
+                                        category = "",
+                                        filterOption = FilterOption.PENDING
+                                    )
+                                )
                             },
                             text = "Show all"
                         )
@@ -208,14 +218,6 @@ fun FeedContent(
                             textAlign = TextAlign.Start,
                             fontWeight = FontWeight.SemiBold
                         )
-
-                        CTATextButton(
-                            text = "Show all",
-                            onClick = {
-                                onEvent(FeedEvent.Navigate.TaskList)
-                            }
-                        )
-
                     }
                 }
 
@@ -223,7 +225,15 @@ fun FeedContent(
                 item {
                     StatsCarousel(
                         carouselItems = state.carouselItems,
-                        carouselState = carouselState
+                        carouselState = carouselState,
+                        onCarouselItemClick = { carouselItem ->
+                            onEvent(
+                                FeedEvent.Navigate.TaskList(
+                                    category = carouselItem.category,
+                                    filterOption = FilterOption.ALL
+                                )
+                            )
+                        }
                     )
                 }
             }

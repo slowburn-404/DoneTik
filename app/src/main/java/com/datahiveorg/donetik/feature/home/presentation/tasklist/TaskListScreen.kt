@@ -24,9 +24,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -42,7 +40,9 @@ fun TaskListScreen(
     modifier: Modifier = Modifier,
     navigator: HomeNavigator,
     snackBar: SnackbarHostState,
-    viewModel: TaskListViewModel
+    viewModel: TaskListViewModel,
+    category: String,
+    filterOption: FilterOption
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle(TaskListState())
     val lazyListState = rememberLazyListState()
@@ -69,6 +69,16 @@ fun TaskListScreen(
                 }
             }
         }
+    }
+
+    LaunchedEffect(category) {
+        viewModel.emitIntent(TaskListIntent.SelectCategory(category))
+
+    }
+
+    LaunchedEffect(filterOption) {
+        viewModel.emitIntent(TaskListIntent.Filter(filterOption))
+
     }
 
 

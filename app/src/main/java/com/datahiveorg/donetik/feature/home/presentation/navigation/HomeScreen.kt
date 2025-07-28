@@ -5,6 +5,7 @@ import com.datahiveorg.donetik.R
 import com.datahiveorg.donetik.core.ui.navigation.FeatureScreen
 import com.datahiveorg.donetik.core.ui.navigation.HomeFeature
 import com.datahiveorg.donetik.core.ui.navigation.ScreenUIConfig
+import com.datahiveorg.donetik.feature.home.presentation.tasklist.FilterOption
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -73,7 +74,7 @@ data class TaskScreen(val taskId: String, val userId: String) : FeatureScreen {
 }
 
 @Serializable
-data object TaskListScreen : FeatureScreen {
+data class TaskListScreen(val category: String, val filterOption: FilterOption) : FeatureScreen {
     override fun buildNavOptions(builder: NavOptionsBuilder) {
         builder.popUpTo<Feed> {
             inclusive = false
@@ -84,8 +85,8 @@ data object TaskListScreen : FeatureScreen {
 
     override val screenUIConfig: ScreenUIConfig
         get() = ScreenUIConfig(
-            title = "My tasks",
-            hasTopAppBar = true,
+            title = "Pending Tasks",
+            hasTopAppBar = false,
             hasBottomBar = false,
             hasFAB = true,
             hasNavIcon = true,

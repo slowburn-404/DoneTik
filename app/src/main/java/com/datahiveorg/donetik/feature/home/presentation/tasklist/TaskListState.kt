@@ -14,6 +14,6 @@ data class TaskListState(
 )
 
 enum class FilterOption {
-    ALL, ACTIVE, DONE
+    ALL, PENDING, DONE
 }
 
