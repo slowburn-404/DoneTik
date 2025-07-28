@@ -127,32 +127,6 @@ fun FeedContent(
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-//                item {
-//                    DoneTikSearchBar(
-//                        query = searchState.query,
-//                        onSearch = {
-//                            onIntent(FeedIntent.Search)
-//                        },
-//                        searchResults = searchState.searchResults,
-//                        onQueryChange = { query ->
-//                            onIntent(FeedIntent.EnterQuery(query))
-//                        },
-//                        isExpanded = searchState.isSearchBarExpanded,
-//                        onExpandedChanged = {
-//                            onIntent(FeedIntent.ToggleSearchBar)
-//                        },
-//                        leadingIcon = {
-//                            Icon(
-//                                Icons.Rounded.Search,
-//                                contentDescription = "Search"
-//                            )
-//                        },
-//                        onSearchResultClick = {
-//                            onIntent(FeedIntent.Search)
-//                        },
-//                        placeholder = "Search Tasks"
-//                    )
-//                }
 
                 item {
                     ScreenTitle(

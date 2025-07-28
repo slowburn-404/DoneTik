@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.datahiveorg.donetik.core.ui.components.AnimatedText
+import com.datahiveorg.donetik.core.ui.components.DoneTikSearchBar
 import com.datahiveorg.donetik.core.ui.components.TaskSegmentedButtons
 import com.datahiveorg.donetik.feature.home.presentation.feed.TaskCard
 import com.datahiveorg.donetik.feature.home.presentation.navigation.HomeNavigator
@@ -107,6 +108,34 @@ fun TaskListContent(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             state = lazyListState
         ) {
+            stickyHeader {
+
+                    DoneTikSearchBar(
+                        query = state.query,
+                        onSearch = {
+                            onIntent(FeedIntent.Search)
+                        },
+                        searchResults = searchState.searchResults,
+                        onQueryChange = { query ->
+                            onIntent(FeedIntent.EnterQuery(query))
+                        },
+                        isExpanded = searchState.isSearchBarExpanded,
+                        onExpandedChanged = {
+                            onIntent(FeedIntent.ToggleSearchBar)
+                        },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Rounded.Search,
+                                contentDescription = "Search"
+                            )
+                        },
+                        onSearchResultClick = {
+                            onIntent(FeedIntent.Search)
+                        },
+                        placeholder = "Search Tasks"
+                    )
+
+            }
 
             item {
                 TaskSegmentedButtons(

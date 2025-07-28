@@ -35,13 +35,6 @@ class FeedViewModel(
         emitIntent(FeedIntent.GetUserInfo)
     }
 
-    private val _searchState = MutableStateFlow(SearchState())
-    val searchState = _searchState.stateIn(
-        scope = viewModelScope,
-        initialValue = SearchState(),
-        started = WhileSubscribed(5000)
-    )
-
     private val _pendingTasks = MutableStateFlow(emptyList<Task>())
     val pendingTasks = _pendingTasks.stateIn(
         scope = viewModelScope,
@@ -68,11 +61,6 @@ class FeedViewModel(
                     is FeedIntent.Delete -> deleteTask(uiIntent.task)
 
 //                    is FeedIntent.ToggleDoneStatus -> toggleDoneStatus(uiIntent.task)
-
-                    is FeedIntent.ToggleSearchBar -> toggleSearchBar()
-
-                    is FeedIntent.EnterQuery -> enterQuery(uiIntent.query)
-
 
                     is FeedIntent.Refresh -> getUserInfo()
 
@@ -257,22 +245,6 @@ class FeedViewModel(
                     carouselItems = carouselItems
                 )
             }
-        }
-    }
-
-    private fun toggleSearchBar() {
-        _searchState.update { currentState ->
-            currentState.copy(
-                isSearchBarExpanded = !currentState.isSearchBarExpanded
-            )
-        }
-    }
-
-    private fun enterQuery(query: String) {
-        _searchState.update { currentState ->
-            currentState.copy(
-                query = query
-            )
         }
     }
 

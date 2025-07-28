@@ -24,11 +24,3 @@ data class FeedState(
     val title: String = "",
     val carouselItems: Set<CarouselItem> = emptySet(),
 )
-
-@Stable
-@Immutable
-data class SearchState(
-    val searchResults: List<Task> = emptyList(),
-    val isSearchBarExpanded: Boolean = false,
-    val query: String = "",
-)
