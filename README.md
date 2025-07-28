@@ -8,7 +8,7 @@ A modern Todo App built with **Kotlin** and **Jetpack Compose**
 
 - [x] Authentication (Google/Email via Firebase)
 - [x] CRUD Operations with FireStore
-- [ ] Leaderboard
+- [x] Leaderboard
 - [ ] Teams
 - [ ] Profile
 - [ ] Search
